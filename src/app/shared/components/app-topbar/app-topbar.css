@@ -1,0 +1,63 @@
+.app-topbar {
+  border-bottom: 1px solid var(--surface-border);
+  background: var(--surface-panel);
+  color: var(--text-color);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  padding: 0.625rem 0;
+}
+
+.app-topbar__container {
+  width: 95%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.app-topbar__toggle--desktop {
+  display: none;
+}
+
+.app-topbar__toggle--mobile {
+  display: inline-flex;
+}
+
+@media (min-width: 768px) {
+  .app-topbar__toggle--desktop {
+    display: inline-flex;
+  }
+
+  .app-topbar__toggle--mobile {
+    display: none;
+  }
+}
+
+.app-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-inline-start: auto;
+}
+
+.app-topbar__toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.app-topbar__toggle-label {
+  color: var(--color-primary);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+@media (max-width: 767px) {
+  .app-topbar__container {
+    width: 100%;
+    padding-inline: 1rem;
+  }
+}

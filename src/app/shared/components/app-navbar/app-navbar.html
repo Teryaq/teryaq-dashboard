@@ -1,0 +1,109 @@
+<header class="navbar app-navbar">
+  <div class="navbar__container">
+    <div class="navbar__start">
+      <app-logo [showSubtitle]="true" />
+    </div>
+
+    <div class="navbar__actions navbar__actions--desktop">
+      <div class="navbar__group navbar__group--tools">
+        <div class="navbar__toggle-group">
+          <span class="navbar__toggle-label" aria-hidden="true">
+            <i class="pi" [class.pi-sun]="!themeService.isDark()" [class.pi-moon]="themeService.isDark()"></i>
+          </span>
+          <p-toggleSwitch
+            [ngModel]="themeService.isDark()"
+            (ngModelChange)="setDarkMode($event)"
+            [ariaLabel]="themeService.isDark() ? ('nav.themeDark' | translate) : ('nav.themeLight' | translate)"
+          />
+        </div>
+
+        <p-button
+          [label]="i18n.locale() === 'en' ? 'AR' : 'EN'"
+          [rounded]="true"
+          [text]="true"
+          severity="secondary"
+          (onClick)="toggleLocale()"
+          [attr.aria-label]="'nav.language' | translate"
+        />
+      </div>
+
+      <div class="navbar__group navbar__group--auth">
+        <a
+          routerLink="/auth/login"
+          routerLinkActive="is-active"
+          class="navbar__text-link"
+        >
+          {{ 'nav.signIn' | translate }}
+        </a>
+        @if (!isRegisterRoute()) {
+          <p-button
+            [label]="'nav.register' | translate"
+            size="small"
+            (onClick)="navigateToRegister()"
+          />
+        }
+      </div>
+    </div>
+
+    <p-button
+      icon="pi pi-bars"
+      [text]="true"
+      severity="secondary"
+      class="navbar__menu-btn"
+      [attr.aria-label]="'nav.menu' | translate"
+      (onClick)="openMobile()"
+    />
+  </div>
+</header>
+
+<p-drawer
+  [visible]="mobileOpen()"
+  (visibleChange)="onMobileDrawerVisibleChange($event)"
+  [position]="drawerPosition()"
+  [modal]="true"
+  styleClass="navbar-drawer"
+>
+  <div class="navbar__drawer">
+    <div class="navbar__drawer-header">
+      <app-logo [showSubtitle]="true" />
+    </div>
+
+    <div class="navbar__drawer-section">
+      <div class="navbar__drawer-row">
+        <span class="navbar__drawer-row-label">
+          <i class="pi" [class.pi-sun]="!themeService.isDark()" [class.pi-moon]="themeService.isDark()"></i>
+          {{ themeService.isDark() ? ('nav.themeDark' | translate) : ('nav.themeLight' | translate) }}
+        </span>
+        <p-toggleSwitch
+          [ngModel]="themeService.isDark()"
+          (ngModelChange)="setDarkMode($event)"
+          [ariaLabel]="themeService.isDark() ? ('nav.themeDark' | translate) : ('nav.themeLight' | translate)"
+        />
+      </div>
+
+      <button type="button" class="navbar__drawer-link" (click)="toggleLocale()">
+        <i class="pi pi-globe" aria-hidden="true"></i>
+        <span>{{ 'nav.language' | translate }} — {{ i18n.locale() === 'en' ? 'AR' : 'EN' }}</span>
+      </button>
+    </div>
+
+    <div class="navbar__drawer-section navbar__drawer-section--auth">
+      <a
+        routerLink="/auth/login"
+        routerLinkActive="is-active"
+        class="navbar__drawer-link"
+        (click)="onDrawerNavClick()"
+      >
+        <i class="pi pi-sign-in" aria-hidden="true"></i>
+        <span>{{ 'nav.signIn' | translate }}</span>
+      </a>
+
+      @if (!isRegisterRoute()) {
+        <button type="button" class="navbar__drawer-link navbar__drawer-link--primary" (click)="navigateToRegister()">
+          <i class="pi pi-user-plus" aria-hidden="true"></i>
+          <span>{{ 'nav.register' | translate }}</span>
+        </button>
+      }
+    </div>
+  </div>
+</p-drawer>

@@ -1,0 +1,40 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo__mark {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+}
+
+.logo__mark-bg {
+  fill: var(--color-primary);
+}
+
+.logo__mark-icon {
+  fill: color-mix(in srgb, var(--color-secondary) 85%, white);
+}
+
+.logo__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.logo__name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+}
+
+.logo__subtitle {
+  font-size: 0.75rem;
+  color: var(--color-secondary);
+  font-weight: 600;
+}

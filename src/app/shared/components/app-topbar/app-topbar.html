@@ -1,0 +1,43 @@
+<header class="app-topbar">
+  <div class="app-topbar__container">
+    <p-button
+      [icon]="collapseIcon()"
+      [text]="true"
+      severity="secondary"
+      class="app-topbar__toggle app-topbar__toggle--desktop"
+      [attr.aria-label]="sidebarState.collapsed() ? ('nav.expand' | translate) : ('nav.collapse' | translate)"
+      (onClick)="sidebarState.toggleCollapsed()"
+    />
+
+    <p-button
+      icon="pi pi-bars"
+      [text]="true"
+      severity="secondary"
+      class="app-topbar__toggle app-topbar__toggle--mobile"
+      [attr.aria-label]="'nav.menu' | translate"
+      (onClick)="sidebarState.openMobile()"
+    />
+
+    <div class="app-topbar__actions">
+      <div class="app-topbar__toggle-group">
+        <span class="app-topbar__toggle-label" aria-hidden="true">
+          <i class="pi" [class.pi-sun]="!themeService.isDark()" [class.pi-moon]="themeService.isDark()"></i>
+        </span>
+        <p-toggleSwitch
+          [ngModel]="themeService.isDark()"
+          (ngModelChange)="setDarkMode($event)"
+          [ariaLabel]="themeService.isDark() ? ('nav.themeDark' | translate) : ('nav.themeLight' | translate)"
+        />
+      </div>
+
+      <p-button
+        [label]="i18n.locale() === 'en' ? 'AR' : 'EN'"
+        [rounded]="true"
+        [text]="true"
+        severity="secondary"
+        (onClick)="toggleLocale()"
+        [attr.aria-label]="'nav.language' | translate"
+      />
+    </div>
+  </div>
+</header>

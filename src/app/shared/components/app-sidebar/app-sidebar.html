@@ -1,0 +1,101 @@
+<aside
+  class="app-sidebar app-sidebar--desktop"
+  [class.app-sidebar--collapsed]="sidebarState.collapsed()"
+>
+  <div class="app-sidebar__inner">
+    <div class="app-sidebar__header">
+      <app-logo [compact]="sidebarState.collapsed()" [showSubtitle]="!sidebarState.collapsed()" />
+    </div>
+
+    <nav class="app-sidebar__nav" aria-label="Main navigation">
+      @for (item of navItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          class="app-sidebar__link"
+          [pTooltip]="sidebarState.collapsed() ? (item.labelKey | translate) : undefined"
+          [tooltipPosition]="i18n.direction() === 'rtl' ? 'left' : 'right'"
+        >
+          <i [class]="item.icon" aria-hidden="true"></i>
+          <span class="app-sidebar__link-label">{{ item.labelKey | translate }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="app-sidebar__footer">
+      @if (authService.userRole(); as role) {
+        <div
+          class="app-sidebar__user"
+          [pTooltip]="sidebarState.collapsed() ? (roleLabelKey(role) | translate) : undefined"
+          [tooltipPosition]="i18n.direction() === 'rtl' ? 'left' : 'right'"
+        >
+          <span class="app-sidebar__user-avatar" aria-hidden="true">
+            <i [class]="roleIcon(role)"></i>
+          </span>
+          <div class="app-sidebar__user-info">
+            <span class="app-sidebar__user-label">{{ 'nav.account' | translate }}</span>
+            <span class="app-sidebar__user-role">{{ roleLabelKey(role) | translate }}</span>
+          </div>
+        </div>
+      }
+
+      <button
+        type="button"
+        class="app-sidebar__link app-sidebar__logout"
+        [pTooltip]="sidebarState.collapsed() ? ('nav.logout' | translate) : undefined"
+        [tooltipPosition]="i18n.direction() === 'rtl' ? 'left' : 'right'"
+        (click)="logout()"
+      >
+        <i class="pi pi-sign-out" aria-hidden="true"></i>
+        <span class="app-sidebar__link-label">{{ 'nav.logout' | translate }}</span>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<p-drawer
+  [visible]="sidebarState.mobileOpen()"
+  (visibleChange)="sidebarState.onMobileDrawerVisibleChange($event)"
+  [position]="drawerPosition()"
+  [modal]="true"
+  styleClass="app-sidebar-drawer"
+>
+  <div class="app-sidebar__inner app-sidebar__inner--drawer">
+    <div class="app-sidebar__header">
+      <app-logo [showSubtitle]="true" />
+    </div>
+
+    <nav class="app-sidebar__nav" aria-label="Main navigation">
+      @for (item of navItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          class="app-sidebar__link"
+          (click)="onNavClick()"
+        >
+          <i [class]="item.icon" aria-hidden="true"></i>
+          <span class="app-sidebar__link-label">{{ item.labelKey | translate }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="app-sidebar__footer">
+      @if (authService.userRole(); as role) {
+        <div class="app-sidebar__user">
+          <span class="app-sidebar__user-avatar" aria-hidden="true">
+            <i [class]="roleIcon(role)"></i>
+          </span>
+          <div class="app-sidebar__user-info">
+            <span class="app-sidebar__user-label">{{ 'nav.account' | translate }}</span>
+            <span class="app-sidebar__user-role">{{ roleLabelKey(role) | translate }}</span>
+          </div>
+        </div>
+      }
+
+      <button type="button" class="app-sidebar__link app-sidebar__logout" (click)="logout()">
+        <i class="pi pi-sign-out" aria-hidden="true"></i>
+        <span class="app-sidebar__link-label">{{ 'nav.logout' | translate }}</span>
+      </button>
+    </div>
+  </div>
+</p-drawer>

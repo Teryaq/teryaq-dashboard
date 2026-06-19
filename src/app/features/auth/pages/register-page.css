@@ -1,0 +1,73 @@
+@import './login-page.css';
+
+/* Register page — wider column, no scroll */
+.auth-page--register {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 960px) {
+  .auth-page--register {
+    grid-template-columns: minmax(16rem, 1fr) minmax(22rem, 1fr);
+  }
+}
+
+.auth-page__form--wide {
+  align-items: flex-start;
+  padding-block: 2.5rem;
+}
+
+.auth-page__form--wide .auth-card,
+.auth-page__form--wide .auth-card--wide {
+  width: 100%;
+  max-width: 32rem;
+}
+
+@media (min-width: 768px) {
+  .auth-card--wide.p-card {
+    max-width: 32rem;
+  }
+}
+
+.auth-page__fields--register {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .auth-page__fields--register {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.field-span-full {
+  grid-column: 1 / -1;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.section-title {
+  margin: 0 0 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+}
+
+.field-error {
+  margin-top: 0;
+}
+
+.auth-page__fields--register .field-error {
+  margin-top: -0.25rem;
+}
+
+.auth-submit-btn {
+  margin-top: 0.5rem;
+}

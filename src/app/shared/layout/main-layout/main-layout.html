@@ -1,0 +1,16 @@
+<div
+  class="main-shell"
+  [class.main-shell--collapsed]="sidebarState.collapsed()"
+>
+  <app-sidebar />
+
+  <div class="main-shell__content">
+    <app-topbar />
+
+    <main class="main-layout">
+      <div class="main-layout__container">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+</div>

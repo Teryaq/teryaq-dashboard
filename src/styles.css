@@ -1,3 +1,164 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+@import 'tailwindcss-primeui';
+@import 'primeicons/primeicons.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --color-primary: #0d7377;
+  --color-primary-hover: #0b5f62;
+  --color-secondary: #e8a838;
+  --color-secondary-hover: #d4952e;
+  --font-sans: 'Plus Jakarta Sans', 'Noto Sans Arabic', system-ui, sans-serif;
+  --surface-ground: #f8fafb;
+  --surface-panel: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-border: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  --text-color: #0f172a;
+  --text-muted: #64748b;
+  color-scheme: light;
+}
+
+.dark {
+  --color-primary: #28adb6;
+  --color-primary-hover: #58bfc6;
+  --color-secondary: #f0b84d;
+  --color-secondary-hover: #e8a838;
+  --surface-ground: #1e1e1e;
+  --surface-panel: #252526;
+  --surface-elevated: #2d2d30;
+  --surface-border: #3c3c3c;
+  --text-color: #e2e8f0;
+  --text-muted: #94a3b8;
+  color-scheme: dark;
+}
+
+@theme {
+  --color-brand-primary: var(--color-primary);
+  --color-brand-secondary: var(--color-secondary);
+  --font-sans: var(--font-sans);
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  background: var(--surface-ground);
+  color: var(--text-color);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Auth card — explicit light/dark so PrimeNG never splits themes */
+html:not(.dark) .auth-card.p-card {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 4px 6px -1px rgb(15 23 42 / 0.06),
+    0 12px 32px -8px rgb(15 23 42 / 0.1);
+}
+
+html.dark .auth-card.p-card {
+  background: #252526;
+  color: #e2e8f0;
+  border: 1px solid #3c3c3c;
+  box-shadow: 0 12px 32px -8px rgb(0 0 0 / 0.45);
+}
+
+.auth-card .p-card-body {
+  padding: 2rem 2rem 1.75rem;
+}
+
+.auth-card--wide .p-card-body {
+  padding: 2.25rem 2.25rem 2rem;
+}
+
+html:not(.dark) .auth-card .p-inputtext,
+html:not(.dark) .auth-card .p-textarea,
+html:not(.dark) .auth-card .p-password .p-inputtext {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+html.dark .auth-card .p-inputtext,
+html.dark .auth-card .p-textarea,
+html.dark .auth-card .p-password .p-inputtext {
+  background: #2d2d30;
+  border-color: #3c3c3c;
+  color: #e2e8f0;
+}
+
+html:not(.dark) .auth-card .p-floatlabel label {
+  color: #64748b;
+}
+
+html.dark .auth-card .p-floatlabel label {
+  color: #94a3b8;
+}
+
+html:not(.dark) .auth-card .p-divider-content {
+  background: #ffffff;
+  color: #64748b;
+}
+
+html.dark .auth-card .p-divider-content {
+  background: #252526;
+  color: #94a3b8;
+}
+
+/* App shell surfaces — global so theme applies outside component encapsulation */
+.app-navbar,
+.app-topbar,
+.app-sidebar--desktop {
+  background: var(--surface-panel);
+  color: var(--text-color);
+  border-color: var(--surface-border);
+}
+
+.main-layout,
+.main-shell {
+  background: var(--surface-ground);
+  color: var(--text-color);
+}
+
+.app-sidebar-drawer.p-drawer .p-drawer-content {
+  background: var(--surface-panel);
+  color: var(--text-color);
+}
+
+.app-sidebar-drawer.p-drawer {
+  width: min(280px, 85vw) !important;
+}
+
+.navbar-drawer.p-drawer {
+  width: min(300px, 88vw) !important;
+}
+
+.navbar-drawer.p-drawer .p-drawer-content {
+  background: var(--surface-panel);
+  color: var(--text-color);
+}
+
+html:not(.dark) .auth-layout {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary) 6%, #fff) 0%,
+    color-mix(in srgb, var(--color-secondary) 8%, #fff) 100%
+  );
+}
+
+html.dark .auth-layout {
+  background: linear-gradient(
+    135deg,
+    #1e1e1e 0%,
+    #252526 50%,
+    color-mix(in srgb, var(--color-primary) 12%, #1e1e1e) 100%
+  );
+}
+

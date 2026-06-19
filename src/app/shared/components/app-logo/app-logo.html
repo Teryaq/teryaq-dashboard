@@ -1,0 +1,30 @@
+<a class="logo" routerLink="/">
+  <svg
+    class="logo__mark"
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <rect width="48" height="48" rx="12" class="logo__mark-bg" />
+    <path
+      d="M24 10C17.4 10 12 15.4 12 22c0 4.2 2.1 7.9 5.3 10.2L14 38h6.5l2.8-4.5c.5.1 1 .1 1.7.1 6.6 0 12-5.4 12-12S30.6 10 24 10Z"
+      class="logo__mark-icon"
+    />
+    <path
+      d="M24 16v12M18 22h12"
+      stroke="white"
+      stroke-width="2.5"
+      stroke-linecap="round"
+    />
+  </svg>
+
+  @if (!compact()) {
+    <span class="logo__text">
+      <span class="logo__name">Teryaq</span>
+      @if (showSubtitle()) {
+        <span class="logo__subtitle">ترياق</span>
+      }
+    </span>
+  }
+</a>
