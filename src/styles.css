@@ -127,11 +127,6 @@ html.dark .auth-card .p-divider-content {
   color: var(--text-color);
 }
 
-.app-sidebar-drawer.p-drawer .p-drawer-content {
-  background: var(--surface-panel);
-  color: var(--text-color);
-}
-
 .app-sidebar-drawer.p-drawer {
   width: min(280px, 85vw) !important;
 }
@@ -140,9 +135,41 @@ html.dark .auth-card .p-divider-content {
   width: min(300px, 88vw) !important;
 }
 
-.navbar-drawer.p-drawer .p-drawer-content {
+/* Drawer shell — global so dark mode + close button work in AR/EN */
+.app-drawer.p-drawer,
+.app-drawer.p-drawer .p-drawer-header,
+.app-drawer.p-drawer .p-drawer-content {
   background: var(--surface-panel);
   color: var(--text-color);
+}
+
+.app-drawer.p-drawer .p-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.app-drawer__header-brand {
+  flex: 1;
+  min-width: 0;
+}
+
+.app-drawer.p-drawer .p-drawer-close-button {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  color: var(--text-muted);
+}
+
+.app-drawer.p-drawer .p-drawer-close-button:hover {
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--surface-panel));
+  color: var(--text-color);
+}
+
+.app-drawer.p-drawer .p-drawer-content {
+  padding: 0.75rem 1rem 1rem;
 }
 
 html:not(.dark) .auth-layout {

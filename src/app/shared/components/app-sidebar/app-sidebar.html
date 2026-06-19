@@ -58,13 +58,16 @@
   (visibleChange)="sidebarState.onMobileDrawerVisibleChange($event)"
   [position]="drawerPosition()"
   [modal]="true"
-  styleClass="app-sidebar-drawer"
+  [ariaCloseLabel]="'nav.closeMenu' | translate"
+  styleClass="app-sidebar-drawer app-drawer"
 >
-  <div class="app-sidebar__inner app-sidebar__inner--drawer">
-    <div class="app-sidebar__header">
+  <ng-template #header>
+    <div class="app-drawer__header-brand">
       <app-logo [showSubtitle]="true" />
     </div>
+  </ng-template>
 
+  <div class="app-sidebar__inner app-sidebar__inner--drawer">
     <nav class="app-sidebar__nav" aria-label="Main navigation">
       @for (item of navItems; track item.route) {
         <a

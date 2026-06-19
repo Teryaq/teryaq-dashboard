@@ -17,6 +17,7 @@
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar",
     "menu": "Open menu",
+    "closeMenu": "Close menu",
     "account": "Account"
   },
   "roles": {

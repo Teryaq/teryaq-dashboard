@@ -61,13 +61,16 @@
   (visibleChange)="onMobileDrawerVisibleChange($event)"
   [position]="drawerPosition()"
   [modal]="true"
-  styleClass="navbar-drawer"
+  [ariaCloseLabel]="'nav.closeMenu' | translate"
+  styleClass="navbar-drawer app-drawer"
 >
-  <div class="navbar__drawer">
-    <div class="navbar__drawer-header">
+  <ng-template #header>
+    <div class="app-drawer__header-brand">
       <app-logo [showSubtitle]="true" />
     </div>
+  </ng-template>
 
+  <div class="navbar__drawer">
     <div class="navbar__drawer-section">
       <div class="navbar__drawer-row">
         <span class="navbar__drawer-row-label">
