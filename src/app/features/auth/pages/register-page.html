@@ -1,19 +1,22 @@
-<div class="auth-page auth-page--register">
-  <section class="auth-page__brand" aria-hidden="true">
-    <app-logo />
-    <h2 class="auth-page__tagline">{{ 'brand.tagline' | translate }}</h2>
-    <p class="auth-page__tagline-short">{{ 'brand.taglineShort' | translate }}</p>
-  </section>
+<div class="reg-page">
+  <!-- Ambient glow decorations -->
+  <div class="reg-page__glow reg-page__glow--1" aria-hidden="true"></div>
+  <div class="reg-page__glow reg-page__glow--2" aria-hidden="true"></div>
 
-  <section class="auth-page__form auth-page__form--wide">
-    <p-card styleClass="auth-card auth-card--wide">
-      <div class="auth-page__header">
-        <h1>{{ 'auth.register.title' | translate }}</h1>
-        <p>{{ 'auth.register.subtitle' | translate }}</p>
+  <div class="reg-page__card-wrapper">
+    <p-card styleClass="auth-card reg-card">
+
+      <!-- Logo + header -->
+      <div class="reg-page__brand">
+        <app-logo [full]="true" />
+        <div class="reg-page__brand-text">
+          <h1>{{ 'auth.register.title' | translate }}</h1>
+          <p>{{ 'auth.register.subtitle' | translate }}</p>
+        </div>
       </div>
 
       @if (errorMessage(); as message) {
-        <p-message severity="error" class="auth-page__banner">
+        <p-message severity="error" class="reg-page__banner">
           @if (message.startsWith('auth.') || message.startsWith('common.') || message.startsWith('errors.')) {
             {{ message | translate }}
           } @else {
@@ -22,111 +25,116 @@
         </p-message>
       }
 
-      <form class="auth-page__fields auth-page__fields--register" [formGroup]="form" (ngSubmit)="onSubmit()">
-        <h3 class="section-title field-span-full">{{ 'auth.register.pharmacySection' | translate }}</h3>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-        <div class="field-group">
-          <p-floatlabel variant="on">
-            <input pInputText id="pharmacyName" formControlName="pharmacyName" class="w-full" />
-            <label for="pharmacyName">{{ 'auth.register.pharmacyName' | translate }}</label>
-          </p-floatlabel>
-          @if (fieldError('pharmacyName'); as key) {
-            <small class="field-error">{{ key | translate }}</small>
-          }
+        <!-- Section: Pharmacy & Branch -->
+        <p class="reg-section-label">{{ 'auth.register.pharmacySection' | translate }}</p>
+        <div class="reg-grid">
+          <div class="field-group">
+            <p-floatlabel variant="on">
+              <input pInputText id="pharmacyName" formControlName="pharmacyName" class="w-full" />
+              <label for="pharmacyName">{{ 'auth.register.pharmacyName' | translate }}</label>
+            </p-floatlabel>
+            @if (fieldError('pharmacyName'); as key) {
+              <small class="field-error">{{ key | translate }}</small>
+            }
+          </div>
+
+          <div class="field-group">
+            <p-floatlabel variant="on">
+              <input pInputText id="branchName" formControlName="branchName" class="w-full" />
+              <label for="branchName">{{ 'auth.register.branchName' | translate }}</label>
+            </p-floatlabel>
+            @if (fieldError('branchName'); as key) {
+              <small class="field-error">{{ key | translate }}</small>
+            }
+          </div>
+
+          <div class="field-group field-full">
+            <p-floatlabel variant="on">
+              <textarea pTextarea id="branchAddress" formControlName="branchAddress" rows="2" class="w-full"></textarea>
+              <label for="branchAddress">{{ 'auth.register.branchAddress' | translate }} ({{ 'auth.register.optional' | translate }})</label>
+            </p-floatlabel>
+          </div>
+
+          <div class="field-group">
+            <p-floatlabel variant="on">
+              <input pInputText id="branchPhone" formControlName="branchPhone" class="w-full" />
+              <label for="branchPhone">{{ 'auth.register.branchPhone' | translate }} ({{ 'auth.register.optional' | translate }})</label>
+            </p-floatlabel>
+          </div>
         </div>
 
-        <div class="field-group">
-          <p-floatlabel variant="on">
-            <input pInputText id="branchName" formControlName="branchName" class="w-full" />
-            <label for="branchName">{{ 'auth.register.branchName' | translate }}</label>
-          </p-floatlabel>
-          @if (fieldError('branchName'); as key) {
-            <small class="field-error">{{ key | translate }}</small>
-          }
-        </div>
+        <p-divider />
 
-        <div class="field-group field-span-full">
-          <p-floatlabel variant="on">
-            <textarea pTextarea id="branchAddress" formControlName="branchAddress" rows="2" class="w-full"></textarea>
-            <label for="branchAddress">{{ 'auth.register.branchAddress' | translate }} ({{ 'auth.register.optional' | translate }})</label>
-          </p-floatlabel>
-        </div>
+        <!-- Section: Owner Account -->
+        <p class="reg-section-label">{{ 'auth.register.ownerSection' | translate }}</p>
+        <div class="reg-grid">
+          <div class="field-group field-full">
+            <p-floatlabel variant="on">
+              <input pInputText id="ownerEmail" type="email" formControlName="ownerEmail" autocomplete="email" class="w-full" />
+              <label for="ownerEmail">{{ 'auth.register.ownerEmail' | translate }}</label>
+            </p-floatlabel>
+            @if (fieldError('ownerEmail'); as key) {
+              <small class="field-error">{{ key | translate }}</small>
+            }
+          </div>
 
-        <div class="field-group">
-          <p-floatlabel variant="on">
-            <input pInputText id="branchPhone" formControlName="branchPhone" class="w-full" />
-            <label for="branchPhone">{{ 'auth.register.branchPhone' | translate }} ({{ 'auth.register.optional' | translate }})</label>
-          </p-floatlabel>
-        </div>
+          <div class="field-group">
+            <p-floatlabel variant="on">
+              <p-password
+                inputId="ownerPassword"
+                formControlName="ownerPassword"
+                [toggleMask]="true"
+                autocomplete="new-password"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+              />
+              <label for="ownerPassword">{{ 'auth.register.ownerPassword' | translate }}</label>
+            </p-floatlabel>
+            @if (fieldError('ownerPassword'); as key) {
+              <small class="field-error">
+                @if (key === 'auth.validation.minLength') {
+                  {{ key | translate: minLengthParam('ownerPassword') }}
+                } @else {
+                  {{ key | translate }}
+                }
+              </small>
+            }
+          </div>
 
-        <p-divider class="field-span-full" />
-
-        <h3 class="section-title field-span-full">{{ 'auth.register.ownerSection' | translate }}</h3>
-
-        <div class="field-group field-span-full">
-          <p-floatlabel variant="on">
-            <input pInputText id="ownerEmail" type="email" formControlName="ownerEmail" autocomplete="email" class="w-full" />
-            <label for="ownerEmail">{{ 'auth.register.ownerEmail' | translate }}</label>
-          </p-floatlabel>
-          @if (fieldError('ownerEmail'); as key) {
-            <small class="field-error">{{ key | translate }}</small>
-          }
-        </div>
-
-        <div class="field-group">
-          <p-floatlabel variant="on">
-            <p-password
-              inputId="ownerPassword"
-              formControlName="ownerPassword"
-              [toggleMask]="true"
-              autocomplete="new-password"
-              styleClass="w-full"
-              inputStyleClass="w-full"
-            />
-            <label for="ownerPassword">{{ 'auth.register.ownerPassword' | translate }}</label>
-          </p-floatlabel>
-          @if (fieldError('ownerPassword'); as key) {
-            <small class="field-error">
-              @if (key === 'auth.validation.minLength') {
-                {{ key | translate: minLengthParam('ownerPassword') }}
-              } @else {
-                {{ key | translate }}
-              }
-            </small>
-          }
-        </div>
-
-        <div class="field-group">
-          <p-floatlabel variant="on">
-            <p-password
-              inputId="confirmPassword"
-              formControlName="confirmPassword"
-              [feedback]="false"
-              [toggleMask]="true"
-              autocomplete="new-password"
-              styleClass="w-full"
-              inputStyleClass="w-full"
-            />
-            <label for="confirmPassword">{{ 'auth.register.confirmPassword' | translate }}</label>
-          </p-floatlabel>
-          @if (fieldError('confirmPassword'); as key) {
-            <small class="field-error">{{ key | translate }}</small>
-          }
+          <div class="field-group">
+            <p-floatlabel variant="on">
+              <p-password
+                inputId="confirmPassword"
+                formControlName="confirmPassword"
+                [feedback]="false"
+                [toggleMask]="true"
+                autocomplete="new-password"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+              />
+              <label for="confirmPassword">{{ 'auth.register.confirmPassword' | translate }}</label>
+            </p-floatlabel>
+            @if (fieldError('confirmPassword'); as key) {
+              <small class="field-error">{{ key | translate }}</small>
+            }
+          </div>
         </div>
 
         <p-button
           type="submit"
-          class="field-span-full"
           [label]="'auth.register.submit' | translate"
           [loading]="authServiceRef.isLoading()"
-          styleClass="w-full auth-submit-btn"
+          styleClass="w-full reg-submit-btn"
         />
       </form>
 
-      <p class="auth-page__footer">
+      <p class="reg-page__footer">
         {{ 'auth.register.hasAccount' | translate }}
         <a routerLink="/auth/login">{{ 'auth.register.signIn' | translate }}</a>
       </p>
+
     </p-card>
-  </section>
+  </div>
 </div>

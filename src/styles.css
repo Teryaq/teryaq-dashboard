@@ -5,11 +5,11 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --color-primary: #0d7377;
-  --color-primary-hover: #0b5f62;
+  --color-primary: #10b981;
+  --color-primary-hover: #059669;
   --color-secondary: #e8a838;
   --color-secondary-hover: #d4952e;
-  --font-sans: 'Plus Jakarta Sans', 'Noto Sans Arabic', system-ui, sans-serif;
+  --font-sans: 'Cairo', system-ui, -apple-system, sans-serif;
   --surface-ground: #f8fafb;
   --surface-panel: #ffffff;
   --surface-elevated: #ffffff;
@@ -20,14 +20,14 @@
 }
 
 .dark {
-  --color-primary: #28adb6;
-  --color-primary-hover: #58bfc6;
+  --color-primary: #34d399;
+  --color-primary-hover: #10b981;
   --color-secondary: #f0b84d;
   --color-secondary-hover: #e8a838;
-  --surface-ground: #1e1e1e;
-  --surface-panel: #252526;
-  --surface-elevated: #2d2d30;
-  --surface-border: #3c3c3c;
+  --surface-ground: #0f172a;
+  --surface-panel: #1e293b;
+  --surface-elevated: #334155;
+  --surface-border: #334155;
   --text-color: #e2e8f0;
   --text-muted: #94a3b8;
   color-scheme: dark;
@@ -64,9 +64,9 @@ html:not(.dark) .auth-card.p-card {
 }
 
 html.dark .auth-card.p-card {
-  background: #252526;
+  background: #1e293b;
   color: #e2e8f0;
-  border: 1px solid #3c3c3c;
+  border: 1px solid #334155;
   box-shadow: 0 12px 32px -8px rgb(0 0 0 / 0.45);
 }
 
@@ -78,6 +78,54 @@ html.dark .auth-card.p-card {
   padding: 2.25rem 2.25rem 2rem;
 }
 
+/* ── Auth pages always render on dark bg with a white card — force light inputs globally ── */
+.auth-page__card-wrapper .p-inputtext,
+.auth-page__card-wrapper textarea,
+.auth-page__card-wrapper input,
+.auth-page__card-wrapper .p-password .p-inputtext,
+.auth-page__card-wrapper .p-password input,
+.auth-page__card-wrapper .p-password,
+.reg-page__card-wrapper .p-inputtext,
+.reg-page__card-wrapper textarea,
+.reg-page__card-wrapper input,
+.reg-page__card-wrapper .p-password .p-inputtext,
+.reg-page__card-wrapper .p-password input,
+.reg-page__card-wrapper .p-password {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.auth-page__card-wrapper .p-floatlabel label,
+.reg-page__card-wrapper .p-floatlabel label {
+  color: #94a3b8 !important;
+  background: #f8fafc !important;
+}
+
+.auth-page__card-wrapper .p-inputtext:focus,
+.auth-page__card-wrapper .p-password input:focus,
+.reg-page__card-wrapper .p-inputtext:focus,
+.reg-page__card-wrapper .p-password input:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent) !important;
+}
+
+/* Password toggle icon */
+.auth-page__card-wrapper .p-password .p-icon,
+.reg-page__card-wrapper .p-password .p-icon,
+.auth-page__card-wrapper .p-password button,
+.reg-page__card-wrapper .p-password button {
+  color: #94a3b8 !important;
+  background: transparent !important;
+}
+
+/* Divider always light inside auth cards */
+.auth-page__card-wrapper .p-divider::before,
+.reg-page__card-wrapper .p-divider::before {
+  border-top-color: #e2e8f0 !important;
+}
+
+/* Keep old .auth-card selectors working for other pages */
 html:not(.dark) .auth-card .p-inputtext,
 html:not(.dark) .auth-card .p-textarea,
 html:not(.dark) .auth-card .p-password .p-inputtext {
@@ -89,8 +137,8 @@ html:not(.dark) .auth-card .p-password .p-inputtext {
 html.dark .auth-card .p-inputtext,
 html.dark .auth-card .p-textarea,
 html.dark .auth-card .p-password .p-inputtext {
-  background: #2d2d30;
-  border-color: #3c3c3c;
+  background: #334155;
+  border-color: #475569;
   color: #e2e8f0;
 }
 
@@ -108,17 +156,45 @@ html:not(.dark) .auth-card .p-divider-content {
 }
 
 html.dark .auth-card .p-divider-content {
-  background: #252526;
+  background: #1e293b;
   color: #94a3b8;
 }
 
 /* App shell surfaces — global so theme applies outside component encapsulation */
 .app-navbar,
-.app-topbar,
-.app-sidebar--desktop {
+.app-topbar {
   background: var(--surface-panel);
   color: var(--text-color);
   border-color: var(--surface-border);
+}
+
+/* Sidebar is always dark slate regardless of light/dark mode */
+.app-sidebar--desktop,
+.app-sidebar-drawer.p-drawer,
+.app-sidebar-drawer.p-drawer .p-drawer-header,
+.app-sidebar-drawer.p-drawer .p-drawer-content {
+  --sidebar-bg: #0f172a;
+  --sidebar-footer-bg: #020617;
+  --sidebar-text: #94a3b8;
+  --sidebar-text-strong: #f1f5f9;
+  --sidebar-hover-bg: #1e293b;
+  --sidebar-active-bg: #059669;
+  background: var(--sidebar-bg) !important;
+  color: var(--sidebar-text);
+  border-color: #1e293b;
+}
+
+.app-sidebar-drawer.p-drawer .p-drawer-header {
+  border-bottom: 1px solid #1e293b !important;
+}
+
+.app-sidebar-drawer.p-drawer .p-drawer-close-button {
+  color: #94a3b8;
+}
+
+.app-sidebar-drawer.p-drawer .p-drawer-close-button:hover {
+  background: #1e293b;
+  color: #f1f5f9;
 }
 
 .main-layout,
@@ -183,9 +259,18 @@ html:not(.dark) .auth-layout {
 html.dark .auth-layout {
   background: linear-gradient(
     135deg,
-    #1e1e1e 0%,
-    #252526 50%,
-    color-mix(in srgb, var(--color-primary) 12%, #1e1e1e) 100%
+    #0f172a 0%,
+    #1e293b 50%,
+    color-mix(in srgb, var(--color-primary) 12%, #0f172a) 100%
   );
+}
+
+/* ── Card radii — match prototype's rounded-2xl / rounded-3xl feel ── */
+.p-card {
+  border-radius: 1rem;
+}
+
+.auth-card.p-card {
+  border-radius: 1.25rem;
 }
 

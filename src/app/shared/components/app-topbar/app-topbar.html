@@ -1,5 +1,6 @@
 <header class="app-topbar">
   <div class="app-topbar__container">
+    <!-- Left: sidebar toggle -->
     <p-button
       [icon]="collapseIcon()"
       [text]="true"
@@ -18,7 +19,35 @@
       (onClick)="sidebarState.openMobile()"
     />
 
+    <!-- Center: context pills -->
+    <div class="app-topbar__context">
+      <span class="app-topbar__pill app-topbar__pill--pharmacy">
+        <i class="pi pi-building" aria-hidden="true"></i>
+        {{ 'topbar.pharmacy' | translate }}
+      </span>
+      <span class="app-topbar__pill app-topbar__pill--branch">
+        <i class="pi pi-map-marker" aria-hidden="true"></i>
+        {{ 'topbar.mainBranch' | translate }}
+      </span>
+      <span class="app-topbar__pill app-topbar__pill--live">
+        <span class="app-topbar__live-dot" aria-hidden="true"></span>
+        {{ 'topbar.liveApi' | translate }}
+      </span>
+      <span class="app-topbar__date">
+        <i class="pi pi-calendar" aria-hidden="true"></i>
+        {{ todayDate() }}
+      </span>
+    </div>
+
+    <!-- Right: actions -->
     <div class="app-topbar__actions">
+      @if (userRole(); as roleKey) {
+        <span class="app-topbar__role-badge">
+          <i class="pi pi-user" aria-hidden="true"></i>
+          {{ roleKey | translate }}
+        </span>
+      }
+
       <div class="app-topbar__toggle-group">
         <span class="app-topbar__toggle-label" aria-hidden="true">
           <i class="pi" [class.pi-sun]="!themeService.isDark()" [class.pi-moon]="themeService.isDark()"></i>
