@@ -33,6 +33,26 @@
   color-scheme: dark;
 }
 
+/* ── Dark presets — standalone dark looks that override surfaces.
+   Primary palette for these is injected at runtime by ThemeService. ── */
+html.dark.theme-obsidian {
+  --surface-ground: #0a0b0f;
+  --surface-panel: #13151b;
+  --surface-elevated: #1a1d26;
+  --surface-border: #1f232d;
+  --text-color: #f2f4f7;
+  --text-muted: #9aa3b2;
+}
+
+html.dark.theme-amber {
+  --surface-ground: #050505;
+  --surface-panel: #0a0a09;
+  --surface-elevated: #121210;
+  --surface-border: #1c1b17;
+  --text-color: #edeae2;
+  --text-muted: #7c7a71;
+}
+
 @theme {
   --color-brand-primary: var(--color-primary);
   --color-brand-secondary: var(--color-secondary);
@@ -78,7 +98,7 @@ html.dark .auth-card.p-card {
   padding: 2.25rem 2.25rem 2rem;
 }
 
-/* ── Auth pages always render on dark bg with a white card — force light inputs globally ── */
+/* ── Auth page inputs follow the active theme (light/dark + presets) ── */
 .auth-page__card-wrapper .p-inputtext,
 .auth-page__card-wrapper textarea,
 .auth-page__card-wrapper input,
@@ -91,15 +111,15 @@ html.dark .auth-card.p-card {
 .reg-page__card-wrapper .p-password .p-inputtext,
 .reg-page__card-wrapper .p-password input,
 .reg-page__card-wrapper .p-password {
-  background: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-  color: #0f172a !important;
+  background: var(--surface-ground) !important;
+  border-color: var(--surface-border) !important;
+  color: var(--text-color) !important;
 }
 
 .auth-page__card-wrapper .p-floatlabel label,
 .reg-page__card-wrapper .p-floatlabel label {
-  color: #94a3b8 !important;
-  background: #f8fafc !important;
+  color: var(--text-muted) !important;
+  background: var(--surface-ground) !important;
 }
 
 .auth-page__card-wrapper .p-inputtext:focus,
@@ -115,14 +135,23 @@ html.dark .auth-card.p-card {
 .reg-page__card-wrapper .p-password .p-icon,
 .auth-page__card-wrapper .p-password button,
 .reg-page__card-wrapper .p-password button {
-  color: #94a3b8 !important;
+  color: var(--text-muted) !important;
   background: transparent !important;
 }
 
-/* Divider always light inside auth cards */
+/* Divider follows the theme inside auth cards */
 .auth-page__card-wrapper .p-divider::before,
 .reg-page__card-wrapper .p-divider::before {
-  border-top-color: #e2e8f0 !important;
+  border-top-color: var(--surface-border) !important;
+}
+
+/* The brand PNG has a dark navy wordmark — keep it readable on a dark card */
+html.dark .auth-page__brand .logo__full-img,
+html.dark .reg-page__brand .logo__full-img {
+  background: #ffffff;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.9rem;
+  box-shadow: 0 6px 18px -8px rgb(0 0 0 / 0.55);
 }
 
 /* Keep old .auth-card selectors working for other pages */
@@ -168,33 +197,34 @@ html.dark .auth-card .p-divider-content {
   border-color: var(--surface-border);
 }
 
-/* Sidebar is always dark slate regardless of light/dark mode */
+/* Sidebar surfaces follow the active theme (light/dark + presets) */
 .app-sidebar--desktop,
 .app-sidebar-drawer.p-drawer,
 .app-sidebar-drawer.p-drawer .p-drawer-header,
 .app-sidebar-drawer.p-drawer .p-drawer-content {
-  --sidebar-bg: #0f172a;
-  --sidebar-footer-bg: #020617;
-  --sidebar-text: #94a3b8;
-  --sidebar-text-strong: #f1f5f9;
-  --sidebar-hover-bg: #1e293b;
-  --sidebar-active-bg: #059669;
+  --sidebar-bg: var(--surface-panel);
+  --sidebar-footer-bg: var(--surface-ground);
+  --sidebar-text: var(--text-muted);
+  --sidebar-text-strong: var(--text-color);
+  --sidebar-hover-bg: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  /* Active highlight follows the selected accent color */
+  --sidebar-active-bg: var(--color-primary);
   background: var(--sidebar-bg) !important;
   color: var(--sidebar-text);
-  border-color: #1e293b;
+  border-color: var(--surface-border);
 }
 
 .app-sidebar-drawer.p-drawer .p-drawer-header {
-  border-bottom: 1px solid #1e293b !important;
+  border-bottom: 1px solid var(--surface-border) !important;
 }
 
 .app-sidebar-drawer.p-drawer .p-drawer-close-button {
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .app-sidebar-drawer.p-drawer .p-drawer-close-button:hover {
-  background: #1e293b;
-  color: #f1f5f9;
+  background: var(--sidebar-hover-bg);
+  color: var(--text-color);
 }
 
 .main-layout,
@@ -263,6 +293,80 @@ html.dark .auth-layout {
     #1e293b 50%,
     color-mix(in srgb, var(--color-primary) 12%, #0f172a) 100%
   );
+}
+
+/* ── Theme picker popover ── */
+.theme-picker__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 14rem;
+}
+
+.theme-picker__section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.theme-picker__swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.55rem;
+}
+
+.theme-picker__swatch {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  outline: none;
+}
+
+.theme-picker__swatch:hover {
+  transform: scale(1.08);
+}
+
+.theme-picker__swatch:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+
+.theme-picker__swatch--selected {
+  border-color: var(--text-color);
+  box-shadow: 0 0 0 2px var(--surface-panel) inset;
+}
+
+.theme-picker__swatch--selected::after {
+  content: '\e909'; /* primeicons check */
+  font-family: 'primeicons';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.45);
+}
+
+.theme-picker__presets {
+  display: flex;
+  gap: 0.55rem;
+}
+
+.theme-picker__divider {
+  height: 1px;
+  background: var(--surface-border);
+  border: 0;
+  margin: 0;
 }
 
 /* ── Card radii — match prototype's rounded-2xl / rounded-3xl feel ── */

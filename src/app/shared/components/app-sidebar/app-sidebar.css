@@ -2,7 +2,7 @@
   display: none;
   flex-shrink: 0;
   width: var(--sidebar-width, 260px);
-  border-inline-end: 1px solid #1e293b;
+  border-inline-end: 1px solid var(--surface-border);
   /* background and color come from the global sidebar dark token block in styles.css */
   transition: width 0.2s ease;
   overflow: hidden;
@@ -12,6 +12,13 @@
   .app-sidebar--desktop {
     display: flex;
     flex-direction: column;
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    height: 100dvh;
+    z-index: 100;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 }
 
@@ -109,7 +116,7 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 1rem 0.75rem 0.5rem;
-  border-top: 1px solid #1e293b;
+  border-top: 1px solid var(--surface-border);
   margin-top: auto;
 }
 
@@ -126,7 +133,7 @@
   padding: 0.625rem 0.875rem;
   border-radius: 0.75rem;
   background: var(--sidebar-footer-bg, #020617);
-  border: 1px solid #1e293b;
+  border: 1px solid var(--surface-border);
 }
 
 .app-sidebar__user-avatar {
@@ -155,14 +162,14 @@
 .app-sidebar__user-label {
   font-size: 0.6875rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--sidebar-text, #64748b);
   letter-spacing: 0.03em;
 }
 
 .app-sidebar__user-role {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--sidebar-text-strong, #e2e8f0);
   line-height: 1.2;
 }
 

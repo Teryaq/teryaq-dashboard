@@ -12,6 +12,18 @@
   flex-direction: column;
 }
 
+/* Desktop: sidebar is fixed to the viewport, so offset the content by its width */
+@media (min-width: 768px) {
+  .main-shell__content {
+    margin-inline-start: 260px;
+    transition: margin-inline-start 0.2s ease;
+  }
+
+  .main-shell--collapsed .main-shell__content {
+    margin-inline-start: 72px;
+  }
+}
+
 .main-layout {
   flex: 1;
   background: var(--surface-ground);
@@ -19,9 +31,9 @@
 }
 
 .main-layout__container {
-  width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
+  width: 95%;
+  max-width: 1920px;
+  margin-inline: auto;
 }
 
 @media (max-width: 767px) {

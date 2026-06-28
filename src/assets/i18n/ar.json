@@ -23,6 +23,25 @@
     "closeMenu": "إغلاق القائمة",
     "account": "الحساب"
   },
+  "theme": {
+    "colorLabel": "لون التمييز",
+    "presetLabel": "نمط الوضع الداكن",
+    "colors": {
+      "cornflower": "أزرق الذرة",
+      "cyan": "سماوي",
+      "magenta": "أرجواني",
+      "emerald": "زمردي",
+      "amber": "كهرماني",
+      "rose": "وردي",
+      "indigo": "نيلي",
+      "violet": "بنفسجي"
+    },
+    "presets": {
+      "none": "افتراضي",
+      "obsidian": "أوبسيديان",
+      "amber": "كهرماني"
+    }
+  },
   "roles": {
     "owner": "المالك",
     "pharmacist": "صيدلي"

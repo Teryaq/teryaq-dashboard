@@ -10,8 +10,8 @@
 
 .app-topbar__container {
   width: 95%;
-  max-width: 1440px;
-  margin: 0 auto;
+  max-width: 1920px;
+  margin-inline: auto;
   display: flex;
   align-items: center;
   gap: 0.75rem;

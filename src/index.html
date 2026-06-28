@@ -8,11 +8,42 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <script>
       (function () {
+        var root = document.documentElement;
         var stored = localStorage.getItem('teryaq.theme');
         var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (stored === 'dark' || (!stored && prefersDark)) {
-          document.documentElement.classList.add('dark');
+        var isDark = stored === 'dark' || (!stored && prefersDark);
+        if (isDark) {
+          root.classList.add('dark');
         }
+
+        // 8 color themes — pre-apply primary vars to avoid a recolor flash.
+        var PALETTES = {
+          cornflower: { c: ['#4a74c1', '#3b5ba5'], d: ['#7899d2', '#4a74c1'] },
+          cyan: { c: ['#06b6d4', '#0891b2'], d: ['#22d3ee', '#06b6d4'] },
+          magenta: { c: ['#d946ef', '#c026d3'], d: ['#e879f9', '#d946ef'] },
+          emerald: { c: ['#10b981', '#059669'], d: ['#34d399', '#10b981'] },
+          amber: { c: ['#f59e0b', '#d97706'], d: ['#fbbf24', '#f59e0b'] },
+          rose: { c: ['#f43f5e', '#e11d48'], d: ['#fb7185', '#f43f5e'] },
+          indigo: { c: ['#6366f1', '#4f46e5'], d: ['#818cf8', '#6366f1'] },
+          violet: { c: ['#8b5cf6', '#7c3aed'], d: ['#a78bfa', '#8b5cf6'] },
+        };
+        var PRESETS = {
+          obsidian: { cls: 'theme-obsidian', primary: ['#7c9cff', '#a5baff'] },
+          amber: { cls: 'theme-amber', primary: ['#f5a100', '#fbbf24'] },
+        };
+
+        var color = localStorage.getItem('teryaq.color-theme');
+        var preset = isDark ? localStorage.getItem('teryaq.dark-preset') : null;
+        var pair;
+        if (preset && PRESETS[preset]) {
+          root.classList.add(PRESETS[preset].cls);
+          pair = PRESETS[preset].primary;
+        } else {
+          var p = PALETTES[color] || PALETTES.emerald;
+          pair = isDark ? p.d : p.c;
+        }
+        root.style.setProperty('--color-primary', pair[0]);
+        root.style.setProperty('--color-primary-hover', pair[1]);
       })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
