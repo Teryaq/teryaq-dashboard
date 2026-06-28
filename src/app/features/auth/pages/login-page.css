@@ -1,16 +1,20 @@
-/* Full-screen dark background — always dark regardless of theme */
+/* Full-screen hero — follows the active theme (light/dark + presets) */
 .auth-page {
   min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1.5rem;
-  background: #030712;
+  background: linear-gradient(
+    140deg,
+    var(--surface-ground) 0%,
+    color-mix(in srgb, var(--color-primary) 10%, var(--surface-ground)) 100%
+  );
   position: relative;
   overflow: hidden;
 }
 
-/* Ambient emerald/slate glow circles */
+/* Ambient accent glow circles — tinted from the selected color theme */
 .auth-page__glow {
   position: absolute;
   border-radius: 50%;
@@ -21,7 +25,7 @@
 .auth-page__glow--1 {
   width: 28rem;
   height: 28rem;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.18), transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent 70%);
   top: -6rem;
   inset-inline-end: -4rem;
 }
@@ -29,7 +33,7 @@
 .auth-page__glow--2 {
   width: 22rem;
   height: 22rem;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.12), transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 14%, transparent), transparent 70%);
   bottom: -4rem;
   inset-inline-start: -3rem;
 }
@@ -37,7 +41,7 @@
 .auth-page__glow--3 {
   width: 18rem;
   height: 18rem;
-  background: radial-gradient(circle, rgba(30, 41, 59, 0.6), transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--text-muted) 18%, transparent), transparent 70%);
   top: 40%;
   inset-inline-start: 30%;
 }
@@ -55,12 +59,13 @@
   width: 100%;
 }
 
-/* Override PrimeNG card to always be white (light) on the dark page */
+/* Card surface follows the theme */
 .auth-page__card-wrapper .auth-card.p-card {
-  background: #ffffff !important;
-  border: none !important;
+  background: var(--surface-panel) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--surface-border) !important;
   border-radius: 1.5rem !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.35) !important;
 }
 
 .auth-page__card-wrapper .auth-card .p-card-body {
@@ -70,9 +75,9 @@
 .auth-page__card-wrapper .auth-card .p-inputtext,
 .auth-page__card-wrapper .auth-card .p-password .p-inputtext,
 .auth-page__card-wrapper .auth-card input {
-  background: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-  color: #0f172a !important;
+  background: var(--surface-ground) !important;
+  border-color: var(--surface-border) !important;
+  color: var(--text-color) !important;
 }
 
 .auth-page__card-wrapper .auth-card .p-inputtext:focus,
@@ -83,7 +88,7 @@
 }
 
 .auth-page__card-wrapper .auth-card .p-floatlabel label {
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 /* Brand header inside card */
@@ -99,7 +104,7 @@
 .auth-page__brand-subtitle {
   margin: 0;
   font-size: 0.9375rem;
-  color: #64748b;
+  color: var(--text-muted);
   text-align: center;
 }
 
@@ -132,7 +137,7 @@
   margin: 1.5rem 0 0;
   text-align: center;
   font-size: 0.9375rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .auth-page__footer a {

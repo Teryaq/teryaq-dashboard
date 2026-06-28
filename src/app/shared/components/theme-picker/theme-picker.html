@@ -1,0 +1,47 @@
+<p-button
+  icon="pi pi-palette"
+  [rounded]="true"
+  [text]="true"
+  severity="secondary"
+  (onClick)="toggle($event)"
+  [attr.aria-label]="'theme.colorLabel' | translate"
+/>
+
+<p-popover #op>
+  <div class="theme-picker__panel">
+    <p class="theme-picker__section-label">{{ 'theme.colorLabel' | translate }}</p>
+    <div class="theme-picker__swatches" role="group" [attr.aria-label]="'theme.colorLabel' | translate">
+      @for (theme of colorThemes; track theme.key) {
+        <button
+          type="button"
+          class="theme-picker__swatch"
+          [class.theme-picker__swatch--selected]="themeService.colorTheme() === theme.key"
+          [style.background]="theme.swatch"
+          [attr.aria-pressed]="themeService.colorTheme() === theme.key"
+          [attr.aria-label]="theme.labelKey | translate"
+          [title]="theme.labelKey | translate"
+          (click)="selectColor(theme.key)"
+        ></button>
+      }
+    </div>
+
+    @if (themeService.isDark()) {
+      <hr class="theme-picker__divider" />
+      <p class="theme-picker__section-label">{{ 'theme.presetLabel' | translate }}</p>
+      <div class="theme-picker__presets" role="group" [attr.aria-label]="'theme.presetLabel' | translate">
+        @for (preset of darkPresets; track preset.key) {
+          <button
+            type="button"
+            class="theme-picker__swatch"
+            [class.theme-picker__swatch--selected]="themeService.darkPreset() === preset.key"
+            [style.background]="preset.swatch"
+            [attr.aria-pressed]="themeService.darkPreset() === preset.key"
+            [attr.aria-label]="preset.labelKey | translate"
+            [title]="preset.labelKey | translate"
+            (click)="selectPreset(preset.key)"
+          ></button>
+        }
+      </div>
+    }
+  </div>
+</p-popover>

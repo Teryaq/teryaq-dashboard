@@ -23,6 +23,25 @@
     "closeMenu": "Close menu",
     "account": "Account"
   },
+  "theme": {
+    "colorLabel": "Accent color",
+    "presetLabel": "Dark style",
+    "colors": {
+      "cornflower": "Cornflower",
+      "cyan": "Cyan",
+      "magenta": "Magenta",
+      "emerald": "Emerald",
+      "amber": "Amber",
+      "rose": "Rose",
+      "indigo": "Indigo",
+      "violet": "Violet"
+    },
+    "presets": {
+      "none": "Default",
+      "obsidian": "Obsidian",
+      "amber": "Amber"
+    }
+  },
   "roles": {
     "owner": "Owner",
     "pharmacist": "Pharmacist"

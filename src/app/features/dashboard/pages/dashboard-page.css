@@ -28,27 +28,6 @@
   color: var(--text-muted);
 }
 
-.dash__new-invoice-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.75rem;
-  background: var(--color-primary);
-  color: #fff;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s;
-  font-family: inherit;
-  white-space: nowrap;
-}
-
-.dash__new-invoice-btn:hover {
-  background: var(--color-primary-hover);
-}
-
 /* KPI grid */
 .dash__kpi-grid {
   display: grid;
@@ -62,15 +41,21 @@
   }
 }
 
-.kpi-card {
+.kpi-card,
+.dash__chart-card,
+.dash__table-card,
+.dash__alerts-card {
   background: var(--surface-panel);
   border: 1px solid var(--surface-border);
   border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.kpi-card {
   padding: 1.25rem;
   display: flex;
   align-items: flex-start;
   gap: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .kpi-card__icon {
@@ -138,11 +123,7 @@
 }
 
 .dash__chart-card {
-  background: var(--surface-panel);
-  border: 1px solid var(--surface-border);
-  border-radius: 1rem;
   padding: 1.25rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .dash__chart-header {
@@ -313,11 +294,7 @@
 
 /* Recent transactions table */
 .dash__table-card {
-  background: var(--surface-panel);
-  border: 1px solid var(--surface-border);
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow-x: auto;
 }
 
 .dash__table-header {
@@ -386,11 +363,7 @@
 
 /* Alerts panel */
 .dash__alerts-card {
-  background: var(--surface-panel);
-  border: 1px solid var(--surface-border);
-  border-radius: 1rem;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .dash__alerts-header {

@@ -1,16 +1,20 @@
-/* Full-screen dark background — same as login */
+/* Full-screen hero — follows the active theme (light/dark + presets) */
 .reg-page {
   min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1.5rem;
-  background: #030712;
+  background: linear-gradient(
+    140deg,
+    var(--surface-ground) 0%,
+    color-mix(in srgb, var(--color-primary) 10%, var(--surface-ground)) 100%
+  );
   position: relative;
   overflow: hidden;
 }
 
-/* Ambient glow circles */
+/* Ambient accent glow circles — tinted from the selected color theme */
 .reg-page__glow {
   position: absolute;
   border-radius: 50%;
@@ -21,7 +25,7 @@
 .reg-page__glow--1 {
   width: 30rem;
   height: 30rem;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.15), transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 20%, transparent), transparent 70%);
   top: -6rem;
   inset-inline-start: -4rem;
 }
@@ -29,7 +33,7 @@
 .reg-page__glow--2 {
   width: 22rem;
   height: 22rem;
-  background: radial-gradient(circle, rgba(14, 165, 200, 0.12), transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 70%);
   bottom: -4rem;
   inset-inline-end: -3rem;
 }
@@ -42,42 +46,43 @@
   z-index: 1;
 }
 
-/* Force card white always (dark page, light card) */
+/* Card surface follows the theme */
 .reg-page__card-wrapper .reg-card.p-card {
-  background: #ffffff !important;
-  border: none !important;
+  background: var(--surface-panel) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--surface-border) !important;
   border-radius: 1.5rem !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55) !important;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4) !important;
 }
 
 .reg-page__card-wrapper .reg-card .p-card-body {
   padding: 2rem 2rem 1.75rem;
 }
 
-/* ── Force ALL form controls to light style on white card ── */
+/* ── Form controls follow the theme ── */
 .reg-page__card-wrapper .reg-card .p-inputtext,
 .reg-page__card-wrapper .reg-card textarea,
 .reg-page__card-wrapper .reg-card input,
 .reg-page__card-wrapper .reg-card .p-password-input {
-  background: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-  color: #0f172a !important;
+  background: var(--surface-ground) !important;
+  border-color: var(--surface-border) !important;
+  color: var(--text-color) !important;
 }
 
-/* Password component wrapper — must also be light */
+/* Password component wrapper */
 .reg-page__card-wrapper .reg-card .p-password,
 .reg-page__card-wrapper .reg-card .p-password.p-component,
 .reg-page__card-wrapper .reg-card .p-iconfield {
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
+  background: var(--surface-ground) !important;
+  border: 1px solid var(--surface-border) !important;
   border-radius: 6px !important;
-  color: #0f172a !important;
+  color: var(--text-color) !important;
 }
 
 /* Icons inside password field */
 .reg-page__card-wrapper .reg-card .p-password .p-icon,
 .reg-page__card-wrapper .reg-card .p-iconfield .p-icon {
-  color: #94a3b8 !important;
+  color: var(--text-muted) !important;
 }
 
 /* Focus ring */
@@ -91,7 +96,7 @@
 
 /* Float labels */
 .reg-page__card-wrapper .reg-card .p-floatlabel label {
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 /* Brand header */
@@ -108,14 +113,14 @@
   margin: 0 0 0.25rem;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-color);
   letter-spacing: -0.01em;
 }
 
 .reg-page__brand-text p {
   margin: 0;
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 /* Section labels */
@@ -171,12 +176,12 @@
 
 .reg-page__card-wrapper .p-divider .p-divider-content,
 .reg-page__card-wrapper .p-divider::before {
-  border-color: #e2e8f0 !important;
+  border-color: var(--surface-border) !important;
   background: transparent !important;
 }
 
 .reg-page__card-wrapper .p-divider.p-divider-horizontal::before {
-  border-top-color: #e2e8f0 !important;
+  border-top-color: var(--surface-border) !important;
 }
 
 /* Submit button */
@@ -191,7 +196,7 @@
   margin: 1.25rem 0 0;
   text-align: center;
   font-size: 0.9375rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .reg-page__footer a {

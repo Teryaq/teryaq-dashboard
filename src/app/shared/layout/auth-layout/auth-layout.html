@@ -1,3 +1,31 @@
 <main class="auth-layout">
+  <div class="auth-controls">
+    <div class="auth-controls__theme">
+      <i
+        class="pi"
+        [class.pi-sun]="!themeService.isDark()"
+        [class.pi-moon]="themeService.isDark()"
+        aria-hidden="true"
+      ></i>
+      <p-toggleSwitch
+        [ngModel]="themeService.isDark()"
+        (ngModelChange)="setDarkMode($event)"
+        [ariaLabel]="themeService.isDark() ? ('nav.themeDark' | translate) : ('nav.themeLight' | translate)"
+      />
+    </div>
+
+    <app-theme-picker />
+
+    <p-button
+      class="auth-controls__lang"
+      [label]="i18n.locale() === 'en' ? 'AR' : 'EN'"
+      [rounded]="true"
+      [text]="true"
+      severity="secondary"
+      (onClick)="toggleLocale()"
+      [attr.aria-label]="'nav.language' | translate"
+    />
+  </div>
+
   <router-outlet />
 </main>

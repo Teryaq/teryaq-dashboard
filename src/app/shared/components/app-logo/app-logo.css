@@ -54,7 +54,8 @@
   font-size: 1.1875rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  /* Brand text only renders inside the sidebar/drawer — follow its theme */
+  color: var(--sidebar-text-strong, #f1f5f9);
   line-height: 1.15;
 }
 

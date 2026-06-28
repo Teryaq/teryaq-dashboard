@@ -1,3 +1,32 @@
 .auth-layout {
   min-height: 100dvh;
+  position: relative;
+}
+
+.auth-controls {
+  position: absolute;
+  inset-block-start: 1.25rem;
+  inset-inline-end: 1.5rem;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-panel) 80%, transparent);
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 8px 24px -12px rgb(15 23 42 / 0.35);
+  backdrop-filter: blur(10px);
+}
+
+.auth-controls__theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-inline-start: 0.5rem;
+  color: var(--text-muted);
+}
+
+.auth-controls__theme .pi {
+  font-size: 0.85rem;
 }
