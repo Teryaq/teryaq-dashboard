@@ -1,30 +1,24 @@
-<a class="logo" routerLink="/">
-  <svg
-    class="logo__mark"
-    viewBox="0 0 48 48"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
-  >
-    <rect width="48" height="48" rx="12" class="logo__mark-bg" />
-    <path
-      d="M24 10C17.4 10 12 15.4 12 22c0 4.2 2.1 7.9 5.3 10.2L14 38h6.5l2.8-4.5c.5.1 1 .1 1.7.1 6.6 0 12-5.4 12-12S30.6 10 24 10Z"
-      class="logo__mark-icon"
-    />
-    <path
-      d="M24 16v12M18 22h12"
-      stroke="white"
-      stroke-width="2.5"
-      stroke-linecap="round"
-    />
-  </svg>
+<a class="logo" routerLink="/" [class.logo--compact]="compact()" [class.logo--full]="full()">
 
-  @if (!compact()) {
-    <span class="logo__text">
+  @if (full()) {
+    <!-- Full PNG — used on white login/register cards -->
+    <img
+      src="assets/images/logo.png"
+      alt="Teryaq – Pharmacy Management System"
+      class="logo__full-img"
+    />
+
+  } @else if (compact()) {
+    <!-- Collapsed sidebar: crop to icon area only -->
+    <div class="logo__icon-crop" aria-label="Teryaq"></div>
+
+  } @else {
+    <!-- Sidebar expanded: cropped icon + written brand text -->
+    <div class="logo__icon-crop logo__icon-crop--sm" aria-hidden="true"></div>
+    <div class="logo__brand">
       <span class="logo__name">Teryaq</span>
-      @if (showSubtitle()) {
-        <span class="logo__subtitle">ترياق</span>
-      }
-    </span>
+      <span class="logo__arabic">— ترياق —</span>
+    </div>
   }
+
 </a>

@@ -1,4 +1,164 @@
-<section class="page">
-  <h1>Point of Sale</h1>
-  <p>A fast, clean sales screen for busy pharmacists.</p>
-</section>
+<div class="pos">
+  <!-- Left panel: drug search + grid -->
+  <div class="pos__left">
+    <!-- Header -->
+    <div class="pos__header">
+      <div>
+        <h1 class="pos__title">{{ 'pos.title' | translate }}</h1>
+        <p class="pos__subtitle">{{ 'pos.subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="pos__search-wrap">
+      <i class="pi pi-search pos__search-icon" aria-hidden="true"></i>
+      <input
+        class="pos__search"
+        type="search"
+        [placeholder]="'pos.search' | translate"
+        [value]="searchQuery()"
+        (input)="onSearch($event)"
+        aria-label="Search drugs"
+      />
+    </div>
+
+    <!-- Drug grid -->
+    <div class="pos__grid">
+      @for (drug of filteredDrugs(); track drug.id) {
+        <button
+          class="pos__drug-card"
+          [class.pos__drug-card--out]="drug.status === 'out'"
+          [class.pos__drug-card--low]="drug.status === 'low'"
+          type="button"
+          (click)="addToCart(drug)"
+          [disabled]="drug.status === 'out'"
+          [attr.aria-label]="drug.tradeName"
+        >
+          <div class="pos__drug-icon">
+            <i class="pi pi-box" aria-hidden="true"></i>
+          </div>
+          @if (drug.status === 'out') {
+            <span class="pos__drug-badge pos__drug-badge--out">{{ 'pos.drugGrid.outOfStock' | translate }}</span>
+          }
+          @if (drug.status === 'low') {
+            <span class="pos__drug-badge pos__drug-badge--low">{{ 'pos.drugGrid.lowStock' | translate }}</span>
+          }
+          <span class="pos__drug-trade">{{ drug.tradeName }}</span>
+          <span class="pos__drug-generic">{{ drug.genericName }}</span>
+          <div class="pos__drug-footer">
+            <span class="pos__drug-balance">{{ drug.qty }} {{ 'pos.drugGrid.balance' | translate }}</span>
+            <span class="pos__drug-price">{{ drug.price }} EGP</span>
+          </div>
+        </button>
+      } @empty {
+        <div class="pos__empty">
+          <i class="pi pi-search" aria-hidden="true"></i>
+          {{ 'pos.drugGrid.empty' | translate }}
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Right panel: dark cart -->
+  <aside class="pos__cart" aria-label="Active invoice">
+    <div class="pos__cart-header">
+      <div>
+        <span class="pos__cart-title">{{ 'pos.cart.title' | translate }}</span>
+        @if (cartItemCount() > 0) {
+          <span class="pos__cart-count">{{ cartItemCount() }} {{ 'pos.cart.items' | translate }}</span>
+        }
+      </div>
+      @if (cartItems().length > 0) {
+        <button class="pos__cart-clear" type="button" (click)="clearCart()" title="Clear cart">
+          <i class="pi pi-trash" aria-hidden="true"></i>
+        </button>
+      }
+    </div>
+
+    <!-- Cart items -->
+    <div class="pos__cart-items">
+      @if (cartItems().length === 0) {
+        <div class="pos__cart-empty">
+          <i class="pi pi-shopping-cart" aria-hidden="true"></i>
+          <span>{{ 'pos.cart.empty' | translate }}</span>
+          <span class="pos__cart-empty-hint">{{ 'pos.cart.emptyHint' | translate }}</span>
+        </div>
+      } @else {
+        @for (item of cartItems(); track item.drug.id) {
+          <div class="pos__cart-item">
+            <div class="pos__cart-item-body">
+              <span class="pos__cart-item-name">{{ item.drug.tradeName }}</span>
+              <span class="pos__cart-item-price">{{ 'pos.cart.unitPrice' | translate }}: {{ item.drug.price | number:'1.2-2' }} EGP</span>
+            </div>
+            <div class="pos__cart-item-controls">
+              <button class="pos__qty-btn" type="button" (click)="decrement(item.drug.id)" aria-label="Decrease quantity">
+                <i class="pi pi-minus" aria-hidden="true"></i>
+              </button>
+              <span class="pos__qty-val">{{ item.quantity }}</span>
+              <button class="pos__qty-btn" type="button" (click)="increment(item.drug.id)" aria-label="Increase quantity">
+                <i class="pi pi-plus" aria-hidden="true"></i>
+              </button>
+              <span class="pos__item-subtotal">{{ item.drug.price * item.quantity | number:'1.2-2' }}</span>
+              <button class="pos__remove-btn" type="button" (click)="removeItem(item.drug.id)" aria-label="Remove item">
+                <i class="pi pi-times" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Totals -->
+    <div class="pos__cart-footer">
+      <!-- Discount -->
+      <div class="pos__discount-row">
+        <label class="pos__discount-label" for="discount-input">
+          {{ 'pos.cart.discount' | translate }}
+        </label>
+        <input
+          id="discount-input"
+          class="pos__discount-input"
+          type="number"
+          min="0"
+          [value]="discount()"
+          (input)="onDiscountInput($event)"
+        />
+      </div>
+
+      <div class="pos__totals">
+        <div class="pos__total-row">
+          <span>{{ 'pos.cart.subtotal' | translate }}</span>
+          <span>{{ subtotal() | number:'1.2-2' }} EGP</span>
+        </div>
+        @if (discount() > 0) {
+          <div class="pos__total-row pos__total-row--discount">
+            <span>{{ 'pos.cart.discountLine' | translate }}</span>
+            <span>- {{ discount() | number:'1.2-2' }} EGP</span>
+          </div>
+        }
+        <div class="pos__total-row pos__total-row--grand">
+          <span>{{ 'pos.cart.total' | translate }}</span>
+          <span>{{ grandTotal() | number:'1.2-2' }} EGP</span>
+        </div>
+      </div>
+
+      <!-- Payment method -->
+      <div class="pos__payment-row">
+        <span class="pos__payment-label">{{ 'pos.cart.payment' | translate }}</span>
+        <span class="pos__payment-method">
+          <i class="pi pi-wallet" aria-hidden="true"></i>
+          {{ 'pos.cart.cash' | translate }}
+        </span>
+      </div>
+
+      <button
+        class="pos__checkout-btn"
+        type="button"
+        [disabled]="cartItems().length === 0"
+      >
+        <i class="pi pi-check-circle" aria-hidden="true"></i>
+        {{ 'pos.cart.checkout' | translate }}
+      </button>
+    </div>
+  </aside>
+</div>

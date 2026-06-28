@@ -193,22 +193,8 @@
     display: inline-flex;
   }
 
-  :host ::ng-deep .logo__subtitle {
-    display: none;
-  }
-
-  :host ::ng-deep .logo__mark {
-    width: 2.125rem;
-    height: 2.125rem;
-  }
-
-  :host ::ng-deep .logo__name {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 380px) {
-  :host ::ng-deep .logo__text {
-    display: none;
+  /* Shrink logo image on small viewports */
+  :host ::ng-deep .logo__full-img {
+    height: 3.5rem;
   }
 }

@@ -1,15 +1,15 @@
 <div class="auth-page">
-  <section class="auth-page__brand" aria-hidden="true">
-    <app-logo />
-    <h2 class="auth-page__tagline">{{ 'brand.tagline' | translate }}</h2>
-    <p class="auth-page__tagline-short">{{ 'brand.taglineShort' | translate }}</p>
-  </section>
+  <!-- Ambient glow decorations -->
+  <div class="auth-page__glow auth-page__glow--1" aria-hidden="true"></div>
+  <div class="auth-page__glow auth-page__glow--2" aria-hidden="true"></div>
+  <div class="auth-page__glow auth-page__glow--3" aria-hidden="true"></div>
 
-  <section class="auth-page__form">
+  <div class="auth-page__card-wrapper">
     <p-card styleClass="auth-card">
-      <div class="auth-page__header">
-        <h1>{{ 'auth.login.title' | translate }}</h1>
-        <p>{{ 'auth.login.subtitle' | translate }}</p>
+      <!-- Logo + brand -->
+      <div class="auth-page__brand">
+        <app-logo [full]="true" />
+        <p class="auth-page__brand-subtitle">{{ 'auth.login.subtitle' | translate }}</p>
       </div>
 
       @if (errorMessage(); as message) {
@@ -64,5 +64,5 @@
         <a routerLink="/auth/register">{{ 'auth.login.createAccount' | translate }}</a>
       </p>
     </p-card>
-  </section>
+  </div>
 </div>

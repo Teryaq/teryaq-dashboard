@@ -1,46 +1,148 @@
-@import './login-page.css';
-
-/* Register page — wider column, no scroll */
-.auth-page--register {
-  grid-template-columns: 1fr;
+/* Full-screen dark background — same as login */
+.reg-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background: #030712;
+  position: relative;
+  overflow: hidden;
 }
 
-@media (min-width: 960px) {
-  .auth-page--register {
-    grid-template-columns: minmax(16rem, 1fr) minmax(22rem, 1fr);
-  }
+/* Ambient glow circles */
+.reg-page__glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
 }
 
-.auth-page__form--wide {
-  align-items: flex-start;
-  padding-block: 2.5rem;
+.reg-page__glow--1 {
+  width: 30rem;
+  height: 30rem;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15), transparent 70%);
+  top: -6rem;
+  inset-inline-start: -4rem;
 }
 
-.auth-page__form--wide .auth-card,
-.auth-page__form--wide .auth-card--wide {
+.reg-page__glow--2 {
+  width: 22rem;
+  height: 22rem;
+  background: radial-gradient(circle, rgba(14, 165, 200, 0.12), transparent 70%);
+  bottom: -4rem;
+  inset-inline-end: -3rem;
+}
+
+/* Card wrapper */
+.reg-page__card-wrapper {
   width: 100%;
-  max-width: 32rem;
+  max-width: 34rem;
+  position: relative;
+  z-index: 1;
 }
 
-@media (min-width: 768px) {
-  .auth-card--wide.p-card {
-    max-width: 32rem;
-  }
+/* Force card white always (dark page, light card) */
+.reg-page__card-wrapper .reg-card.p-card {
+  background: #ffffff !important;
+  border: none !important;
+  border-radius: 1.5rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55) !important;
 }
 
-.auth-page__fields--register {
+.reg-page__card-wrapper .reg-card .p-card-body {
+  padding: 2rem 2rem 1.75rem;
+}
+
+/* ── Force ALL form controls to light style on white card ── */
+.reg-page__card-wrapper .reg-card .p-inputtext,
+.reg-page__card-wrapper .reg-card textarea,
+.reg-page__card-wrapper .reg-card input,
+.reg-page__card-wrapper .reg-card .p-password-input {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Password component wrapper — must also be light */
+.reg-page__card-wrapper .reg-card .p-password,
+.reg-page__card-wrapper .reg-card .p-password.p-component,
+.reg-page__card-wrapper .reg-card .p-iconfield {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  color: #0f172a !important;
+}
+
+/* Icons inside password field */
+.reg-page__card-wrapper .reg-card .p-password .p-icon,
+.reg-page__card-wrapper .reg-card .p-iconfield .p-icon {
+  color: #94a3b8 !important;
+}
+
+/* Focus ring */
+.reg-page__card-wrapper .reg-card .p-inputtext:focus,
+.reg-page__card-wrapper .reg-card textarea:focus,
+.reg-page__card-wrapper .reg-card input:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent) !important;
+  outline: none !important;
+}
+
+/* Float labels */
+.reg-page__card-wrapper .reg-card .p-floatlabel label {
+  color: #94a3b8;
+}
+
+/* Brand header */
+.reg-page__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.reg-page__brand-text h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.reg-page__brand-text p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+/* Section labels */
+.reg-section-label {
+  margin: 0 0 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+}
+
+/* Two-column grid for fields */
+.reg-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem 1.25rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem 1rem;
+  margin-bottom: 1rem;
 }
 
-@media (min-width: 640px) {
-  .auth-page__fields--register {
-    grid-template-columns: 1fr 1fr;
+@media (max-width: 520px) {
+  .reg-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-.field-span-full {
+.field-full {
   grid-column: 1 / -1;
 }
 
@@ -51,23 +153,63 @@
   min-width: 0;
 }
 
-.section-title {
-  margin: 0 0 0.25rem;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-primary);
-}
-
 .field-error {
-  margin-top: 0;
+  color: #ef4444;
+  font-size: 0.8125rem;
 }
 
-.auth-page__fields--register .field-error {
-  margin-top: -0.25rem;
+/* Banner */
+.reg-page__banner {
+  display: block;
+  margin-bottom: 1rem;
 }
 
-.auth-submit-btn {
-  margin-top: 0.5rem;
+/* Divider — light gray, not dark */
+.reg-page__card-wrapper .p-divider {
+  margin: 0.75rem 0 1rem;
+}
+
+.reg-page__card-wrapper .p-divider .p-divider-content,
+.reg-page__card-wrapper .p-divider::before {
+  border-color: #e2e8f0 !important;
+  background: transparent !important;
+}
+
+.reg-page__card-wrapper .p-divider.p-divider-horizontal::before {
+  border-top-color: #e2e8f0 !important;
+}
+
+/* Submit button */
+.reg-submit-btn {
+  margin-top: 1rem;
+}
+
+.w-full { width: 100%; }
+
+/* Footer link */
+.reg-page__footer {
+  margin: 1.25rem 0 0;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: #64748b;
+}
+
+.reg-page__footer a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  margin-inline-start: 0.25rem;
+}
+
+.reg-page__footer a:hover {
+  text-decoration: underline;
+}
+
+/* Logo text on white card — dark colors */
+.reg-page__brand .logo__name {
+  color: #0f172a;
+}
+
+.reg-page__brand .logo__arabic {
+  color: #0891b2;
 }

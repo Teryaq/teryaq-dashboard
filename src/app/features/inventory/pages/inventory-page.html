@@ -1,4 +1,105 @@
-<section class="page">
-  <h1>Inventory</h1>
-  <p>Track every box, every batch, every shelf.</p>
-</section>
+<div class="inv">
+  <!-- Header -->
+  <div class="inv__header">
+    <div>
+      <h1 class="inv__title">{{ 'inventory.title' | translate }}</h1>
+      <p class="inv__subtitle">{{ 'inventory.subtitle' | translate }}</p>
+    </div>
+    <button class="inv__receive-btn" type="button">
+      <i class="pi pi-download" aria-hidden="true"></i>
+      {{ 'inventory.action.receive' | translate }}
+    </button>
+  </div>
+
+  <!-- Search + filter bar -->
+  <div class="inv__toolbar">
+    <div class="inv__search-wrap">
+      <i class="pi pi-search inv__search-icon" aria-hidden="true"></i>
+      <input
+        class="inv__search"
+        type="search"
+        [placeholder]="'inventory.search' | translate"
+        [value]="searchQuery()"
+        (input)="onSearch($event)"
+        aria-label="Search inventory"
+      />
+    </div>
+
+    <div class="inv__filter-chips">
+      <button class="inv__chip inv__chip--active" type="button">All</button>
+      <button class="inv__chip" type="button">
+        <span class="inv__status-dot inv__status-dot--ok"></span>
+        {{ 'inventory.status.ok' | translate }}
+      </button>
+      <button class="inv__chip" type="button">
+        <span class="inv__status-dot inv__status-dot--near"></span>
+        {{ 'inventory.status.nearExpiry' | translate }}
+      </button>
+      <button class="inv__chip" type="button">
+        <span class="inv__status-dot inv__status-dot--exp"></span>
+        {{ 'inventory.status.expired' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Data table -->
+  <div class="inv__table-card">
+    <table class="inv__table" aria-label="Drug inventory">
+      <thead>
+        <tr>
+          <th>{{ 'inventory.col.drug' | translate }}</th>
+          <th>{{ 'inventory.col.batch' | translate }}</th>
+          <th>{{ 'inventory.col.expiry' | translate }}</th>
+          <th>{{ 'inventory.col.qty' | translate }}</th>
+          <th>{{ 'inventory.col.cost' | translate }}</th>
+          <th>{{ 'inventory.col.price' | translate }}</th>
+          <th>{{ 'inventory.col.status' | translate }}</th>
+          <th>{{ 'inventory.col.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (drug of filteredDrugs(); track drug.id) {
+          <tr>
+            <td>
+              <div class="inv__drug-cell">
+                <span class="inv__trade-name">{{ drug.tradeName }}</span>
+                <span class="inv__generic-name">{{ drug.genericName }}</span>
+              </div>
+            </td>
+            <td><span class="inv__batch">{{ drug.batchNo }}</span></td>
+            <td>
+              <span class="inv__expiry" [class]="'inv__expiry--' + drug.status">{{ drug.expiry }}</span>
+            </td>
+            <td><span class="inv__qty">{{ drug.qty }}</span></td>
+            <td class="inv__price">{{ drug.cost }}<span class="inv__currency"> EGP</span></td>
+            <td class="inv__price">{{ drug.price }}<span class="inv__currency"> EGP</span></td>
+            <td>
+              <span class="inv__status-badge inv__status-badge--{{ drug.status }}">
+                @if (drug.status === 'ok') { {{ 'inventory.status.ok' | translate }} }
+                @if (drug.status === 'nearExpiry') { {{ 'inventory.status.nearExpiry' | translate }} }
+                @if (drug.status === 'expired') { {{ 'inventory.status.expired' | translate }} }
+              </span>
+            </td>
+            <td>
+              <div class="inv__actions">
+                <button class="inv__action-btn" type="button" [title]="'inventory.adjust' | translate">
+                  <i class="pi pi-sliders-h" aria-hidden="true"></i>
+                </button>
+                <button class="inv__action-btn" type="button" title="Edit">
+                  <i class="pi pi-pencil" aria-hidden="true"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="8" class="inv__empty">
+              <i class="pi pi-inbox inv__empty-icon" aria-hidden="true"></i>
+              <span>{{ 'inventory.empty' | translate }}</span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

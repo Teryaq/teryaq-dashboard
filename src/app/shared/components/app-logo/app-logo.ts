@@ -10,5 +10,5 @@ import { RouterLink } from '@angular/router';
 })
 export class AppLogo {
   readonly compact = input(false);
-  readonly showSubtitle = input(true);
+  readonly full = input(false); // show full PNG (login/register cards)
 }

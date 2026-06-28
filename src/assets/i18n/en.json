@@ -24,15 +24,120 @@
     "owner": "Owner",
     "pharmacist": "Pharmacist"
   },
+  "topbar": {
+    "pharmacy": "Teryaq Pharmacy",
+    "mainBranch": "Main Branch",
+    "liveApi": "Connected to live API",
+    "today": "Today"
+  },
   "dashboard": {
-    "title": "Dashboard",
-    "subtitle": "Your pharmacy's daily health report at a glance."
+    "title": "Performance Overview",
+    "subtitle": "Real-time sales analytics and pharmacy alerts.",
+    "kpi": {
+      "salesToday": "Today's Sales",
+      "itemsSold": "Units Sold Today",
+      "activeAlerts": "Active Alerts",
+      "lowStock": "Low Stock Items",
+      "currency": "EGP",
+      "active": "Active",
+      "units": "items"
+    },
+    "charts": {
+      "weeklySales": "Last 7 Days Sales (EGP)",
+      "topDrugs": "Top 5 Drugs This Month",
+      "autoUpdate": "Live update"
+    },
+    "recent": {
+      "title": "Recent Transactions",
+      "newInvoice": "New Invoice",
+      "empty": "No transactions recorded today yet.",
+      "col": {
+        "invoiceId": "Invoice #",
+        "cashier": "Cashier",
+        "items": "Items",
+        "total": "Total",
+        "time": "Time"
+      }
+    },
+    "alertsPanel": {
+      "title": "Urgent Stock Alerts",
+      "viewAll": "View All",
+      "empty": "All pharmacy indicators are safe and stable.",
+      "severity": {
+        "high": "Critical",
+        "medium": "Medium",
+        "low": "Low"
+      },
+      "type": {
+        "nearExpiry": "Expiry",
+        "lowStock": "Stock"
+      },
+      "dismiss": "Dismiss"
+    }
+  },
+  "inventory": {
+    "title": "Drug Inventory & Warehouse",
+    "subtitle": "Track every box, every batch, and every expiry date.",
+    "search": "Search by trade name, generic name, or barcode...",
+    "action": {
+      "receive": "Receive Shipment"
+    },
+    "col": {
+      "drug": "Drug (Trade / Generic)",
+      "batch": "Batch No.",
+      "expiry": "Expiry Date",
+      "qty": "Available Qty",
+      "cost": "Cost Price",
+      "price": "Sale Price",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "ok": "Available",
+      "nearExpiry": "Near Expiry",
+      "expired": "Expired"
+    },
+    "empty": "No drug entries found in inventory.",
+    "adjust": "Adjust Qty"
+  },
+  "pos": {
+    "title": "Instant Drug Dispensing (POS)",
+    "subtitle": "Build sales receipts and dispense drugs instantly.",
+    "search": "Search by drug name, generic name, or barcode...",
+    "scanner": {
+      "title": "Smart Barcode & QR Scanner",
+      "subtitle": "Use hardware scanner or click a drug card below to simulate scanning",
+      "activate": "Activate Camera",
+      "deactivate": "Deactivate Camera",
+      "quickScan": "Quick Scan Simulator"
+    },
+    "drugGrid": {
+      "outOfStock": "Out of Stock",
+      "lowStock": "Low Stock",
+      "balance": "Balance",
+      "price": "Sale Price",
+      "empty": "No drugs match your search."
+    },
+    "cart": {
+      "title": "Active Invoice",
+      "items": "items",
+      "empty": "Cart is empty. Click a drug to add it.",
+      "emptyHint": "Click drug cards on the left to build the invoice.",
+      "discount": "Cash Discount (EGP)",
+      "subtotal": "Subtotal",
+      "discountLine": "Discount Applied",
+      "payment": "Payment Method",
+      "cash": "Cash Only",
+      "total": "Grand Total",
+      "checkout": "Complete Sale",
+      "unitPrice": "Unit price"
+    }
   },
   "auth": {
     "login": {
-      "title": "Sign in",
-      "subtitle": "Welcome back. Sign in to manage your pharmacy.",
-      "email": "Email",
+      "title": "Sign in to Teryaq",
+      "subtitle": "Manage your pharmacy from anywhere.",
+      "email": "Work Email",
       "password": "Password",
       "submit": "Sign in",
       "noAccount": "Don't have an account?",
