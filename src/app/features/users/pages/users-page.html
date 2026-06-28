@@ -1,0 +1,261 @@
+<div class="usr">
+  <!-- Header -->
+  <div class="usr__header">
+    <div>
+      <h1 class="usr__title">{{ 'users.title' | translate }}</h1>
+      <p class="usr__subtitle">{{ 'users.subtitle' | translate }}</p>
+    </div>
+    <button class="usr__invite-btn" type="button" (click)="openInvite()">
+      <i class="pi pi-user-plus" aria-hidden="true"></i>
+      {{ 'users.action.invite' | translate }}
+    </button>
+  </div>
+
+  <!-- Search bar -->
+  <div class="usr__toolbar">
+    <div class="usr__search-wrap">
+      <i class="pi pi-search usr__search-icon" aria-hidden="true"></i>
+      <input
+        class="usr__search"
+        type="search"
+        [placeholder]="'users.search' | translate"
+        [value]="searchQuery()"
+        (input)="onSearch($event)"
+        aria-label="Search users"
+      />
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  @if (isLoading()) {
+    <div class="usr__state-box">
+      <span class="usr__spinner" aria-hidden="true"></span>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error() && !isLoading()) {
+    <div class="usr__state-box usr__state-box--error">
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+      <span>{{ error()! | translate }}</span>
+    </div>
+  }
+
+  <!-- Users table -->
+  @if (!isLoading() && !error()) {
+    <div class="usr__table-card">
+      <table class="usr__table" aria-label="Team members">
+        <thead>
+          <tr>
+            <th>{{ 'users.col.name' | translate }}</th>
+            <th>{{ 'users.col.email' | translate }}</th>
+            <th>{{ 'users.col.role' | translate }}</th>
+            <th>{{ 'users.col.branch' | translate }}</th>
+            <th>{{ 'users.col.status' | translate }}</th>
+            <th>{{ 'users.col.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of filteredUsers(); track user.id) {
+            <tr>
+              <td>
+                <div class="usr__name-cell">
+                  <span class="usr__avatar" [class]="'usr__avatar--' + user.role.toLowerCase()">
+                    <i class="pi" [class]="roleIcon(user.role)" aria-hidden="true"></i>
+                  </span>
+                  <span class="usr__name">{{ user.fullName }}</span>
+                </div>
+              </td>
+              <td class="usr__email">{{ user.email }}</td>
+              <td>
+                <span class="usr__role-badge usr__role-badge--{{ user.role.toLowerCase() }}">
+                  {{ 'roles.' + user.role.toLowerCase() | translate }}
+                </span>
+              </td>
+              <td class="usr__muted">
+                {{ branchName(user.branchId) || ('users.unassigned' | translate) }}
+              </td>
+              <td>
+                <span class="usr__status-badge" [class.usr__status-badge--locked]="user.isLocked">
+                  @if (user.isLocked) { {{ 'users.status.locked' | translate }} }
+                  @else { {{ 'users.status.active' | translate }} }
+                </span>
+              </td>
+              <td>
+                <div class="usr__actions">
+                  <button
+                    class="usr__action-btn"
+                    type="button"
+                    [title]="'form.edit' | translate"
+                    (click)="openEdit(user)"
+                  >
+                    <i class="pi pi-pencil" aria-hidden="true"></i>
+                  </button>
+                  @if (!user.isLocked) {
+                    <button
+                      class="usr__action-btn usr__action-btn--warn"
+                      type="button"
+                      [title]="'users.deactivate' | translate"
+                      [disabled]="deactivatingId() === user.id"
+                      (click)="deactivate(user)"
+                    >
+                      @if (deactivatingId() === user.id) {
+                        <span class="usr__btn-spinner" aria-hidden="true"></span>
+                      } @else {
+                        <i class="pi pi-lock" aria-hidden="true"></i>
+                      }
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="usr__empty">
+                <i class="pi pi-users usr__empty-icon" aria-hidden="true"></i>
+                <span>{{ 'users.empty' | translate }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- Invite dialog -->
+@if (isInviteOpen()) {
+  <div class="modal-backdrop" (click)="closeInvite()" role="dialog" aria-modal="true" [attr.aria-label]="'users.form.inviteTitle' | translate">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ 'users.form.inviteTitle' | translate }}</h2>
+        <button class="modal__close" type="button" (click)="closeInvite()" [attr.aria-label]="'form.close' | translate">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form [formGroup]="inviteForm" (ngSubmit)="onInviteSubmit()">
+        <div class="modal__body">
+          <div class="form-field">
+            <label class="form-label" for="invite-fullname">{{ 'users.form.fullName' | translate }}</label>
+            <input
+              id="invite-fullname"
+              class="form-input"
+              [class.form-input--error]="inviteFieldError('fullName')"
+              type="text"
+              formControlName="fullName"
+            />
+            @if (inviteFieldError('fullName'); as key) {
+              <small class="form-error">{{ key | translate }}</small>
+            }
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="invite-email">{{ 'users.form.email' | translate }}</label>
+            <input
+              id="invite-email"
+              class="form-input"
+              [class.form-input--error]="inviteFieldError('email')"
+              type="email"
+              formControlName="email"
+              dir="ltr"
+            />
+            @if (inviteFieldError('email'); as key) {
+              <small class="form-error">{{ key | translate }}</small>
+            }
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="invite-password">{{ 'users.form.password' | translate }}</label>
+            <input
+              id="invite-password"
+              class="form-input"
+              [class.form-input--error]="inviteFieldError('password')"
+              type="password"
+              formControlName="password"
+              autocomplete="new-password"
+            />
+            @if (inviteFieldError('password'); as key) {
+              <small class="form-error">{{ key | translate }}</small>
+            }
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="invite-branch">
+              {{ 'users.form.branch' | translate }}
+              <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+            </label>
+            <select id="invite-branch" class="form-select" formControlName="branchId">
+              <option value="">{{ 'users.form.noBranch' | translate }}</option>
+              @for (branch of branches(); track branch.id) {
+                <option [value]="branch.id">{{ branch.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn" type="button" (click)="closeInvite()">
+            {{ 'form.cancel' | translate }}
+          </button>
+          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span class="btn-spinner" aria-hidden="true"></span>
+            }
+            {{ 'users.form.submit' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Edit dialog -->
+@if (isEditOpen() && selectedUser()) {
+  <div class="modal-backdrop" (click)="closeEdit()" role="dialog" aria-modal="true" [attr.aria-label]="'users.form.editTitle' | translate">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ 'users.form.editTitle' | translate }}</h2>
+        <button class="modal__close" type="button" (click)="closeEdit()" [attr.aria-label]="'form.close' | translate">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()">
+        <div class="modal__body">
+          <div class="form-field">
+            <label class="form-label" for="edit-fullname">{{ 'users.form.fullName' | translate }}</label>
+            <input
+              id="edit-fullname"
+              class="form-input"
+              [class.form-input--error]="editFieldError('fullName')"
+              type="text"
+              formControlName="fullName"
+            />
+            @if (editFieldError('fullName'); as key) {
+              <small class="form-error">{{ key | translate }}</small>
+            }
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="edit-branch">
+              {{ 'users.form.branch' | translate }}
+              <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+            </label>
+            <select id="edit-branch" class="form-select" formControlName="branchId">
+              <option value="">{{ 'users.form.noBranch' | translate }}</option>
+              @for (branch of branches(); track branch.id) {
+                <option [value]="branch.id">{{ branch.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn" type="button" (click)="closeEdit()">
+            {{ 'form.cancel' | translate }}
+          </button>
+          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span class="btn-spinner" aria-hidden="true"></span>
+            }
+            {{ 'form.save' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

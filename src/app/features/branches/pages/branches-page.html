@@ -1,0 +1,258 @@
+<div class="br">
+  <!-- Header -->
+  <div class="br__header">
+    <div>
+      <h1 class="br__title">{{ 'branches.title' | translate }}</h1>
+      <p class="br__subtitle">{{ 'branches.subtitle' | translate }}</p>
+    </div>
+    <button class="br__add-btn" type="button" (click)="openCreate()">
+      <i class="pi pi-plus" aria-hidden="true"></i>
+      {{ 'branches.action.add' | translate }}
+    </button>
+  </div>
+
+  <!-- Search bar -->
+  <div class="br__toolbar">
+    <div class="br__search-wrap">
+      <i class="pi pi-search br__search-icon" aria-hidden="true"></i>
+      <input
+        class="br__search"
+        type="search"
+        [placeholder]="'branches.search' | translate"
+        [value]="searchQuery()"
+        (input)="onSearch($event)"
+        aria-label="Search branches"
+      />
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  @if (isLoading()) {
+    <div class="br__state-box">
+      <span class="br__spinner" aria-hidden="true"></span>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error() && !isLoading()) {
+    <div class="br__state-box br__state-box--error">
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+      <span>{{ error()! | translate }}</span>
+    </div>
+  }
+
+  <!-- Branches table -->
+  @if (!isLoading() && !error()) {
+    <div class="br__table-card">
+      <table class="br__table" aria-label="Branches">
+        <thead>
+          <tr>
+            <th>{{ 'branches.col.name' | translate }}</th>
+            <th>{{ 'branches.col.address' | translate }}</th>
+            <th>{{ 'branches.col.phone' | translate }}</th>
+            <th>{{ 'branches.col.type' | translate }}</th>
+            <th>{{ 'branches.col.status' | translate }}</th>
+            <th>{{ 'branches.col.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (branch of filteredBranches(); track branch.id) {
+            <tr>
+              <td>
+                <div class="br__name-cell">
+                  <i class="pi pi-building br__branch-icon" aria-hidden="true"></i>
+                  <span class="br__name">{{ branch.name }}</span>
+                </div>
+              </td>
+              <td class="br__muted">{{ branch.address ?? ('branches.noAddress' | translate) }}</td>
+              <td class="br__muted">{{ branch.phone ?? '—' }}</td>
+              <td>
+                @if (branch.isMain) {
+                  <span class="br__type-badge br__type-badge--main">
+                    <i class="pi pi-star-fill" aria-hidden="true"></i>
+                    {{ 'branches.type.main' | translate }}
+                  </span>
+                } @else {
+                  <span class="br__type-badge">{{ 'branches.type.sub' | translate }}</span>
+                }
+              </td>
+              <td>
+                <span class="br__status-badge" [class.br__status-badge--inactive]="!branch.isActive">
+                  @if (branch.isActive) { {{ 'branches.status.active' | translate }} }
+                  @else { {{ 'branches.status.inactive' | translate }} }
+                </span>
+              </td>
+              <td>
+                <div class="br__actions">
+                  <button
+                    class="br__action-btn"
+                    type="button"
+                    [title]="'form.edit' | translate"
+                    (click)="openEdit(branch)"
+                  >
+                    <i class="pi pi-pencil" aria-hidden="true"></i>
+                  </button>
+                  @if (!branch.isMain && branch.isActive) {
+                    <button
+                      class="br__action-btn br__action-btn--warn"
+                      type="button"
+                      [title]="'branches.deactivate' | translate"
+                      [disabled]="deactivatingId() === branch.id"
+                      (click)="deactivate(branch)"
+                    >
+                      @if (deactivatingId() === branch.id) {
+                        <span class="br__btn-spinner" aria-hidden="true"></span>
+                      } @else {
+                        <i class="pi pi-ban" aria-hidden="true"></i>
+                      }
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="br__empty">
+                <i class="pi pi-building br__empty-icon" aria-hidden="true"></i>
+                <span>{{ 'branches.empty' | translate }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- Create dialog -->
+@if (isCreateOpen()) {
+  <div class="modal-backdrop" (click)="closeCreate()" role="dialog" aria-modal="true" [attr.aria-label]="'branches.form.createTitle' | translate">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ 'branches.form.createTitle' | translate }}</h2>
+        <button class="modal__close" type="button" (click)="closeCreate()" [attr.aria-label]="'form.close' | translate">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form [formGroup]="createForm" (ngSubmit)="onCreateSubmit()">
+        <div class="modal__body">
+          <div class="form-field">
+            <label class="form-label" for="create-name">{{ 'branches.form.name' | translate }}</label>
+            <input
+              id="create-name"
+              class="form-input"
+              [class.form-input--error]="createFieldError('name')"
+              type="text"
+              formControlName="name"
+            />
+            @if (createFieldError('name'); as key) {
+              <small class="form-error">{{ key | translate }}</small>
+            }
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="create-address">
+              {{ 'branches.form.address' | translate }}
+              <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+            </label>
+            <input
+              id="create-address"
+              class="form-input"
+              type="text"
+              formControlName="address"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="create-phone">
+              {{ 'branches.form.phone' | translate }}
+              <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+            </label>
+            <input
+              id="create-phone"
+              class="form-input"
+              type="tel"
+              formControlName="phone"
+            />
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn" type="button" (click)="closeCreate()">
+            {{ 'form.cancel' | translate }}
+          </button>
+          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span class="btn-spinner" aria-hidden="true"></span>
+            }
+            {{ 'form.create' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Edit dialog -->
+@if (isEditOpen() && selectedBranch()) {
+  <div class="modal-backdrop" (click)="closeEdit()" role="dialog" aria-modal="true" [attr.aria-label]="'branches.form.editTitle' | translate">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ 'branches.form.editTitle' | translate }}</h2>
+        <button class="modal__close" type="button" (click)="closeEdit()" [attr.aria-label]="'form.close' | translate">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()">
+        <div class="modal__body">
+          <div class="form-field">
+            <label class="form-label" for="edit-name">{{ 'branches.form.name' | translate }}</label>
+            <input
+              id="edit-name"
+              class="form-input"
+              [class.form-input--error]="editFieldError('name')"
+              type="text"
+              formControlName="name"
+            />
+            @if (editFieldError('name'); as key) {
+              <small class="form-error">{{ key | translate }}</small>
+            }
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="edit-address">
+              {{ 'branches.form.address' | translate }}
+              <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+            </label>
+            <input
+              id="edit-address"
+              class="form-input"
+              type="text"
+              formControlName="address"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="edit-phone">
+              {{ 'branches.form.phone' | translate }}
+              <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+            </label>
+            <input
+              id="edit-phone"
+              class="form-input"
+              type="tel"
+              formControlName="phone"
+            />
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn" type="button" (click)="closeEdit()">
+            {{ 'form.cancel' | translate }}
+          </button>
+          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span class="btn-spinner" aria-hidden="true"></span>
+            }
+            {{ 'form.save' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

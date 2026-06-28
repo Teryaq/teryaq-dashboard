@@ -7,7 +7,10 @@
   "nav": {
     "dashboard": "Dashboard",
     "inventory": "Inventory",
+    "catalog": "Drug Catalog",
     "pos": "Point of Sale",
+    "branches": "Branches",
+    "users": "Team",
     "signIn": "Sign in",
     "register": "Register",
     "logout": "Log out",
@@ -29,6 +32,21 @@
     "mainBranch": "Main Branch",
     "liveApi": "Connected to live API",
     "today": "Today"
+  },
+  "form": {
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "optional": "optional",
+    "validation": {
+      "required": "This field is required.",
+      "tooLong": "Value exceeds maximum length.",
+      "email": "Enter a valid email address.",
+      "minLength8": "Must be at least 8 characters."
+    }
   },
   "dashboard": {
     "title": "Performance Overview",
@@ -82,8 +100,12 @@
     "action": {
       "receive": "Receive Shipment"
     },
+    "filter": {
+      "all": "All"
+    },
     "col": {
       "drug": "Drug (Trade / Generic)",
+      "branch": "Branch",
       "batch": "Batch No.",
       "expiry": "Expiry Date",
       "qty": "Available Qty",
@@ -98,7 +120,137 @@
       "expired": "Expired"
     },
     "empty": "No drug entries found in inventory.",
-    "adjust": "Adjust Qty"
+    "adjust": "Adjust Qty",
+    "form": {
+      "receiveTitle": "Receive Stock Shipment",
+      "adjustTitle": "Adjust Stock Batch",
+      "branch": "Branch",
+      "selectBranch": "Select a branch...",
+      "drug": "Drug",
+      "drugSearch": "Search drug by name...",
+      "batchNumber": "Batch / Lot Number",
+      "expiryDate": "Expiry Date",
+      "quantity": "Quantity Received",
+      "costPrice": "Cost Price (EGP)",
+      "sellingPrice": "Selling Price (EGP)",
+      "quantityOnHand": "Corrected Quantity on Hand",
+      "submitReceive": "Receive Shipment",
+      "submitAdjust": "Apply Adjustment"
+    }
+  },
+  "catalog": {
+    "title": "Drug Catalog",
+    "subtitle": "Browse and manage the shared global drug database.",
+    "search": "Search by trade name, generic name, or barcode...",
+    "action": {
+      "add": "Add Drug"
+    },
+    "col": {
+      "drug": "Drug (EN / AR)",
+      "genericName": "Generic Name",
+      "form": "Dosage Form",
+      "strength": "Strength",
+      "packSize": "Pack Size",
+      "price": "Price",
+      "source": "Source",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "source": {
+      "all": "All Sources",
+      "EDA": "EDA",
+      "Import": "Import",
+      "Manual": "Manual"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "empty": "No drugs found in the catalog.",
+    "form": {
+      "createTitle": "Add New Drug",
+      "editTitle": "Edit Drug",
+      "tradeNameEn": "Trade Name (English)",
+      "tradeNameAr": "Trade Name (Arabic)",
+      "genericName": "Generic Name",
+      "dosageForm": "Dosage Form",
+      "strength": "Strength",
+      "packSize": "Pack Size (units)",
+      "price": "Price (EGP)",
+      "barcode": "Barcode",
+      "manufacturerEn": "Manufacturer (English)",
+      "manufacturerAr": "Manufacturer (Arabic)",
+      "source": "Source",
+      "isActive": "Active listing",
+      "deleteConfirm": "Confirm delete?"
+    }
+  },
+  "branches": {
+    "title": "Branches",
+    "subtitle": "Manage your pharmacy locations and branches.",
+    "search": "Search by name or address...",
+    "action": {
+      "add": "Add Branch"
+    },
+    "col": {
+      "name": "Branch Name",
+      "address": "Address",
+      "phone": "Phone",
+      "type": "Type",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "type": {
+      "main": "Main",
+      "sub": "Branch"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "noAddress": "—",
+    "empty": "No branches found.",
+    "deactivate": "Deactivate",
+    "form": {
+      "createTitle": "Add New Branch",
+      "editTitle": "Edit Branch",
+      "name": "Branch Name",
+      "address": "Address",
+      "phone": "Phone Number"
+    }
+  },
+  "users": {
+    "title": "Team Members",
+    "subtitle": "Manage pharmacists and staff accounts.",
+    "search": "Search by name or email...",
+    "action": {
+      "invite": "Invite Pharmacist"
+    },
+    "col": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "branch": "Branch",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "locked": "Locked"
+    },
+    "empty": "No team members found.",
+    "deactivate": "Deactivate account",
+    "unassigned": "Unassigned",
+    "form": {
+      "inviteTitle": "Invite Pharmacist",
+      "editTitle": "Edit Member",
+      "email": "Email Address",
+      "fullName": "Full Name",
+      "password": "Password",
+      "branch": "Assign to Branch",
+      "noBranch": "No specific branch",
+      "submit": "Send Invite"
+    }
   },
   "pos": {
     "title": "Instant Drug Dispensing (POS)",

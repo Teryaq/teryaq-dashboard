@@ -1,0 +1,351 @@
+<div class="cat">
+  <!-- Header -->
+  <div class="cat__header">
+    <div>
+      <h1 class="cat__title">{{ 'catalog.title' | translate }}</h1>
+      <p class="cat__subtitle">{{ 'catalog.subtitle' | translate }}</p>
+    </div>
+    <button class="cat__add-btn" type="button" (click)="openCreate()">
+      <i class="pi pi-plus" aria-hidden="true"></i>
+      {{ 'catalog.action.add' | translate }}
+    </button>
+  </div>
+
+  <!-- Search + source filter bar -->
+  <div class="cat__toolbar">
+    <div class="cat__search-wrap">
+      <i class="pi pi-search cat__search-icon" aria-hidden="true"></i>
+      <input
+        class="cat__search"
+        type="search"
+        [placeholder]="'catalog.search' | translate"
+        [value]="searchQuery()"
+        (input)="onSearch($event)"
+        aria-label="Search drug catalog"
+      />
+    </div>
+
+    <div class="cat__filter-chips">
+      @for (src of sources; track src) {
+        <button
+          class="cat__chip"
+          [class.cat__chip--active]="sourceFilter() === src"
+          type="button"
+          (click)="setSourceFilter(src)"
+        >{{ sourceKey(src) | translate }}</button>
+      }
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  @if (isLoading()) {
+    <div class="cat__state-box">
+      <span class="cat__spinner" aria-hidden="true"></span>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error() && !isLoading()) {
+    <div class="cat__state-box cat__state-box--error">
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+      <span>{{ error()! | translate }}</span>
+    </div>
+  }
+
+  <!-- Data table -->
+  @if (!isLoading() && !error()) {
+    <div class="cat__table-card">
+      <table class="cat__table" aria-label="Drug catalog">
+        <thead>
+          <tr>
+            <th>{{ 'catalog.col.drug' | translate }}</th>
+            <th>{{ 'catalog.col.genericName' | translate }}</th>
+            <th>{{ 'catalog.col.form' | translate }}</th>
+            <th>{{ 'catalog.col.strength' | translate }}</th>
+            <th>{{ 'catalog.col.packSize' | translate }}</th>
+            <th>{{ 'catalog.col.price' | translate }}</th>
+            <th>{{ 'catalog.col.source' | translate }}</th>
+            <th>{{ 'catalog.col.status' | translate }}</th>
+            <th>{{ 'catalog.col.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (drug of filteredDrugs(); track drug.id) {
+            <tr>
+              <td>
+                <div class="cat__drug-cell">
+                  <span class="cat__trade-en">{{ drug.tradeNameEn }}</span>
+                  <span class="cat__trade-ar">{{ drug.tradeNameAr }}</span>
+                </div>
+              </td>
+              <td class="cat__generic">{{ drug.genericName }}</td>
+              <td class="cat__muted">{{ drug.dosageForm }}</td>
+              <td class="cat__muted">{{ drug.strength }}</td>
+              <td class="cat__muted">{{ drug.packSize }}</td>
+              <td class="cat__price">{{ drug.price }}<span class="cat__currency"> EGP</span></td>
+              <td>
+                <span class="cat__source-badge cat__source-badge--{{ drug.source.toLowerCase() }}">
+                  {{ 'catalog.source.' + drug.source | translate }}
+                </span>
+              </td>
+              <td>
+                <span class="cat__status-badge" [class.cat__status-badge--inactive]="!drug.isActive">
+                  @if (drug.isActive) { {{ 'catalog.status.active' | translate }} }
+                  @else { {{ 'catalog.status.inactive' | translate }} }
+                </span>
+              </td>
+              <td>
+                <div class="cat__actions">
+                  <button
+                    class="cat__action-btn"
+                    type="button"
+                    [title]="'form.edit' | translate"
+                    (click)="openEdit(drug)"
+                  >
+                    <i class="pi pi-pencil" aria-hidden="true"></i>
+                  </button>
+                  @if (confirmDeleteId() === drug.id) {
+                    <button
+                      class="cat__action-btn cat__action-btn--danger"
+                      type="button"
+                      [title]="'catalog.form.deleteConfirm' | translate"
+                      [disabled]="isDeleting()"
+                      (click)="confirmDelete()"
+                    >
+                      @if (isDeleting()) {
+                        <span class="cat__btn-spinner" aria-hidden="true"></span>
+                      } @else {
+                        <i class="pi pi-check" aria-hidden="true"></i>
+                      }
+                    </button>
+                    <button
+                      class="cat__action-btn"
+                      type="button"
+                      [title]="'form.cancel' | translate"
+                      (click)="cancelDelete()"
+                    >
+                      <i class="pi pi-times" aria-hidden="true"></i>
+                    </button>
+                  } @else {
+                    <button
+                      class="cat__action-btn cat__action-btn--danger"
+                      type="button"
+                      [title]="'form.delete' | translate"
+                      (click)="requestDelete(drug.id)"
+                    >
+                      <i class="pi pi-trash" aria-hidden="true"></i>
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="9" class="cat__empty">
+                <i class="pi pi-database cat__empty-icon" aria-hidden="true"></i>
+                <span>{{ 'catalog.empty' | translate }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- Create drug dialog -->
+@if (isCreateOpen()) {
+  <div class="modal-backdrop" (click)="closeCreate()" role="dialog" aria-modal="true" [attr.aria-label]="'catalog.form.createTitle' | translate">
+    <div class="modal modal--wide" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ 'catalog.form.createTitle' | translate }}</h2>
+        <button class="modal__close" type="button" (click)="closeCreate()" [attr.aria-label]="'form.close' | translate">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form [formGroup]="createForm" (ngSubmit)="onCreateSubmit()">
+        <div class="modal__body">
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="c-nameEn">{{ 'catalog.form.tradeNameEn' | translate }}</label>
+              <input id="c-nameEn" class="form-input" [class.form-input--error]="createFieldError('tradeNameEn')" type="text" formControlName="tradeNameEn" dir="ltr" />
+              @if (createFieldError('tradeNameEn'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="c-nameAr">{{ 'catalog.form.tradeNameAr' | translate }}</label>
+              <input id="c-nameAr" class="form-input" [class.form-input--error]="createFieldError('tradeNameAr')" type="text" formControlName="tradeNameAr" dir="rtl" />
+              @if (createFieldError('tradeNameAr'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="c-generic">{{ 'catalog.form.genericName' | translate }}</label>
+            <input id="c-generic" class="form-input" [class.form-input--error]="createFieldError('genericName')" type="text" formControlName="genericName" />
+            @if (createFieldError('genericName'); as key) { <small class="form-error">{{ key | translate }}</small> }
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="c-form">{{ 'catalog.form.dosageForm' | translate }}</label>
+              <input id="c-form" class="form-input" [class.form-input--error]="createFieldError('dosageForm')" type="text" formControlName="dosageForm" />
+              @if (createFieldError('dosageForm'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="c-strength">{{ 'catalog.form.strength' | translate }}</label>
+              <input id="c-strength" class="form-input" [class.form-input--error]="createFieldError('strength')" type="text" formControlName="strength" />
+              @if (createFieldError('strength'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="c-pack">{{ 'catalog.form.packSize' | translate }}</label>
+              <input id="c-pack" class="form-input" [class.form-input--error]="createFieldError('packSize')" type="number" min="1" step="1" formControlName="packSize" />
+              @if (createFieldError('packSize'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="c-price">{{ 'catalog.form.price' | translate }}</label>
+              <input id="c-price" class="form-input" [class.form-input--error]="createFieldError('price')" type="number" min="0" step="0.01" formControlName="price" />
+              @if (createFieldError('price'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="c-source">{{ 'catalog.form.source' | translate }}</label>
+              <select id="c-source" class="form-select" formControlName="source">
+                <option value="0">{{ 'catalog.source.EDA' | translate }}</option>
+                <option value="1">{{ 'catalog.source.Import' | translate }}</option>
+                <option value="2">{{ 'catalog.source.Manual' | translate }}</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="c-barcode">
+                {{ 'catalog.form.barcode' | translate }}
+                <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+              </label>
+              <input id="c-barcode" class="form-input" type="text" formControlName="barcode" dir="ltr" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="c-mfrEn">
+                {{ 'catalog.form.manufacturerEn' | translate }}
+                <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+              </label>
+              <input id="c-mfrEn" class="form-input" type="text" formControlName="manufacturerEn" dir="ltr" />
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="c-mfrAr">
+                {{ 'catalog.form.manufacturerAr' | translate }}
+                <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+              </label>
+              <input id="c-mfrAr" class="form-input" type="text" formControlName="manufacturerAr" dir="rtl" />
+            </div>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn" type="button" (click)="closeCreate()">{{ 'form.cancel' | translate }}</button>
+          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
+            @if (isSubmitting()) { <span class="btn-spinner" aria-hidden="true"></span> }
+            {{ 'form.create' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Edit drug dialog -->
+@if (isEditOpen() && selectedDrug()) {
+  <div class="modal-backdrop" (click)="closeEdit()" role="dialog" aria-modal="true" [attr.aria-label]="'catalog.form.editTitle' | translate">
+    <div class="modal modal--wide" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ 'catalog.form.editTitle' | translate }}</h2>
+        <button class="modal__close" type="button" (click)="closeEdit()" [attr.aria-label]="'form.close' | translate">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()">
+        <div class="modal__body">
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="e-nameEn">{{ 'catalog.form.tradeNameEn' | translate }}</label>
+              <input id="e-nameEn" class="form-input" [class.form-input--error]="editFieldError('tradeNameEn')" type="text" formControlName="tradeNameEn" dir="ltr" />
+              @if (editFieldError('tradeNameEn'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="e-nameAr">{{ 'catalog.form.tradeNameAr' | translate }}</label>
+              <input id="e-nameAr" class="form-input" [class.form-input--error]="editFieldError('tradeNameAr')" type="text" formControlName="tradeNameAr" dir="rtl" />
+              @if (editFieldError('tradeNameAr'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="e-generic">{{ 'catalog.form.genericName' | translate }}</label>
+            <input id="e-generic" class="form-input" [class.form-input--error]="editFieldError('genericName')" type="text" formControlName="genericName" />
+            @if (editFieldError('genericName'); as key) { <small class="form-error">{{ key | translate }}</small> }
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="e-form">{{ 'catalog.form.dosageForm' | translate }}</label>
+              <input id="e-form" class="form-input" [class.form-input--error]="editFieldError('dosageForm')" type="text" formControlName="dosageForm" />
+              @if (editFieldError('dosageForm'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="e-strength">{{ 'catalog.form.strength' | translate }}</label>
+              <input id="e-strength" class="form-input" [class.form-input--error]="editFieldError('strength')" type="text" formControlName="strength" />
+              @if (editFieldError('strength'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="e-pack">{{ 'catalog.form.packSize' | translate }}</label>
+              <input id="e-pack" class="form-input" [class.form-input--error]="editFieldError('packSize')" type="number" min="1" step="1" formControlName="packSize" />
+              @if (editFieldError('packSize'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="e-price">{{ 'catalog.form.price' | translate }}</label>
+              <input id="e-price" class="form-input" [class.form-input--error]="editFieldError('price')" type="number" min="0" step="0.01" formControlName="price" />
+              @if (editFieldError('price'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="e-barcode">
+                {{ 'catalog.form.barcode' | translate }}
+                <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+              </label>
+              <input id="e-barcode" class="form-input" type="text" formControlName="barcode" dir="ltr" />
+            </div>
+            <div class="form-field form-field--checkbox">
+              <label class="form-checkbox-label" for="e-active">
+                <input id="e-active" type="checkbox" formControlName="isActive" class="form-checkbox" />
+                {{ 'catalog.form.isActive' | translate }}
+              </label>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="e-mfrEn">
+                {{ 'catalog.form.manufacturerEn' | translate }}
+                <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+              </label>
+              <input id="e-mfrEn" class="form-input" type="text" formControlName="manufacturerEn" dir="ltr" />
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="e-mfrAr">
+                {{ 'catalog.form.manufacturerAr' | translate }}
+                <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+              </label>
+              <input id="e-mfrAr" class="form-input" type="text" formControlName="manufacturerAr" dir="rtl" />
+            </div>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn" type="button" (click)="closeEdit()">{{ 'form.cancel' | translate }}</button>
+          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
+            @if (isSubmitting()) { <span class="btn-spinner" aria-hidden="true"></span> }
+            {{ 'form.save' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

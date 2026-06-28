@@ -5,7 +5,7 @@
       <h1 class="inv__title">{{ 'inventory.title' | translate }}</h1>
       <p class="inv__subtitle">{{ 'inventory.subtitle' | translate }}</p>
     </div>
-    <button class="inv__receive-btn" type="button">
+    <button class="inv__receive-btn" type="button" (click)="openReceive()">
       <i class="pi pi-download" aria-hidden="true"></i>
       {{ 'inventory.action.receive' | translate }}
     </button>
@@ -26,80 +26,263 @@
     </div>
 
     <div class="inv__filter-chips">
-      <button class="inv__chip inv__chip--active" type="button">All</button>
-      <button class="inv__chip" type="button">
+      <button class="inv__chip" [class.inv__chip--active]="activeFilter() === 'all'" type="button" (click)="setFilter('all')">{{ 'inventory.filter.all' | translate }}</button>
+      <button class="inv__chip" [class.inv__chip--active]="activeFilter() === 'ok'" type="button" (click)="setFilter('ok')">
         <span class="inv__status-dot inv__status-dot--ok"></span>
         {{ 'inventory.status.ok' | translate }}
       </button>
-      <button class="inv__chip" type="button">
+      <button class="inv__chip" [class.inv__chip--active]="activeFilter() === 'nearExpiry'" type="button" (click)="setFilter('nearExpiry')">
         <span class="inv__status-dot inv__status-dot--near"></span>
         {{ 'inventory.status.nearExpiry' | translate }}
       </button>
-      <button class="inv__chip" type="button">
+      <button class="inv__chip" [class.inv__chip--active]="activeFilter() === 'expired'" type="button" (click)="setFilter('expired')">
         <span class="inv__status-dot inv__status-dot--exp"></span>
         {{ 'inventory.status.expired' | translate }}
       </button>
     </div>
   </div>
 
+  <!-- Loading state -->
+  @if (isLoading()) {
+    <div class="inv__state-box">
+      <span class="inv__spinner" aria-hidden="true"></span>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error() && !isLoading()) {
+    <div class="inv__state-box inv__state-box--error">
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+      <span>{{ error()! | translate }}</span>
+    </div>
+  }
+
   <!-- Data table -->
-  <div class="inv__table-card">
-    <table class="inv__table" aria-label="Drug inventory">
-      <thead>
-        <tr>
-          <th>{{ 'inventory.col.drug' | translate }}</th>
-          <th>{{ 'inventory.col.batch' | translate }}</th>
-          <th>{{ 'inventory.col.expiry' | translate }}</th>
-          <th>{{ 'inventory.col.qty' | translate }}</th>
-          <th>{{ 'inventory.col.cost' | translate }}</th>
-          <th>{{ 'inventory.col.price' | translate }}</th>
-          <th>{{ 'inventory.col.status' | translate }}</th>
-          <th>{{ 'inventory.col.actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (drug of filteredDrugs(); track drug.id) {
+  @if (!isLoading() && !error()) {
+    <div class="inv__table-card">
+      <table class="inv__table" aria-label="Drug inventory">
+        <thead>
           <tr>
-            <td>
-              <div class="inv__drug-cell">
-                <span class="inv__trade-name">{{ drug.tradeName }}</span>
-                <span class="inv__generic-name">{{ drug.genericName }}</span>
-              </div>
-            </td>
-            <td><span class="inv__batch">{{ drug.batchNo }}</span></td>
-            <td>
-              <span class="inv__expiry" [class]="'inv__expiry--' + drug.status">{{ drug.expiry }}</span>
-            </td>
-            <td><span class="inv__qty">{{ drug.qty }}</span></td>
-            <td class="inv__price">{{ drug.cost }}<span class="inv__currency"> EGP</span></td>
-            <td class="inv__price">{{ drug.price }}<span class="inv__currency"> EGP</span></td>
-            <td>
-              <span class="inv__status-badge inv__status-badge--{{ drug.status }}">
-                @if (drug.status === 'ok') { {{ 'inventory.status.ok' | translate }} }
-                @if (drug.status === 'nearExpiry') { {{ 'inventory.status.nearExpiry' | translate }} }
-                @if (drug.status === 'expired') { {{ 'inventory.status.expired' | translate }} }
-              </span>
-            </td>
-            <td>
-              <div class="inv__actions">
-                <button class="inv__action-btn" type="button" [title]="'inventory.adjust' | translate">
-                  <i class="pi pi-sliders-h" aria-hidden="true"></i>
-                </button>
-                <button class="inv__action-btn" type="button" title="Edit">
-                  <i class="pi pi-pencil" aria-hidden="true"></i>
-                </button>
-              </div>
-            </td>
+            <th>{{ 'inventory.col.drug' | translate }}</th>
+            <th>{{ 'inventory.col.branch' | translate }}</th>
+            <th>{{ 'inventory.col.batch' | translate }}</th>
+            <th>{{ 'inventory.col.expiry' | translate }}</th>
+            <th>{{ 'inventory.col.qty' | translate }}</th>
+            <th>{{ 'inventory.col.cost' | translate }}</th>
+            <th>{{ 'inventory.col.price' | translate }}</th>
+            <th>{{ 'inventory.col.status' | translate }}</th>
+            <th>{{ 'inventory.col.actions' | translate }}</th>
           </tr>
-        } @empty {
-          <tr>
-            <td colspan="8" class="inv__empty">
-              <i class="pi pi-inbox inv__empty-icon" aria-hidden="true"></i>
-              <span>{{ 'inventory.empty' | translate }}</span>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          @for (batch of filteredBatches(); track batch.id) {
+            <tr>
+              <td>
+                <div class="inv__drug-cell">
+                  <span class="inv__trade-name">{{ batch.drugTradeNameEn }}</span>
+                  <span class="inv__generic-name">{{ batch.drugTradeNameAr }}</span>
+                </div>
+              </td>
+              <td><span class="inv__branch-name">{{ batch.branchName }}</span></td>
+              <td><span class="inv__batch">{{ batch.batchNumber }}</span></td>
+              <td>
+                <span class="inv__expiry" [class]="'inv__expiry--' + batch.status">{{ batch.expiryDate }}</span>
+              </td>
+              <td><span class="inv__qty">{{ batch.quantityOnHand }}</span></td>
+              <td class="inv__price">{{ batch.costPrice }}<span class="inv__currency"> EGP</span></td>
+              <td class="inv__price">{{ batch.sellingPrice }}<span class="inv__currency"> EGP</span></td>
+              <td>
+                <span class="inv__status-badge inv__status-badge--{{ batch.status }}">
+                  @if (batch.status === 'ok') { {{ 'inventory.status.ok' | translate }} }
+                  @if (batch.status === 'nearExpiry') { {{ 'inventory.status.nearExpiry' | translate }} }
+                  @if (batch.status === 'expired') { {{ 'inventory.status.expired' | translate }} }
+                </span>
+              </td>
+              <td>
+                <div class="inv__actions">
+                  <button
+                    class="inv__action-btn"
+                    type="button"
+                    [title]="'inventory.adjust' | translate"
+                    (click)="openAdjust(batch)"
+                  >
+                    <i class="pi pi-sliders-h" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    class="inv__action-btn"
+                    type="button"
+                    [title]="'form.edit' | translate"
+                    (click)="openAdjust(batch)"
+                  >
+                    <i class="pi pi-pencil" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="9" class="inv__empty">
+                <i class="pi pi-inbox inv__empty-icon" aria-hidden="true"></i>
+                <span>{{ 'inventory.empty' | translate }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </div>
+
+<!-- Receive stock dialog -->
+@if (isReceiveOpen()) {
+  <div class="modal-backdrop" (click)="closeReceive()" role="dialog" aria-modal="true" [attr.aria-label]="'inventory.form.receiveTitle' | translate">
+    <div class="modal modal--wide" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ 'inventory.form.receiveTitle' | translate }}</h2>
+        <button class="modal__close" type="button" (click)="closeReceive()" [attr.aria-label]="'form.close' | translate">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form [formGroup]="receiveForm" (ngSubmit)="onReceiveSubmit()">
+        <div class="modal__body">
+          <div class="form-field">
+            <label class="form-label" for="r-branch">{{ 'inventory.form.branch' | translate }}</label>
+            <select
+              id="r-branch"
+              class="form-select"
+              [class.form-input--error]="receiveFieldError('branchId')"
+              formControlName="branchId"
+            >
+              <option value="">{{ 'inventory.form.selectBranch' | translate }}</option>
+              @for (branch of branches(); track branch.id) {
+                <option [value]="branch.id">{{ branch.name }}</option>
+              }
+            </select>
+            @if (receiveFieldError('branchId'); as key) { <small class="form-error">{{ key | translate }}</small> }
+          </div>
+
+          <!-- Drug search -->
+          <div class="form-field">
+            <label class="form-label" for="r-drug">{{ 'inventory.form.drug' | translate }}</label>
+            <div class="drug-search-wrap">
+              <input
+                id="r-drug"
+                class="form-input"
+                [class.form-input--error]="receiveFieldError('drugId')"
+                type="text"
+                [placeholder]="'inventory.form.drugSearch' | translate"
+                [value]="drugDisplayValue()"
+                (input)="onDrugSearchInput($event)"
+                autocomplete="off"
+              />
+              @if (isDrugSearching()) {
+                <span class="drug-search-spinner" aria-hidden="true"></span>
+              }
+              @if (drugResults().length > 0) {
+                <ul class="drug-dropdown" role="listbox">
+                  @for (drug of drugResults(); track drug.id) {
+                    <li
+                      class="drug-dropdown__item"
+                      role="option"
+                      (click)="selectDrug(drug)"
+                      (keydown.enter)="selectDrug(drug)"
+                      tabindex="0"
+                    >
+                      <span class="drug-dropdown__en">{{ drug.tradeNameEn }}</span>
+                      <span class="drug-dropdown__ar">{{ drug.tradeNameAr }}</span>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+            @if (receiveFieldError('drugId'); as key) { <small class="form-error">{{ key | translate }}</small> }
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="r-batch">{{ 'inventory.form.batchNumber' | translate }}</label>
+              <input id="r-batch" class="form-input" [class.form-input--error]="receiveFieldError('batchNumber')" type="text" formControlName="batchNumber" dir="ltr" />
+              @if (receiveFieldError('batchNumber'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="r-expiry">{{ 'inventory.form.expiryDate' | translate }}</label>
+              <input id="r-expiry" class="form-input" [class.form-input--error]="receiveFieldError('expiryDate')" type="date" formControlName="expiryDate" />
+              @if (receiveFieldError('expiryDate'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="r-qty">{{ 'inventory.form.quantity' | translate }}</label>
+              <input id="r-qty" class="form-input" [class.form-input--error]="receiveFieldError('quantity')" type="number" min="1" step="1" formControlName="quantity" />
+              @if (receiveFieldError('quantity'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="r-cost">{{ 'inventory.form.costPrice' | translate }}</label>
+              <input id="r-cost" class="form-input" [class.form-input--error]="receiveFieldError('costPrice')" type="number" min="0" step="0.01" formControlName="costPrice" />
+              @if (receiveFieldError('costPrice'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="r-sell">
+              {{ 'inventory.form.sellingPrice' | translate }}
+              <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+            </label>
+            <input id="r-sell" class="form-input" type="number" min="0" step="0.01" formControlName="sellingPrice" />
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn" type="button" (click)="closeReceive()">{{ 'form.cancel' | translate }}</button>
+          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
+            @if (isSubmitting()) { <span class="btn-spinner" aria-hidden="true"></span> }
+            {{ 'inventory.form.submitReceive' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Adjust stock dialog -->
+@if (isAdjustOpen() && selectedBatch()) {
+  <div class="modal-backdrop" (click)="closeAdjust()" role="dialog" aria-modal="true" [attr.aria-label]="'inventory.form.adjustTitle' | translate">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ 'inventory.form.adjustTitle' | translate }}</h2>
+        <button class="modal__close" type="button" (click)="closeAdjust()" [attr.aria-label]="'form.close' | translate">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="modal__drug-info">
+        <span class="modal__drug-name">{{ selectedBatch()!.drugTradeNameEn }}</span>
+        <span class="modal__batch-no">{{ selectedBatch()!.batchNumber }}</span>
+      </div>
+      <form [formGroup]="adjustForm" (ngSubmit)="onAdjustSubmit()">
+        <div class="modal__body">
+          <div class="form-field">
+            <label class="form-label" for="a-qty">{{ 'inventory.form.quantityOnHand' | translate }}</label>
+            <input id="a-qty" class="form-input" [class.form-input--error]="adjustFieldError('quantityOnHand')" type="number" min="0" step="1" formControlName="quantityOnHand" />
+            @if (adjustFieldError('quantityOnHand'); as key) { <small class="form-error">{{ key | translate }}</small> }
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="a-sell">{{ 'inventory.form.sellingPrice' | translate }}</label>
+            <input id="a-sell" class="form-input" [class.form-input--error]="adjustFieldError('sellingPrice')" type="number" min="0" step="0.01" formControlName="sellingPrice" />
+            @if (adjustFieldError('sellingPrice'); as key) { <small class="form-error">{{ key | translate }}</small> }
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="a-expiry">{{ 'inventory.form.expiryDate' | translate }}</label>
+            <input id="a-expiry" class="form-input" [class.form-input--error]="adjustFieldError('expiryDate')" type="date" formControlName="expiryDate" />
+            @if (adjustFieldError('expiryDate'); as key) { <small class="form-error">{{ key | translate }}</small> }
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn" type="button" (click)="closeAdjust()">{{ 'form.cancel' | translate }}</button>
+          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
+            @if (isSubmitting()) { <span class="btn-spinner" aria-hidden="true"></span> }
+            {{ 'inventory.form.submitAdjust' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

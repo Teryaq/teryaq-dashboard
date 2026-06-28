@@ -48,7 +48,10 @@ export class AppSidebar {
   protected readonly navItems: SidebarNavItem[] = [
     { route: '/dashboard', labelKey: 'nav.dashboard', icon: 'pi pi-chart-bar' },
     { route: '/inventory', labelKey: 'nav.inventory', icon: 'pi pi-box' },
+    { route: '/catalog', labelKey: 'nav.catalog', icon: 'pi pi-database' },
     { route: '/pos', labelKey: 'nav.pos', icon: 'pi pi-shopping-cart' },
+    { route: '/branches', labelKey: 'nav.branches', icon: 'pi pi-building' },
+    { route: '/users', labelKey: 'nav.users', icon: 'pi pi-users' },
   ];
 
   protected readonly drawerPosition = computed(() =>
