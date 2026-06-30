@@ -57,6 +57,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/users/users.routes').then((m) => m.USERS_ROUTES),
       },
+      {
+        path: 'alerts',
+        loadChildren: () =>
+          import('./features/alerts/alerts.routes').then((m) => m.ALERTS_ROUTES),
+      },
     ],
   },
   {

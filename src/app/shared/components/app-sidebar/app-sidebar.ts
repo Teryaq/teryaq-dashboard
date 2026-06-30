@@ -52,6 +52,7 @@ export class AppSidebar {
     { route: '/pos', labelKey: 'nav.pos', icon: 'pi pi-shopping-cart' },
     { route: '/branches', labelKey: 'nav.branches', icon: 'pi pi-building' },
     { route: '/users', labelKey: 'nav.users', icon: 'pi pi-users' },
+    { route: '/alerts', labelKey: 'nav.alerts', icon: 'pi pi-bell' },
   ];
 
   protected readonly drawerPosition = computed(() =>

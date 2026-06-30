@@ -21,7 +21,8 @@
     "expand": "Expand sidebar",
     "menu": "Open menu",
     "closeMenu": "Close menu",
-    "account": "Account"
+    "account": "Account",
+    "alerts": "Alerts"
   },
   "theme": {
     "colorLabel": "Accent color",
@@ -152,6 +153,7 @@
       "quantity": "Quantity Received",
       "costPrice": "Cost Price (EGP)",
       "sellingPrice": "Selling Price (EGP)",
+      "reorderLevel": "Reorder Level (min qty for alert)",
       "quantityOnHand": "Corrected Quantity on Hand",
       "submitReceive": "Receive Shipment",
       "submitAdjust": "Apply Adjustment"
@@ -302,6 +304,14 @@
       "total": "Grand Total",
       "checkout": "Complete Sale",
       "unitPrice": "Unit price"
+    },
+    "checkout": {
+      "success": "Sale {{saleNumber}} completed successfully.",
+      "insufficientStock": "Insufficient stock for one or more drugs. Please adjust quantities.",
+      "empty": "Add at least one item before checking out."
+    },
+    "today": {
+      "title": "Today's Sales"
     }
   },
   "auth": {
@@ -340,9 +350,40 @@
       "minLength": "Must be at least {{ min }} characters."
     }
   },
+  "alerts": {
+    "title": "Stock Alerts",
+    "subtitle": "Near-expiry and low-stock warnings across all branches.",
+    "tab": {
+      "all": "All Alerts",
+      "nearExpiry": "Near Expiry",
+      "lowStock": "Low Stock"
+    },
+    "col": {
+      "drug": "Drug",
+      "branch": "Branch",
+      "batch": "Batch №",
+      "expiry": "Expiry Date",
+      "days": "Days Left",
+      "qty": "Qty on Hand",
+      "reorder": "Reorder Level",
+      "type": "Type",
+      "severity": "Severity"
+    },
+    "type": {
+      "NearExpiry": "Near Expiry",
+      "LowStock": "Low Stock"
+    },
+    "severity": {
+      "High": "Critical",
+      "Medium": "Medium",
+      "Low": "Low"
+    },
+    "empty": "No alerts — everything looks good!"
+  },
   "common": {
     "loading": "Loading...",
-    "error": "Something went wrong. Please try again."
+    "error": "Something went wrong. Please try again.",
+    "success": "Success"
   },
   "errors": {
     "title": "Error",

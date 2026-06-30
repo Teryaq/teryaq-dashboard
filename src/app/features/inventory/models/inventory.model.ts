@@ -13,6 +13,8 @@ export interface StockBatch {
   expiryDate: string;
   quantityReceived: number;
   quantityOnHand: number;
+  /** Min on-hand qty before a low-stock alert fires; 0 = disabled. */
+  reorderLevel: number;
   costPrice: number;
   sellingPrice: number;
   receivedAt: string;
@@ -38,6 +40,8 @@ export interface ReceiveStockDto {
   expiryDate: string;
   /** Must be at least 1. */
   quantity: number;
+  /** Min on-hand qty before a low-stock alert fires; 0 = disabled. */
+  reorderLevel: number;
   /** Purchase cost per unit in Egyptian pounds (non-negative). */
   costPrice: number;
   /** Per-unit selling price; defaults to the drug's catalog price when null. */
@@ -52,4 +56,6 @@ export interface AdjustStockDto {
   sellingPrice: number;
   /** Corrected expiry date as ISO 8601 date string (yyyy-MM-dd). */
   expiryDate: string;
+  /** Min on-hand qty before a low-stock alert fires; 0 = disabled. */
+  reorderLevel: number;
 }

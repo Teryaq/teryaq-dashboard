@@ -564,3 +564,350 @@ html.dark .auth-layout {
   animation: app-spin 0.75s linear infinite;
 }
 
+/* =====================================================================
+   POS page — loading state + today's sales panel
+   (moved to global to keep pos-page.css under the 8 kB component budget)
+   ===================================================================== */
+.pos__loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+.pos__spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--surface-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: app-spin 0.75s linear infinite;
+  display: inline-block;
+}
+
+.pos__checkout-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: app-spin 0.75s linear infinite;
+  display: inline-block;
+}
+
+.pos__today {
+  background: var(--surface-card, var(--surface-panel));
+  border: 1px solid var(--surface-border);
+  border-radius: 0.875rem;
+  overflow: hidden;
+}
+
+.pos__today-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--surface-border);
+  background: var(--surface-50, var(--surface-ground));
+}
+
+.pos__today-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.pos__today-total {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.pos__today-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+.pos__today-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--surface-border);
+  font-size: 0.8125rem;
+}
+
+.pos__today-row:last-child { border-bottom: none; }
+
+.pos__today-number {
+  font-weight: 600;
+  color: var(--text-color);
+  font-family: monospace;
+}
+
+.pos__today-items,
+.pos__today-time { color: var(--text-muted); }
+
+.pos__today-amount {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* ── Receipt modal ──────────────────────────────────────────────── */
+.receipt-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.receipt-modal {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+  width: 100%;
+  max-width: 22rem;
+  overflow: hidden;
+  animation: receiptFadeIn 0.2s ease;
+}
+
+@keyframes receiptFadeIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.receipt {
+  padding: 1.5rem 1.5rem 0.75rem;
+  font-family: 'Cairo', system-ui, sans-serif;
+  color: #1e293b;
+  direction: rtl;
+}
+
+/* Header */
+.receipt__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.receipt__logo-icon {
+  font-size: 2rem;
+  color: #10b981;
+  margin-bottom: 0.25rem;
+}
+
+.receipt__pharmacy {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.receipt__branch-name,
+.receipt__phone {
+  font-size: 0.6875rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Meta rows */
+.receipt__meta {
+  border-top: 1.5px dashed #cbd5e1;
+  border-bottom: 1.5px dashed #cbd5e1;
+  padding: 0.625rem 0;
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.receipt__meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6875rem;
+  color: #475569;
+}
+
+.receipt__mono { font-family: monospace; }
+.receipt__bold { font-weight: 700; }
+.receipt__paid { color: #10b981; font-weight: 700; }
+
+/* Line items */
+.receipt__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+}
+
+.receipt__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.75rem;
+}
+
+.receipt__item:last-child { border-bottom: none; }
+
+.receipt__item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.receipt__item-name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.6875rem;
+}
+
+.receipt__item-unit { color: #94a3b8; font-size: 0.625rem; }
+
+.receipt__item-total {
+  font-weight: 800;
+  color: #1e293b;
+  white-space: nowrap;
+  font-size: 0.75rem;
+}
+
+/* Totals */
+.receipt__totals {
+  border-top: 1.5px dashed #cbd5e1;
+  padding-top: 0.625rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.receipt__total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.receipt__total-row--discount { color: #ef4444; }
+
+.receipt__total-row--grand {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #0f172a;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 0.375rem;
+  margin-top: 0.125rem;
+}
+
+/* Barcode area */
+.receipt__barcode-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0 0.25rem;
+}
+
+.receipt__barcode-bar {
+  width: 100%;
+  height: 2.5rem;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.receipt__barcode-bar .receipt__mono {
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+}
+
+.receipt__thanks {
+  font-size: 0.625rem;
+  color: #94a3b8;
+  text-align: center;
+  margin: 0;
+}
+
+/* Action buttons */
+.receipt__actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.receipt__btn {
+  flex: 1;
+  padding: 0.625rem;
+  border-radius: 0.75rem;
+  font-family: 'Cairo', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+}
+
+.receipt__btn--close {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.receipt__btn--close:hover { background: #e2e8f0; }
+
+.receipt__btn--print {
+  background: #0f172a;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+.receipt__btn--print:hover { background: #1e293b; }
+
+/* Print mode — hide everything except the receipt content.
+   Uses visibility (not display:none) so a child can override its ancestor. */
+@media print {
+  body * { visibility: hidden; }
+
+  .receipt,
+  .receipt * {
+    visibility: visible;
+  }
+
+  .receipt {
+    position: fixed;
+    inset: 0;
+    padding: 1.5rem;
+    background: #fff;
+    direction: rtl;
+  }
+
+  .receipt-overlay,
+  .receipt-modal,
+  .receipt__actions { display: none; }
+}
+

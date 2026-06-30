@@ -23,4 +23,13 @@ export class NotificationService {
       life: 5000,
     });
   }
+
+  showSuccess(key: string, params?: Record<string, string>): void {
+    this.messageService.add({
+      severity: 'success',
+      summary: this.i18n.translate('common.success'),
+      detail: this.i18n.translate(key, params),
+      life: 4000,
+    });
+  }
 }

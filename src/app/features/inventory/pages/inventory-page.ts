@@ -78,12 +78,14 @@ export class InventoryPage {
     batchNumber: ['', [Validators.required, Validators.maxLength(100)]],
     expiryDate: ['', [Validators.required]],
     quantity: ['1', [Validators.required]],
+    reorderLevel: ['0', [Validators.required]],
     costPrice: ['0', [Validators.required]],
     sellingPrice: [''],
   });
 
   protected readonly adjustForm = this.fb.nonNullable.group({
     quantityOnHand: ['0', [Validators.required]],
+    reorderLevel: ['0', [Validators.required]],
     sellingPrice: ['0', [Validators.required]],
     expiryDate: ['', [Validators.required]],
   });
@@ -142,7 +144,7 @@ export class InventoryPage {
   }
 
   protected openReceive(): void {
-    this.receiveForm.reset({ quantity: '1', costPrice: '0', sellingPrice: '' });
+    this.receiveForm.reset({ quantity: '1', reorderLevel: '0', costPrice: '0', sellingPrice: '' });
     this.drugDisplayValue.set('');
     this.drugResults.set([]);
     this.isReceiveOpen.set(true);
@@ -180,6 +182,7 @@ export class InventoryPage {
         batchNumber: raw.batchNumber,
         expiryDate: raw.expiryDate,
         quantity: Number(raw.quantity),
+        reorderLevel: Number(raw.reorderLevel),
         costPrice: Number(raw.costPrice),
         sellingPrice: raw.sellingPrice ? Number(raw.sellingPrice) : null,
       })
@@ -201,6 +204,7 @@ export class InventoryPage {
     this.selectedBatch.set(batch);
     this.adjustForm.reset({
       quantityOnHand: String(batch.quantityOnHand),
+      reorderLevel: String(batch.reorderLevel),
       sellingPrice: String(batch.sellingPrice),
       expiryDate: batch.expiryDate,
     });
@@ -222,6 +226,7 @@ export class InventoryPage {
     this.api
       .update(batch.id, {
         quantityOnHand: Number(raw.quantityOnHand),
+        reorderLevel: Number(raw.reorderLevel),
         sellingPrice: Number(raw.sellingPrice),
         expiryDate: raw.expiryDate,
       })

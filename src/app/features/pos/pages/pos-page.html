@@ -1,3 +1,88 @@
+<!-- Receipt modal — shown after a successful sale -->
+@if (showReceiptModal() && lastSale(); as sale) {
+  <div class="receipt-overlay" role="dialog" aria-modal="true" aria-labelledby="receipt-title">
+    <div class="receipt-modal">
+
+      <div class="receipt" id="printable-receipt-area" dir="rtl">
+        <!-- Pharmacy header -->
+        <div class="receipt__header">
+          <i class="pi pi-heart-fill receipt__logo-icon" aria-hidden="true"></i>
+          <h3 class="receipt__pharmacy" id="receipt-title">مجموعة صيدليات ترياق</h3>
+          <p class="receipt__branch-name">{{ sale.branchName }}</p>
+          <p class="receipt__phone">هاتف: 0233445566</p>
+        </div>
+
+        <!-- Invoice meta -->
+        <div class="receipt__meta">
+          <div class="receipt__meta-row">
+            <span>رقم الفاتورة:</span>
+            <span class="receipt__mono receipt__bold">{{ sale.saleNumber }}</span>
+          </div>
+          <div class="receipt__meta-row">
+            <span>تاريخ الصرف:</span>
+            <span>{{ formatReceiptDate(sale.completedAt) }}</span>
+          </div>
+          <div class="receipt__meta-row">
+            <span>اسم الصيدلي:</span>
+            <span>{{ cashierName() }}</span>
+          </div>
+          <div class="receipt__meta-row">
+            <span>حالة العملية:</span>
+            <span class="receipt__paid">مدفوعة نقداً (كاش)</span>
+          </div>
+        </div>
+
+        <!-- Line items -->
+        <div class="receipt__items">
+          @for (line of sale.lines; track line.id) {
+            <div class="receipt__item">
+              <div class="receipt__item-body">
+                <span class="receipt__item-name">{{ line.drugTradeNameAr }}</span>
+                <span class="receipt__item-unit">{{ line.quantity }} × {{ line.unitPrice | number:'1.2-2' }} ج.م</span>
+              </div>
+              <span class="receipt__item-total">{{ line.lineTotal | number:'1.2-2' }} ج.م</span>
+            </div>
+          }
+        </div>
+
+        <!-- Totals -->
+        <div class="receipt__totals">
+          @if (sale.discount > 0) {
+            <div class="receipt__total-row receipt__total-row--discount">
+              <span>الخصم الممنوح:</span>
+              <span>- {{ sale.discount | number:'1.2-2' }} ج.م</span>
+            </div>
+          }
+          <div class="receipt__total-row receipt__total-row--grand">
+            <span>الإجمالي الكلي:</span>
+            <span>{{ sale.grandTotal | number:'1.2-2' }} ج.م</span>
+          </div>
+        </div>
+
+        <!-- Barcode + footer -->
+        <div class="receipt__barcode-area">
+          <div class="receipt__barcode-bar">
+            <span class="receipt__mono">||||| {{ sale.saleNumber }} |||||</span>
+          </div>
+          <p class="receipt__thanks">نشكركم على ثقتكم في ترياق — دواء صحتك!</p>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="receipt__actions">
+        <button class="receipt__btn receipt__btn--close" type="button" (click)="closeReceipt()">
+          إغلاق
+        </button>
+        <button class="receipt__btn receipt__btn--print" type="button" (click)="printReceipt()">
+          <i class="pi pi-print" aria-hidden="true"></i>
+          طباعة الفاتورة
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
 <div class="pos">
   <!-- Left panel: drug search + grid -->
   <div class="pos__left">
@@ -22,41 +107,71 @@
       />
     </div>
 
+    <!-- Loading state -->
+    @if (isLoading()) {
+      <div class="pos__loading-state">
+        <span class="pos__spinner" aria-hidden="true"></span>
+        <span>{{ 'common.loading' | translate }}</span>
+      </div>
+    }
+
     <!-- Drug grid -->
-    <div class="pos__grid">
-      @for (drug of filteredDrugs(); track drug.id) {
-        <button
-          class="pos__drug-card"
-          [class.pos__drug-card--out]="drug.status === 'out'"
-          [class.pos__drug-card--low]="drug.status === 'low'"
-          type="button"
-          (click)="addToCart(drug)"
-          [disabled]="drug.status === 'out'"
-          [attr.aria-label]="drug.tradeName"
-        >
-          <div class="pos__drug-icon">
-            <i class="pi pi-box" aria-hidden="true"></i>
+    @if (!isLoading()) {
+      <div class="pos__grid">
+        @for (drug of filteredDrugs(); track drug.id) {
+          <button
+            class="pos__drug-card"
+            [class.pos__drug-card--out]="drug.status === 'out'"
+            [class.pos__drug-card--low]="drug.status === 'low'"
+            type="button"
+            (click)="addToCart(drug)"
+            [disabled]="drug.status === 'out'"
+            [attr.aria-label]="drug.tradeName"
+          >
+            <div class="pos__drug-icon">
+              <i class="pi pi-box" aria-hidden="true"></i>
+            </div>
+            @if (drug.status === 'out') {
+              <span class="pos__drug-badge pos__drug-badge--out">{{ 'pos.drugGrid.outOfStock' | translate }}</span>
+            }
+            @if (drug.status === 'low') {
+              <span class="pos__drug-badge pos__drug-badge--low">{{ 'pos.drugGrid.lowStock' | translate }}</span>
+            }
+            <span class="pos__drug-trade">{{ drug.tradeName }}</span>
+            <span class="pos__drug-generic">{{ drug.genericName }}</span>
+            <div class="pos__drug-footer">
+              <span class="pos__drug-balance">{{ drug.qty }} {{ 'pos.drugGrid.balance' | translate }}</span>
+              <span class="pos__drug-price">{{ drug.price }} EGP</span>
+            </div>
+          </button>
+        } @empty {
+          <div class="pos__empty">
+            <i class="pi pi-search" aria-hidden="true"></i>
+            {{ 'pos.drugGrid.empty' | translate }}
           </div>
-          @if (drug.status === 'out') {
-            <span class="pos__drug-badge pos__drug-badge--out">{{ 'pos.drugGrid.outOfStock' | translate }}</span>
-          }
-          @if (drug.status === 'low') {
-            <span class="pos__drug-badge pos__drug-badge--low">{{ 'pos.drugGrid.lowStock' | translate }}</span>
-          }
-          <span class="pos__drug-trade">{{ drug.tradeName }}</span>
-          <span class="pos__drug-generic">{{ drug.genericName }}</span>
-          <div class="pos__drug-footer">
-            <span class="pos__drug-balance">{{ drug.qty }} {{ 'pos.drugGrid.balance' | translate }}</span>
-            <span class="pos__drug-price">{{ drug.price }} EGP</span>
-          </div>
-        </button>
-      } @empty {
-        <div class="pos__empty">
-          <i class="pi pi-search" aria-hidden="true"></i>
-          {{ 'pos.drugGrid.empty' | translate }}
+        }
+      </div>
+    }
+
+    <!-- Today's sales panel -->
+    @if (todaysSales().length > 0) {
+      <div class="pos__today">
+        <div class="pos__today-header">
+          <span class="pos__today-title">{{ 'pos.today.title' | translate }}</span>
+          <span class="pos__today-total">{{ todayGrandTotal() | number:'1.2-2' }} EGP</span>
         </div>
-      }
-    </div>
+        <div class="pos__today-list">
+          @for (sale of todaysSales(); track sale.id) {
+            <div class="pos__today-row">
+              <span class="pos__today-number">{{ sale.saleNumber }}</span>
+              <span class="pos__today-items">{{ sale.itemCount }} {{ 'pos.cart.items' | translate }}</span>
+              <span class="pos__today-amount">{{ sale.grandTotal | number:'1.2-2' }} EGP</span>
+              <span class="pos__today-time">{{ formatTime(sale.completedAt) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
   </div>
 
   <!-- Right panel: dark cart -->
@@ -154,9 +269,14 @@
       <button
         class="pos__checkout-btn"
         type="button"
-        [disabled]="cartItems().length === 0"
+        [disabled]="cartItems().length === 0 || isSubmitting()"
+        (click)="checkout()"
       >
-        <i class="pi pi-check-circle" aria-hidden="true"></i>
+        @if (isSubmitting()) {
+          <span class="pos__checkout-spinner" aria-hidden="true"></span>
+        } @else {
+          <i class="pi pi-check-circle" aria-hidden="true"></i>
+        }
         {{ 'pos.cart.checkout' | translate }}
       </button>
     </div>

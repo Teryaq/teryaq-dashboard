@@ -1,0 +1,142 @@
+<div class="alerts">
+  <!-- Header -->
+  <div class="alerts__header">
+    <div>
+      <h1 class="alerts__title">{{ 'alerts.title' | translate }}</h1>
+      <p class="alerts__subtitle">{{ 'alerts.subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="alerts__tabs" role="tablist">
+    <button
+      class="alerts__tab"
+      [class.alerts__tab--active]="activeTab() === 'all'"
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTab() === 'all'"
+      (click)="setTab('all')"
+    >
+      {{ 'alerts.tab.all' | translate }}
+      <span class="alerts__tab-count">{{ totalCount() }}</span>
+    </button>
+    <button
+      class="alerts__tab"
+      [class.alerts__tab--active]="activeTab() === 'NearExpiry'"
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTab() === 'NearExpiry'"
+      (click)="setTab('NearExpiry')"
+    >
+      <span class="alerts__tab-dot alerts__tab-dot--expiry" aria-hidden="true"></span>
+      {{ 'alerts.tab.nearExpiry' | translate }}
+      @if (nearExpiryCount() > 0) {
+        <span class="alerts__tab-count">{{ nearExpiryCount() }}</span>
+      }
+    </button>
+    <button
+      class="alerts__tab"
+      [class.alerts__tab--active]="activeTab() === 'LowStock'"
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTab() === 'LowStock'"
+      (click)="setTab('LowStock')"
+    >
+      <span class="alerts__tab-dot alerts__tab-dot--stock" aria-hidden="true"></span>
+      {{ 'alerts.tab.lowStock' | translate }}
+      @if (lowStockCount() > 0) {
+        <span class="alerts__tab-count">{{ lowStockCount() }}</span>
+      }
+    </button>
+  </div>
+
+  <!-- Loading state -->
+  @if (isLoading()) {
+    <div class="alerts__state-box">
+      <span class="alerts__spinner" aria-hidden="true"></span>
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error() && !isLoading()) {
+    <div class="alerts__state-box alerts__state-box--error">
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+      <span>{{ error()! | translate }}</span>
+    </div>
+  }
+
+  <!-- Data table -->
+  @if (!isLoading() && !error()) {
+    <div class="alerts__table-card">
+      <table class="alerts__table" aria-label="Alerts list">
+        <thead>
+          <tr>
+            <th>{{ 'alerts.col.drug' | translate }}</th>
+            <th>{{ 'alerts.col.branch' | translate }}</th>
+            <th>{{ 'alerts.col.batch' | translate }}</th>
+            <th>{{ 'alerts.col.expiry' | translate }}</th>
+            <th>{{ 'alerts.col.days' | translate }}</th>
+            <th>{{ 'alerts.col.qty' | translate }}</th>
+            <th>{{ 'alerts.col.reorder' | translate }}</th>
+            <th>{{ 'alerts.col.type' | translate }}</th>
+            <th>{{ 'alerts.col.severity' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (alert of filteredAlerts(); track alert.stockBatchId) {
+            <tr>
+              <td>
+                <div class="alerts__drug-cell">
+                  <span class="alerts__trade-name">{{ alert.drugTradeNameEn }}</span>
+                  <span class="alerts__generic-name">{{ alert.drugTradeNameAr }}</span>
+                </div>
+              </td>
+              <td><span class="alerts__branch">{{ alert.branchName }}</span></td>
+              <td><span class="alerts__batch">{{ alert.batchNumber }}</span></td>
+              <td><span class="alerts__expiry">{{ alert.expiryDate }}</span></td>
+              <td>
+                @if (alert.daysUntilExpiry !== null) {
+                  <span
+                    class="alerts__days-badge"
+                    [class.alerts__days-badge--critical]="alert.daysUntilExpiry <= 30"
+                    [class.alerts__days-badge--warn]="alert.daysUntilExpiry > 30 && alert.daysUntilExpiry <= 60"
+                    [class.alerts__days-badge--ok]="alert.daysUntilExpiry > 60"
+                  >
+                    {{ alert.daysUntilExpiry }}
+                  </span>
+                } @else {
+                  <span class="alerts__na">—</span>
+                }
+              </td>
+              <td><span class="alerts__qty">{{ alert.quantityOnHand }}</span></td>
+              <td><span class="alerts__reorder">{{ alert.reorderLevel }}</span></td>
+              <td>
+                <span
+                  class="alerts__type-chip"
+                  [class.alerts__type-chip--expiry]="alert.type === 'NearExpiry'"
+                  [class.alerts__type-chip--stock]="alert.type === 'LowStock'"
+                >
+                  @if (alert.type === 'NearExpiry') { {{ 'alerts.type.NearExpiry' | translate }} }
+                  @if (alert.type === 'LowStock') { {{ 'alerts.type.LowStock' | translate }} }
+                </span>
+              </td>
+              <td>
+                <span class="alerts__severity-badge" [class]="severityClass(alert.severity)">
+                  {{ 'alerts.severity.' + alert.severity | translate }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="9" class="alerts__empty">
+                <i class="pi pi-check-circle alerts__empty-icon" aria-hidden="true"></i>
+                <span>{{ 'alerts.empty' | translate }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

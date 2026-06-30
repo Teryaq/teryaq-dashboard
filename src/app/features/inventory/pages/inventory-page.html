@@ -218,17 +218,24 @@
               @if (receiveFieldError('quantity'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
+              <label class="form-label" for="r-reorder">{{ 'inventory.form.reorderLevel' | translate }}</label>
+              <input id="r-reorder" class="form-input" [class.form-input--error]="receiveFieldError('reorderLevel')" type="number" min="0" step="1" formControlName="reorderLevel" />
+              @if (receiveFieldError('reorderLevel'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
               <label class="form-label" for="r-cost">{{ 'inventory.form.costPrice' | translate }}</label>
               <input id="r-cost" class="form-input" [class.form-input--error]="receiveFieldError('costPrice')" type="number" min="0" step="0.01" formControlName="costPrice" />
               @if (receiveFieldError('costPrice'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
-          </div>
-          <div class="form-field">
-            <label class="form-label" for="r-sell">
-              {{ 'inventory.form.sellingPrice' | translate }}
-              <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
-            </label>
-            <input id="r-sell" class="form-input" type="number" min="0" step="0.01" formControlName="sellingPrice" />
+            <div class="form-field">
+              <label class="form-label" for="r-sell">
+                {{ 'inventory.form.sellingPrice' | translate }}
+                <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
+              </label>
+              <input id="r-sell" class="form-input" type="number" min="0" step="0.01" formControlName="sellingPrice" />
+            </div>
           </div>
         </div>
         <div class="modal__footer">
@@ -259,10 +266,17 @@
       </div>
       <form [formGroup]="adjustForm" (ngSubmit)="onAdjustSubmit()">
         <div class="modal__body">
-          <div class="form-field">
-            <label class="form-label" for="a-qty">{{ 'inventory.form.quantityOnHand' | translate }}</label>
-            <input id="a-qty" class="form-input" [class.form-input--error]="adjustFieldError('quantityOnHand')" type="number" min="0" step="1" formControlName="quantityOnHand" />
-            @if (adjustFieldError('quantityOnHand'); as key) { <small class="form-error">{{ key | translate }}</small> }
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="a-qty">{{ 'inventory.form.quantityOnHand' | translate }}</label>
+              <input id="a-qty" class="form-input" [class.form-input--error]="adjustFieldError('quantityOnHand')" type="number" min="0" step="1" formControlName="quantityOnHand" />
+              @if (adjustFieldError('quantityOnHand'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="a-reorder">{{ 'inventory.form.reorderLevel' | translate }}</label>
+              <input id="a-reorder" class="form-input" [class.form-input--error]="adjustFieldError('reorderLevel')" type="number" min="0" step="1" formControlName="reorderLevel" />
+              @if (adjustFieldError('reorderLevel'); as key) { <small class="form-error">{{ key | translate }}</small> }
+            </div>
           </div>
           <div class="form-field">
             <label class="form-label" for="a-sell">{{ 'inventory.form.sellingPrice' | translate }}</label>
