@@ -43,6 +43,16 @@
   color: var(--text-muted);
 }
 
+.pos__search-wrap--barcode .pos__search-icon {
+  color: var(--color-primary);
+}
+
+.pos__search-wrap--barcode .pos__search {
+  border-width: 2px;
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--surface-border));
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--surface-panel));
+}
+
 /* Search */
 .pos__search-wrap {
   position: relative;

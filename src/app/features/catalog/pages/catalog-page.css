@@ -28,6 +28,36 @@
   color: var(--text-muted);
 }
 
+.cat__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.cat__import-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  background: var(--surface-panel);
+  color: var(--text-color);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border: 1px solid var(--surface-border);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.cat__import-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
 .cat__add-btn {
   display: inline-flex;
   align-items: center;

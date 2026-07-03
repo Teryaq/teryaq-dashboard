@@ -1,15 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { AuthService } from '../../../core/auth/services/auth.service';
 import { CatalogApiService } from '../services/catalog-api.service';
 import { Drug, DrugSource, DrugSourceValue } from '../models/catalog.model';
 
@@ -17,15 +12,18 @@ type SourceFilter = 'all' | DrugSource;
 
 @Component({
   selector: 'app-catalog-page',
-  imports: [TranslatePipe, ReactiveFormsModule],
+  imports: [TranslatePipe, ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './catalog-page.html',
   styleUrl: './catalog-page.css',
 })
 export class CatalogPage {
   private readonly api = inject(CatalogApiService);
+  private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
+
+  protected readonly isOwner = this.authService.isOwner;
 
   protected readonly isLoading = signal(true);
   protected readonly error = signal<string | null>(null);

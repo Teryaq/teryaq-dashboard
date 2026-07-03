@@ -34,6 +34,7 @@ export class AuthService {
   readonly isLoading = this.loadingState.asReadonly();
   readonly isAuthenticated = computed(() => this.sessionState() !== null);
   readonly userRole = computed(() => this.sessionState()?.role ?? null);
+  readonly isOwner = computed(() => this.sessionState()?.role === 'Owner');
 
   initializeFromStorage(): void {
     const stored = this.tokenStorage.load();

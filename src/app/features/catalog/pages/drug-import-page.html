@@ -1,0 +1,86 @@
+<div class="import">
+  <div class="import__header">
+    <div>
+      <a class="import__back" routerLink="/catalog">
+        <i class="pi pi-arrow-left" aria-hidden="true"></i>
+        {{ 'catalog.title' | translate }}
+      </a>
+      <h1 class="import__title">{{ 'catalog.import.title' | translate }}</h1>
+      <p class="import__subtitle">{{ 'catalog.import.subtitle' | translate }}</p>
+    </div>
+    <button class="btn" type="button" (click)="downloadTemplate()">
+      <i class="pi pi-download" aria-hidden="true"></i>
+      {{ 'catalog.import.download_template' | translate }}
+    </button>
+  </div>
+
+  <div
+    class="import__dropzone"
+    [class.import__dropzone--active]="isDragOver()"
+    [class.import__dropzone--disabled]="importing()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+  >
+    @if (importing()) {
+      <span class="import__spinner" aria-hidden="true"></span>
+      <span>{{ 'catalog.import.importing' | translate }}</span>
+    } @else {
+      <i class="pi pi-upload import__dropzone-icon" aria-hidden="true"></i>
+      <span>{{ 'catalog.import.drop_file' | translate }}</span>
+      <label class="import__file-label">
+        <input
+          class="import__file-input"
+          type="file"
+          accept=".csv,text/csv"
+          [disabled]="importing()"
+          (change)="onFileSelected($event)"
+        />
+        <span class="btn btn--primary">{{ 'catalog.import.choose_file' | translate }}</span>
+      </label>
+    }
+  </div>
+
+  @if (lastImportSummary(); as summary) {
+    <div class="import__summary">
+      <div class="import__summary-banner">
+        @if (summary.createdCount > 0) {
+          <span>{{ 'catalog.import.summary_created' | translate: countParam(summary.createdCount) }}</span>
+        }
+        @if (summary.updatedCount > 0) {
+          <span>{{ 'catalog.import.summary_updated' | translate: countParam(summary.updatedCount) }}</span>
+        }
+        @if (summary.skippedCount > 0) {
+          <span>{{ 'catalog.import.summary_skipped' | translate: countParam(summary.skippedCount) }}</span>
+        }
+        @if (summary.createdCount === 0 && summary.updatedCount === 0 && summary.skippedCount === 0) {
+          <span>{{ 'catalog.import.summary_empty' | translate }}</span>
+        }
+      </div>
+
+      @if (summary.errors.length > 0) {
+        <h2 class="import__errors-title">{{ 'catalog.import.row_errors_title' | translate }}</h2>
+        <div class="import__table-card">
+          <table class="import__table" aria-label="Import row errors">
+            <thead>
+              <tr>
+                <th>{{ 'catalog.import.col.row' | translate }}</th>
+                <th>{{ 'catalog.import.col.barcode' | translate }}</th>
+                <th>{{ 'catalog.import.col.error' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of summary.errors; track row.rowNumber) {
+                <tr>
+                  <td>{{ row.rowNumber }}</td>
+                  <td>{{ row.barcode ?? '—' }}</td>
+                  <td>{{ row.errorMessage }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</div>

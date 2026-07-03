@@ -5,10 +5,18 @@
       <h1 class="cat__title">{{ 'catalog.title' | translate }}</h1>
       <p class="cat__subtitle">{{ 'catalog.subtitle' | translate }}</p>
     </div>
-    <button class="cat__add-btn" type="button" (click)="openCreate()">
-      <i class="pi pi-plus" aria-hidden="true"></i>
-      {{ 'catalog.action.add' | translate }}
-    </button>
+    <div class="cat__header-actions">
+      @if (isOwner()) {
+        <a class="cat__import-btn" routerLink="/catalog/import">
+          <i class="pi pi-upload" aria-hidden="true"></i>
+          {{ 'catalog.import.import_from_catalog' | translate }}
+        </a>
+      }
+      <button class="cat__add-btn" type="button" (click)="openCreate()">
+        <i class="pi pi-plus" aria-hidden="true"></i>
+        {{ 'catalog.action.add' | translate }}
+      </button>
+    </div>
   </div>
 
   <!-- Search + source filter bar -->

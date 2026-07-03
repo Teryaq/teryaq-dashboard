@@ -71,6 +71,13 @@
   "dashboard": {
     "title": "Performance Overview",
     "subtitle": "Real-time sales analytics and pharmacy alerts.",
+    "today_sales_count": "Today's Sales",
+    "today_sales_total": "Today's Revenue",
+    "near_expiry": "Near Expiry",
+    "low_stock": "Low Stock",
+    "open_alerts": "Open Alerts",
+    "branchFilter": "Branch",
+    "allBranches": "All branches",
     "kpi": {
       "salesToday": "Today's Sales",
       "itemsSold": "Units Sold Today",
@@ -188,6 +195,26 @@
       "inactive": "Inactive"
     },
     "empty": "No drugs found in the catalog.",
+    "import": {
+      "title": "Import Drugs (CSV)",
+      "subtitle": "Upload a CSV file to bulk-create or update drugs by barcode.",
+      "drop_file": "Drag a CSV file here or choose one below",
+      "choose_file": "Choose CSV file",
+      "importing": "Importing...",
+      "summary_created": "Created {{count}} drug(s)",
+      "summary_updated": "Updated {{count}} drug(s)",
+      "summary_skipped": "Skipped {{count}} row(s)",
+      "summary_empty": "No rows were processed.",
+      "row_errors_title": "Rows that need review",
+      "download_template": "Download CSV template",
+      "upload_error": "Could not import the file.",
+      "import_from_catalog": "Import CSV",
+      "col": {
+        "row": "Row",
+        "barcode": "Barcode",
+        "error": "Error"
+      }
+    },
     "form": {
       "createTitle": "Add New Drug",
       "editTitle": "Edit Drug",
@@ -277,6 +304,9 @@
     "title": "Instant Drug Dispensing (POS)",
     "subtitle": "Build sales receipts and dispense drugs instantly.",
     "search": "Search by drug name, generic name, or barcode...",
+    "barcode_scan": "Scan barcode and press Enter",
+    "barcode_not_found": "No drug found with this barcode.",
+    "barcode_not_in_stock": "Drug found but not in branch inventory.",
     "scanner": {
       "title": "Smart Barcode & QR Scanner",
       "subtitle": "Use hardware scanner or click a drug card below to simulate scanning",

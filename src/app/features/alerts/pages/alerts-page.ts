@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { catchError, of } from 'rxjs';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
@@ -24,6 +25,7 @@ type ActiveTab = 'all' | AlertType;
 })
 export class AlertsPage {
   private readonly api = inject(AlertsApiService);
+  private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly isLoading = signal(true);
@@ -49,6 +51,11 @@ export class AlertsPage {
   );
 
   constructor() {
+    const typeParam = this.route.snapshot.queryParamMap.get('type');
+    if (typeParam === 'NearExpiry' || typeParam === 'LowStock') {
+      this.activeTab.set(typeParam);
+    }
+
     this.api
       .getAll()
       .pipe(

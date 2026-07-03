@@ -63,3 +63,17 @@ export interface UpdateDrugDto {
   manufacturerEn?: string | null;
   isActive: boolean;
 }
+
+export interface DrugImportRowError {
+  rowNumber: number;
+  barcode: string | null;
+  errorMessage: string;
+}
+
+export interface DrugImportSummary {
+  totalRows: number;
+  createdCount: number;
+  updatedCount: number;
+  skippedCount: number;
+  errors: DrugImportRowError[];
+}

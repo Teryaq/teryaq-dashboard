@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { ApiService } from '../../../core/api/api.service';
 import { PaginatedList } from '../../../shared/models/paginated-list.model';
-import { CreateDrugDto, Drug, DrugSearchParams, UpdateDrugDto } from '../models/catalog.model';
+import { CreateDrugDto, Drug, DrugImportSummary, DrugSearchParams, UpdateDrugDto } from '../models/catalog.model';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogApiService {
@@ -27,6 +27,16 @@ export class CatalogApiService {
 
   delete(id: string): Observable<void> {
     return this.api.delete<void>(`drugs/${id}`);
+  }
+
+  getByBarcode(barcode: string): Observable<Drug> {
+    return this.api.get<Drug>(`drugs/by-barcode/${encodeURIComponent(barcode)}`);
+  }
+
+  importDrugs(file: File): Observable<DrugImportSummary> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.api.post<DrugImportSummary>('drugs/import', formData);
   }
 
   private toParams(

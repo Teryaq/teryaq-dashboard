@@ -16,6 +16,7 @@ import { NotificationService } from '../../../core/notifications/notification.se
 import { InventoryApiService } from '../../inventory/services/inventory-api.service';
 import { StockBatch } from '../../inventory/models/inventory.model';
 import { BranchesApiService } from '../../branches/services/branches-api.service';
+import { CatalogApiService } from '../../catalog/services/catalog-api.service';
 import { PosApiService } from '../services/pos-api.service';
 import { SaleDto, TodaySaleSummaryDto } from '../models/sale.model';
 
@@ -47,6 +48,7 @@ interface CartItem {
 export class PosPage {
   private readonly inventoryApi = inject(InventoryApiService);
   private readonly branchesApi = inject(BranchesApiService);
+  private readonly catalogApi = inject(CatalogApiService);
   private readonly posApi = inject(PosApiService);
   private readonly authService = inject(AuthService);
   private readonly notifications = inject(NotificationService);
@@ -212,6 +214,38 @@ export class PosPage {
 
   protected onSearch(event: Event): void {
     this.searchQuery.set((event.target as HTMLInputElement).value);
+  }
+
+  protected onBarcodeScan(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const barcode = input.value.trim();
+    input.value = '';
+    if (!barcode) return;
+
+    this.catalogApi
+      .getByBarcode(barcode)
+      .pipe(
+        catchError(err => {
+          if (err?.status === 404) {
+            this.notifications.showError('pos.barcode_not_found');
+          }
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(drug => {
+        if (!drug) return;
+        const row = this.allDrugRows().find(d => d.id === drug.id);
+        if (!row) {
+          this.notifications.showError('pos.barcode_not_in_stock');
+          return;
+        }
+        if (row.status === 'out') {
+          this.notifications.showError('pos.checkout.insufficientStock');
+          return;
+        }
+        this.addToCart(row);
+      });
   }
 
   protected onDiscountInput(event: Event): void {

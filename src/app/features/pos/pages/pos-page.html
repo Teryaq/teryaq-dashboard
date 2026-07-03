@@ -94,6 +94,18 @@
       </div>
     </div>
 
+    <div class="pos__search-wrap pos__search-wrap--barcode">
+      <i class="pi pi-barcode pos__search-icon" aria-hidden="true"></i>
+      <input
+        class="pos__search"
+        type="text"
+        autocomplete="off"
+        [placeholder]="'pos.barcode_scan' | translate"
+        (keyup.enter)="onBarcodeScan($event)"
+        aria-label="Barcode scanner input"
+      />
+    </div>
+
     <!-- Search bar -->
     <div class="pos__search-wrap">
       <i class="pi pi-search pos__search-icon" aria-hidden="true"></i>

@@ -32,4 +32,13 @@ export class NotificationService {
       life: 4000,
     });
   }
+
+  showErrorDetail(detail: string): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.i18n.translate('errors.title'),
+      detail,
+      life: 5000,
+    });
+  }
 }

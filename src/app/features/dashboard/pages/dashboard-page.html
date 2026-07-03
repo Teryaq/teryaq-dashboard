@@ -1,181 +1,108 @@
 <div class="dash">
-  <!-- Page header -->
   <div class="dash__header">
     <div>
       <h1 class="dash__title">{{ 'dashboard.title' | translate }}</h1>
       <p class="dash__subtitle">{{ 'dashboard.subtitle' | translate }}</p>
     </div>
-    <button class="btn btn--primary" type="button">
-      <i class="pi pi-plus" aria-hidden="true"></i>
-      {{ 'dashboard.recent.newInvoice' | translate }}
-    </button>
-  </div>
-
-  <!-- KPI cards -->
-  <div class="dash__kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-card__icon kpi-card__icon--green">
-        <i class="pi pi-dollar" aria-hidden="true"></i>
-      </div>
-      <div class="kpi-card__body">
-        <span class="kpi-card__label">{{ 'dashboard.kpi.salesToday' | translate }}</span>
-        <span class="kpi-card__value">
-          {{ 'dashboard.kpi.currency' | translate }} {{ salesTotal() | number:'1.0-0' }}
-        </span>
-        <span class="kpi-card__sub">+12.4% {{ 'topbar.today' | translate }}</span>
-      </div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-card__icon kpi-card__icon--blue">
-        <i class="pi pi-box" aria-hidden="true"></i>
-      </div>
-      <div class="kpi-card__body">
-        <span class="kpi-card__label">{{ 'dashboard.kpi.itemsSold' | translate }}</span>
-        <span class="kpi-card__value">{{ unitsSold() }}</span>
-        <span class="kpi-card__sub">{{ 'dashboard.kpi.units' | translate }}</span>
-      </div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-card__icon kpi-card__icon--amber">
-        <i class="pi pi-bell" aria-hidden="true"></i>
-      </div>
-      <div class="kpi-card__body">
-        <span class="kpi-card__label">{{ 'dashboard.kpi.activeAlerts' | translate }}</span>
-        <span class="kpi-card__value">{{ activeAlerts() }}</span>
-        <span class="kpi-card__sub kpi-card__sub--warn">{{ 'dashboard.kpi.active' | translate }}</span>
-      </div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-card__icon kpi-card__icon--red">
-        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-      </div>
-      <div class="kpi-card__body">
-        <span class="kpi-card__label">{{ 'dashboard.kpi.lowStock' | translate }}</span>
-        <span class="kpi-card__value">{{ lowStockItems() }}</span>
-        <span class="kpi-card__sub kpi-card__sub--danger">{{ 'dashboard.kpi.units' | translate }}</span>
-      </div>
+    <div class="dash__header-actions">
+      @if (isOwner() && branches().length > 0) {
+        <label class="dash__branch-filter">
+          <span class="dash__branch-label">{{ 'dashboard.branchFilter' | translate }}</span>
+          <select
+            class="dash__branch-select"
+            [value]="selectedBranchId()"
+            (change)="onBranchChange($event)"
+          >
+            <option value="">{{ 'dashboard.allBranches' | translate }}</option>
+            @for (branch of branches(); track branch.id) {
+              <option [value]="branch.id">{{ branch.name }}</option>
+            }
+          </select>
+        </label>
+      }
+      <a class="btn btn--primary" routerLink="/pos">
+        <i class="pi pi-plus" aria-hidden="true"></i>
+        {{ 'dashboard.recent.newInvoice' | translate }}
+      </a>
     </div>
   </div>
 
-  <!-- Charts row -->
-  <div class="dash__charts-row">
-    <div class="dash__chart-card">
-      <div class="dash__chart-header">
-        <span class="dash__chart-title">{{ 'dashboard.charts.weeklySales' | translate }}</span>
-        <span class="dash__chart-badge">
-          <i class="pi pi-refresh" aria-hidden="true"></i>
-          {{ 'dashboard.charts.autoUpdate' | translate }}
-        </span>
-      </div>
-      <div class="dash__chart-placeholder dash__chart-placeholder--bar" aria-label="Weekly sales bar chart placeholder">
-        @for (bar of weeklySalesData(); track $index) {
-          <div class="dash__bar-group">
-            <div class="dash__bar" [style.height.%]="bar.pct" [title]="bar.label"></div>
-            <span class="dash__bar-label">{{ bar.day }}</span>
-          </div>
-        }
-      </div>
+  @if (isLoading()) {
+    <div class="dash__loading">
+      @for (i of [1, 2, 3, 4, 5]; track i) {
+        <div class="dash__skeleton-card" aria-hidden="true"></div>
+      }
     </div>
+  }
 
-    <div class="dash__chart-card">
-      <div class="dash__chart-header">
-        <span class="dash__chart-title">{{ 'dashboard.charts.topDrugs' | translate }}</span>
-      </div>
-      <div class="dash__chart-placeholder dash__chart-placeholder--donut" aria-label="Top drugs donut chart placeholder">
-        <div class="dash__donut">
-          <div class="dash__donut-ring"></div>
-          <div class="dash__donut-center">
-            <span class="dash__donut-value">5</span>
-            <span class="dash__donut-label">drugs</span>
-          </div>
+  @if (error() && !isLoading()) {
+    <div class="dash__error">
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+      <span>{{ error()! | translate }}</span>
+    </div>
+  }
+
+  @if (summary(); as s) {
+    <div class="dash__kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--blue">
+          <i class="pi pi-shopping-cart" aria-hidden="true"></i>
         </div>
-        <ul class="dash__legend">
-          @for (item of topDrugsData(); track $index) {
-            <li class="dash__legend-item">
-              <span class="dash__legend-dot" [style.background]="item.color"></span>
-              <span class="dash__legend-name">{{ item.name }}</span>
-              <span class="dash__legend-pct">{{ item.pct }}%</span>
-            </li>
-          }
-        </ul>
+        <div class="kpi-card__body">
+          <span class="kpi-card__label">{{ 'dashboard.today_sales_count' | translate }}</span>
+          <span class="kpi-card__value">{{ s.todaySalesCount }}</span>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Bottom row: recent transactions + alerts panel -->
-  <div class="dash__bottom-row">
-    <!-- Recent transactions table -->
-    <div class="dash__table-card">
-      <div class="dash__table-header">
-        <span class="dash__table-title">{{ 'dashboard.recent.title' | translate }}</span>
+      <div class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--green">
+          <i class="pi pi-dollar" aria-hidden="true"></i>
+        </div>
+        <div class="kpi-card__body">
+          <span class="kpi-card__label">{{ 'dashboard.today_sales_total' | translate }}</span>
+          <span class="kpi-card__value">
+            {{ 'dashboard.kpi.currency' | translate }} {{ s.todaySalesTotal | number:'1.2-2' }}
+          </span>
+        </div>
       </div>
-      <table class="dash__table" aria-label="Recent transactions">
-        <thead>
-          <tr>
-            <th>{{ 'dashboard.recent.col.invoiceId' | translate }}</th>
-            <th>{{ 'dashboard.recent.col.cashier' | translate }}</th>
-            <th>{{ 'dashboard.recent.col.items' | translate }}</th>
-            <th>{{ 'dashboard.recent.col.total' | translate }}</th>
-            <th>{{ 'dashboard.recent.col.time' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (tx of recentTransactions(); track tx.id) {
-            <tr>
-              <td><span class="dash__invoice-id">#{{ tx.id }}</span></td>
-              <td>{{ tx.cashier }}</td>
-              <td>{{ tx.items }}</td>
-              <td>
-                <span class="dash__amount">
-                  {{ 'dashboard.kpi.currency' | translate }} {{ tx.total | number:'1.2-2' }}
-                </span>
-              </td>
-              <td class="dash__time">{{ tx.time }}</td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="5" class="dash__empty">{{ 'dashboard.recent.empty' | translate }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
 
-    <!-- Alerts panel -->
-    <div class="dash__alerts-card">
-      <div class="dash__alerts-header">
-        <span class="dash__alerts-title">{{ 'dashboard.alertsPanel.title' | translate }}</span>
-        <a class="dash__alerts-view-all" href="#">{{ 'dashboard.alertsPanel.viewAll' | translate }}</a>
-      </div>
-      <ul class="dash__alerts-list" aria-label="Stock alerts">
-        @for (alert of stockAlerts(); track alert.id) {
-          <li class="dash__alert-item" [class]="'dash__alert-item--' + alert.severity">
-            <div class="dash__alert-icon">
-              <i class="pi" [class.pi-clock]="alert.type === 'nearExpiry'" [class.pi-exclamation-triangle]="alert.type === 'lowStock'" aria-hidden="true"></i>
-            </div>
-            <div class="dash__alert-body">
-              <span class="dash__alert-name">{{ alert.name }}</span>
-              <span class="dash__alert-meta">
-                <span class="dash__alert-type-badge">
-                  {{ 'dashboard.alertsPanel.type.' + alert.type | translate }}
-                </span>
-                {{ alert.detail }}
-              </span>
-            </div>
-            <span class="dash__alert-sev-badge">
-              {{ 'dashboard.alertsPanel.severity.' + alert.severity | translate }}
-            </span>
-          </li>
-        } @empty {
-          <li class="dash__alerts-empty">
-            <i class="pi pi-check-circle" aria-hidden="true"></i>
-            {{ 'dashboard.alertsPanel.empty' | translate }}
-          </li>
-        }
-      </ul>
+      <a class="kpi-card kpi-card--link" routerLink="/alerts">
+        <div class="kpi-card__icon kpi-card__icon--amber">
+          <i class="pi pi-bell" aria-hidden="true"></i>
+        </div>
+        <div class="kpi-card__body">
+          <span class="kpi-card__label">{{ 'dashboard.open_alerts' | translate }}</span>
+          <span class="kpi-card__value">{{ s.openAlertsCount }}</span>
+        </div>
+      </a>
+
+      <a
+        class="kpi-card kpi-card--link"
+        routerLink="/alerts"
+        [queryParams]="{ type: 'NearExpiry' }"
+      >
+        <div class="kpi-card__icon kpi-card__icon--amber">
+          <i class="pi pi-clock" aria-hidden="true"></i>
+        </div>
+        <div class="kpi-card__body">
+          <span class="kpi-card__label">{{ 'dashboard.near_expiry' | translate }}</span>
+          <span class="kpi-card__value">{{ s.nearExpiryCount }}</span>
+        </div>
+      </a>
+
+      <a
+        class="kpi-card kpi-card--link"
+        routerLink="/alerts"
+        [queryParams]="{ type: 'LowStock' }"
+      >
+        <div class="kpi-card__icon kpi-card__icon--red">
+          <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+        </div>
+        <div class="kpi-card__body">
+          <span class="kpi-card__label">{{ 'dashboard.low_stock' | translate }}</span>
+          <span class="kpi-card__value">{{ s.lowStockCount }}</span>
+        </div>
+      </a>
     </div>
-  </div>
+  }
 </div>
