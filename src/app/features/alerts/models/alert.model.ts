@@ -31,4 +31,6 @@ export interface Alert {
 export interface AlertSearchParams {
   branchId?: string;
   type?: AlertType;
+  /** Max alerts after backend sort; omit for full list. */
+  limit?: number;
 }

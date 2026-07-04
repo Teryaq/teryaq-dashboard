@@ -20,6 +20,7 @@ export class AlertsApiService {
     const record: Record<string, string | number | boolean> = {};
     if (params.branchId !== undefined) record['branchId'] = params.branchId;
     if (params.type !== undefined) record['type'] = params.type;
+    if (params.limit !== undefined) record['limit'] = params.limit;
     return Object.keys(record).length ? record : undefined;
   }
 }

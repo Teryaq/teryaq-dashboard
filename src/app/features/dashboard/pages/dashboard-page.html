@@ -29,10 +29,11 @@
 
   @if (isLoading()) {
     <div class="dash__loading">
-      @for (i of [1, 2, 3, 4, 5]; track i) {
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
         <div class="dash__skeleton-card" aria-hidden="true"></div>
       }
     </div>
+    <div class="dash__skeleton-panel" aria-hidden="true"></div>
   }
 
   @if (error() && !isLoading()) {
@@ -63,6 +64,16 @@
           <span class="kpi-card__value">
             {{ 'dashboard.kpi.currency' | translate }} {{ s.todaySalesTotal | number:'1.2-2' }}
           </span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-card__icon kpi-card__icon--blue">
+          <i class="pi pi-box" aria-hidden="true"></i>
+        </div>
+        <div class="kpi-card__body">
+          <span class="kpi-card__label">{{ 'dashboard.kpi.itemsSold' | translate }}</span>
+          <span class="kpi-card__value">{{ s.todayItemsSold }}</span>
         </div>
       </div>
 
@@ -103,6 +114,145 @@
           <span class="kpi-card__value">{{ s.lowStockCount }}</span>
         </div>
       </a>
+    </div>
+
+    <div class="dash__charts-row">
+      <section class="dash-panel">
+        <div class="dash-panel__header">
+          <h2 class="dash-panel__title">{{ 'dashboard.charts.weeklySales' | translate }}</h2>
+          <span class="dash-panel__badge">{{ 'dashboard.charts.autoUpdate' | translate }}</span>
+        </div>
+        @if (weeklySales().length === 0) {
+          <p class="dash-panel__empty">{{ 'dashboard.recent.empty' | translate }}</p>
+        } @else {
+          <div class="dash-bar-chart" role="img" [attr.aria-label]="'dashboard.charts.weeklySales' | translate">
+            @for (day of weeklySales(); track day.date) {
+              <div class="dash-bar-chart__col">
+                <div class="dash-bar-chart__bar-wrap">
+                  <div
+                    class="dash-bar-chart__bar"
+                    [style.height.%]="barHeight(day.salesTotal)"
+                    [title]="day.salesTotal | number:'1.2-2'"
+                  ></div>
+                </div>
+                <span class="dash-bar-chart__value">
+                  {{ day.salesTotal | number:'1.0-0' }}
+                </span>
+                <span class="dash-bar-chart__label">{{ formatChartDay(day.date) }}</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="dash-panel">
+        <div class="dash-panel__header">
+          <h2 class="dash-panel__title">{{ 'dashboard.charts.topDrugs' | translate }}</h2>
+        </div>
+        @if (topDrugs().length === 0) {
+          <p class="dash-panel__empty">{{ 'dashboard.recent.empty' | translate }}</p>
+        } @else {
+          <div class="dash-donut">
+            <div class="dash-donut__ring" [style.background]="donutGradient()"></div>
+            <ul class="dash-donut__legend">
+              @for (segment of donutSegments(); track segment.drugId) {
+                <li class="dash-donut__legend-item">
+                  <span class="dash-donut__swatch" [style.background]="segment.color"></span>
+                  <span class="dash-donut__legend-label">{{ segment.label }}</span>
+                  <span class="dash-donut__legend-pct">{{ segment.sharePercent | number:'1.0-1' }}%</span>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </section>
+    </div>
+
+    <div class="dash__bottom-row">
+      <section class="dash-panel dash-panel--wide">
+        <div class="dash-panel__header">
+          <h2 class="dash-panel__title">{{ 'dashboard.recent.title' | translate }}</h2>
+        </div>
+        @if (recentSales().length === 0) {
+          <p class="dash-panel__empty">{{ 'dashboard.recent.empty' | translate }}</p>
+        } @else {
+          <div class="dash-table-wrap">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>{{ 'dashboard.recent.col.invoiceId' | translate }}</th>
+                  <th>{{ 'dashboard.recent.col.cashier' | translate }}</th>
+                  <th>{{ 'dashboard.recent.col.items' | translate }}</th>
+                  <th>{{ 'dashboard.recent.col.total' | translate }}</th>
+                  <th>{{ 'dashboard.recent.col.time' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (sale of recentSales(); track sale.id) {
+                  <tr>
+                    <td><span class="dash-table__mono">{{ sale.saleNumber }}</span></td>
+                    <td>{{ sale.cashierName }}</td>
+                    <td>{{ sale.itemCount }}</td>
+                    <td>
+                      {{ 'dashboard.kpi.currency' | translate }}
+                      {{ sale.grandTotal | number:'1.2-2' }}
+                    </td>
+                    <td>{{ sale.completedAt | date:'shortTime' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+
+      <section class="dash-panel">
+        <div class="dash-panel__header">
+          <h2 class="dash-panel__title">{{ 'dashboard.alertsPanel.title' | translate }}</h2>
+          <a class="dash-panel__link" routerLink="/alerts">
+            {{ 'dashboard.alertsPanel.viewAll' | translate }}
+          </a>
+        </div>
+        @if (previewAlerts().length === 0) {
+          <p class="dash-panel__empty dash-panel__empty--ok">
+            <i class="pi pi-check-circle" aria-hidden="true"></i>
+            {{ 'dashboard.alertsPanel.empty' | translate }}
+          </p>
+        } @else {
+          <ul class="dash-alerts">
+            @for (alert of previewAlerts(); track alert.stockBatchId) {
+              <li class="dash-alert">
+                <div class="dash-alert__main">
+                  <span class="dash-alert__drug">{{ alertDrugLabel(alert) }}</span>
+                  <span class="dash-alert__meta">{{ alert.batchNumber }} · {{ alert.branchName }}</span>
+                </div>
+                <div class="dash-alert__badges">
+                  <span
+                    class="dash-alert__type"
+                    [class.dash-alert__type--expiry]="alert.type === 'NearExpiry'"
+                    [class.dash-alert__type--stock]="alert.type === 'LowStock'"
+                  >
+                    @if (alert.type === 'NearExpiry') {
+                      {{ 'dashboard.alertsPanel.type.nearExpiry' | translate }}
+                    } @else {
+                      {{ 'dashboard.alertsPanel.type.lowStock' | translate }}
+                    }
+                  </span>
+                  <span class="dash-alert__severity" [class]="severityClass(alert.severity)">
+                    @if (alert.severity === 'High') {
+                      {{ 'dashboard.alertsPanel.severity.high' | translate }}
+                    } @else if (alert.severity === 'Medium') {
+                      {{ 'dashboard.alertsPanel.severity.medium' | translate }}
+                    } @else {
+                      {{ 'dashboard.alertsPanel.severity.low' | translate }}
+                    }
+                  </span>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
     </div>
   }
 </div>
