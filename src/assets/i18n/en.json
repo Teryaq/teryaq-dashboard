@@ -90,7 +90,11 @@
     "charts": {
       "weeklySales": "Last 7 Days Sales (EGP)",
       "topDrugs": "Top 5 Drugs This Month",
-      "autoUpdate": "Live update"
+      "autoUpdate": "Live update",
+      "revenue": "Revenue",
+      "orders": "Orders",
+      "share": "Share",
+      "units": "Units sold"
     },
     "recent": {
       "title": "Recent Transactions",
