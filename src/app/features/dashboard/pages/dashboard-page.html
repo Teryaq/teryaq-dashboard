@@ -45,7 +45,7 @@
 
   @if (summary(); as s) {
     <div class="dash__kpi-grid">
-      <div class="kpi-card">
+      <div class="kpi-card kpi-card--sales">
         <div class="kpi-card__icon kpi-card__icon--blue">
           <i class="pi pi-shopping-cart" aria-hidden="true"></i>
         </div>
@@ -55,7 +55,7 @@
         </div>
       </div>
 
-      <div class="kpi-card">
+      <div class="kpi-card kpi-card--revenue">
         <div class="kpi-card__icon kpi-card__icon--green">
           <i class="pi pi-dollar" aria-hidden="true"></i>
         </div>
@@ -67,7 +67,7 @@
         </div>
       </div>
 
-      <div class="kpi-card">
+      <div class="kpi-card kpi-card--units">
         <div class="kpi-card__icon kpi-card__icon--blue">
           <i class="pi pi-box" aria-hidden="true"></i>
         </div>
@@ -77,7 +77,7 @@
         </div>
       </div>
 
-      <a class="kpi-card kpi-card--link" routerLink="/alerts">
+      <a class="kpi-card kpi-card--link kpi-card--alerts" routerLink="/alerts">
         <div class="kpi-card__icon kpi-card__icon--amber">
           <i class="pi pi-bell" aria-hidden="true"></i>
         </div>
@@ -88,7 +88,7 @@
       </a>
 
       <a
-        class="kpi-card kpi-card--link"
+        class="kpi-card kpi-card--link kpi-card--expiry"
         routerLink="/alerts"
         [queryParams]="{ type: 'NearExpiry' }"
       >
@@ -102,7 +102,7 @@
       </a>
 
       <a
-        class="kpi-card kpi-card--link"
+        class="kpi-card kpi-card--link kpi-card--stock"
         routerLink="/alerts"
         [queryParams]="{ type: 'LowStock' }"
       >
@@ -125,22 +125,19 @@
         @if (weeklySales().length === 0) {
           <p class="dash-panel__empty">{{ 'dashboard.recent.empty' | translate }}</p>
         } @else {
-          <div class="dash-bar-chart" role="img" [attr.aria-label]="'dashboard.charts.weeklySales' | translate">
-            @for (day of weeklySales(); track day.date) {
-              <div class="dash-bar-chart__col">
-                <div class="dash-bar-chart__bar-wrap">
-                  <div
-                    class="dash-bar-chart__bar"
-                    [style.height.%]="barHeight(day.salesTotal)"
-                    [title]="day.salesTotal | number:'1.2-2'"
-                  ></div>
-                </div>
-                <span class="dash-bar-chart__value">
-                  {{ day.salesTotal | number:'1.0-0' }}
-                </span>
-                <span class="dash-bar-chart__label">{{ formatChartDay(day.date) }}</span>
-              </div>
-            }
+          <div
+            class="dash-chart dash-chart--weekly"
+            role="img"
+            [attr.aria-label]="weeklySalesAnalysis().chartSummary"
+          >
+            <p-chart
+              type="bar"
+              [data]="weeklySalesChartData()"
+              [options]="weeklySalesChartOptions()"
+              height="16rem"
+              [attr.aria-hidden]="true"
+            ></p-chart>
+            <p class="dash__sr-only">{{ weeklySalesAnalysis().chartSummary }}</p>
           </div>
         }
       </section>
@@ -152,17 +149,19 @@
         @if (topDrugs().length === 0) {
           <p class="dash-panel__empty">{{ 'dashboard.recent.empty' | translate }}</p>
         } @else {
-          <div class="dash-donut">
-            <div class="dash-donut__ring" [style.background]="donutGradient()"></div>
-            <ul class="dash-donut__legend">
-              @for (segment of donutSegments(); track segment.drugId) {
-                <li class="dash-donut__legend-item">
-                  <span class="dash-donut__swatch" [style.background]="segment.color"></span>
-                  <span class="dash-donut__legend-label">{{ segment.label }}</span>
-                  <span class="dash-donut__legend-pct">{{ segment.sharePercent | number:'1.0-1' }}%</span>
-                </li>
-              }
-            </ul>
+          <div
+            class="dash-chart dash-chart--ranking"
+            role="img"
+            [attr.aria-label]="topDrugsSummary()"
+          >
+            <p-chart
+              type="bar"
+              [data]="topDrugsChartData()"
+              [options]="topDrugsChartOptions()"
+              height="15rem"
+              [attr.aria-hidden]="true"
+            ></p-chart>
+            <p class="dash__sr-only">{{ topDrugsSummary() }}</p>
           </div>
         }
       </section>

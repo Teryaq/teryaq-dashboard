@@ -77,21 +77,27 @@ export class ThemeService {
 
   private applyColorVars(isDark: boolean): void {
     const style = this.document.documentElement.style;
-    const activePreset = isDark ? DARK_PRESETS[this.darkPreset()] : undefined;
-
-    if (activePreset?.primary) {
-      // A dark preset owns the primary palette.
-      style.setProperty('--color-primary', activePreset.primary.color);
-      style.setProperty('--color-primary-hover', activePreset.primary.hover);
-      updatePrimaryPalette({ ...activePreset.primary.palette });
-      return;
-    }
-
     const palette = COLOR_THEMES[this.colorTheme()].palette;
     // Light: 500/600 · Dark: 400/500 (matches existing emerald tokens).
-    style.setProperty('--color-primary', isDark ? palette[400] : palette[500]);
-    style.setProperty('--color-primary-hover', isDark ? palette[500] : palette[600]);
+    const primary = isDark ? palette[400] : palette[500];
+    const primaryHover = isDark ? palette[500] : palette[600];
+
+    style.setProperty('--color-primary', primary);
+    style.setProperty('--color-primary-hover', primaryHover);
+    this.applyPrimeNgComponentVars(style, primary, primaryHover);
     updatePrimaryPalette({ ...palette });
+  }
+
+  private applyPrimeNgComponentVars(
+    style: CSSStyleDeclaration,
+    primary: string,
+    primaryHover: string,
+  ): void {
+    style.setProperty('--p-toggleswitch-checked-background', primary);
+    style.setProperty('--p-toggleswitch-checked-hover-background', primaryHover);
+    style.setProperty('--p-toggleswitch-checked-border-color', primary);
+    style.setProperty('--p-toggleswitch-checked-hover-border-color', primaryHover);
+    style.setProperty('--p-toggleswitch-focus-ring-color', 'var(--action-focus-ring)');
   }
 
   private readInitialTheme(): ThemeMode {

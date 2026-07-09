@@ -94,76 +94,81 @@
       </div>
     </div>
 
-    <div class="pos__search-wrap pos__search-wrap--barcode">
-      <i class="pi pi-barcode pos__search-icon" aria-hidden="true"></i>
-      <input
-        class="pos__search"
-        type="text"
-        autocomplete="off"
-        [placeholder]="'pos.barcode_scan' | translate"
-        (keyup.enter)="onBarcodeScan($event)"
-        aria-label="Barcode scanner input"
-      />
-    </div>
+    <section class="pos__search-panel" role="search" [attr.aria-label]="'pos.search' | translate">
+      <div class="pos__search-field pos__search-field--barcode">
+        <i class="pi pi-barcode pos__search-icon" aria-hidden="true"></i>
+        <input
+          class="pos__search"
+          type="text"
+          autocomplete="off"
+          [placeholder]="'pos.barcode_scan' | translate"
+          (keyup.enter)="onBarcodeScan($event)"
+          aria-label="Barcode scanner input"
+        />
+      </div>
 
-    <!-- Search bar -->
-    <div class="pos__search-wrap">
-      <i class="pi pi-search pos__search-icon" aria-hidden="true"></i>
-      <input
-        class="pos__search"
-        type="search"
-        [placeholder]="'pos.search' | translate"
-        [value]="searchQuery()"
-        (input)="onSearch($event)"
-        aria-label="Search drugs"
-      />
-    </div>
+      <div class="pos__search-field">
+        <i class="pi pi-search pos__search-icon" aria-hidden="true"></i>
+        <input
+          class="pos__search"
+          type="search"
+          [placeholder]="'pos.search' | translate"
+          [value]="searchQuery()"
+          (input)="onSearch($event)"
+          aria-label="Search drugs"
+        />
+      </div>
+    </section>
 
     <!-- Loading state -->
-    @if (isLoading()) {
-      <div class="pos__loading-state">
-        <span class="pos__spinner" aria-hidden="true"></span>
-        <span>{{ 'common.loading' | translate }}</span>
-      </div>
-    }
+    <section class="pos__results-panel" [attr.aria-busy]="isLoading()">
+      @if (isLoading()) {
+        <div class="pos__loading-state">
+          <span class="pos__spinner" aria-hidden="true"></span>
+          <span>{{ 'common.loading' | translate }}</span>
+        </div>
+      }
 
-    <!-- Drug grid -->
-    @if (!isLoading()) {
-      <div class="pos__grid">
-        @for (drug of filteredDrugs(); track drug.id) {
-          <button
-            class="pos__drug-card"
-            [class.pos__drug-card--out]="drug.status === 'out'"
-            [class.pos__drug-card--low]="drug.status === 'low'"
-            type="button"
-            (click)="addToCart(drug)"
-            [disabled]="drug.status === 'out'"
-            [attr.aria-label]="drug.tradeName"
-          >
-            <div class="pos__drug-icon">
-              <i class="pi pi-box" aria-hidden="true"></i>
+      <!-- Drug grid -->
+      @if (!isLoading()) {
+        <div class="pos__grid">
+          @for (drug of filteredDrugs(); track drug.id) {
+            <button
+              class="pos__drug-card"
+              [class.pos__drug-card--out]="drug.status === 'out'"
+              [class.pos__drug-card--low]="drug.status === 'low'"
+              type="button"
+              (click)="addToCart(drug)"
+              [disabled]="drug.status === 'out'"
+              [attr.aria-label]="drug.tradeName"
+            >
+              <div class="pos__drug-topline">
+                <div class="pos__drug-icon">
+                  <i class="pi pi-box" aria-hidden="true"></i>
+                </div>
+                @if (drug.status === 'out') {
+                  <span class="pos__drug-badge pos__drug-badge--out">{{ 'pos.drugGrid.outOfStock' | translate }}</span>
+                }
+                @if (drug.status === 'low') {
+                  <span class="pos__drug-badge pos__drug-badge--low">{{ 'pos.drugGrid.lowStock' | translate }}</span>
+                }
+              </div>
+              <span class="pos__drug-trade">{{ drug.tradeName }}</span>
+              <span class="pos__drug-generic">{{ drug.genericName }}</span>
+              <div class="pos__drug-footer">
+                <span class="pos__drug-balance">{{ drug.qty }} {{ 'pos.drugGrid.balance' | translate }}</span>
+                <span class="pos__drug-price">{{ drug.price }} EGP</span>
+              </div>
+            </button>
+          } @empty {
+            <div class="pos__empty">
+              <i class="pi pi-search" aria-hidden="true"></i>
+              {{ 'pos.drugGrid.empty' | translate }}
             </div>
-            @if (drug.status === 'out') {
-              <span class="pos__drug-badge pos__drug-badge--out">{{ 'pos.drugGrid.outOfStock' | translate }}</span>
-            }
-            @if (drug.status === 'low') {
-              <span class="pos__drug-badge pos__drug-badge--low">{{ 'pos.drugGrid.lowStock' | translate }}</span>
-            }
-            <span class="pos__drug-trade">{{ drug.tradeName }}</span>
-            <span class="pos__drug-generic">{{ drug.genericName }}</span>
-            <div class="pos__drug-footer">
-              <span class="pos__drug-balance">{{ drug.qty }} {{ 'pos.drugGrid.balance' | translate }}</span>
-              <span class="pos__drug-price">{{ drug.price }} EGP</span>
-            </div>
-          </button>
-        } @empty {
-          <div class="pos__empty">
-            <i class="pi pi-search" aria-hidden="true"></i>
-            {{ 'pos.drugGrid.empty' | translate }}
-          </div>
-        }
-      </div>
-    }
+          }
+        </div>
+      }
+    </section>
 
     <!-- Today's sales panel -->
     @if (todaysSales().length > 0) {
