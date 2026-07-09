@@ -123,9 +123,22 @@
     <!-- Loading state -->
     <section class="pos__results-panel" [attr.aria-busy]="isLoading()">
       @if (isLoading()) {
-        <div class="pos__loading-state">
-          <span class="pos__spinner" aria-hidden="true"></span>
-          <span>{{ 'common.loading' | translate }}</span>
+        <div class="pos__grid">
+          <span class="app-sr-only">{{ 'common.loading' | translate }}</span>
+          @for (card of [1, 2, 3, 4, 5, 6]; track card) {
+            <div class="pos__drug-card-skeleton" aria-hidden="true">
+              <div class="pos__drug-skeleton-top">
+                <span class="app-skeleton app-skeleton--icon"></span>
+                <span class="app-skeleton app-skeleton--pill"></span>
+              </div>
+              <span class="app-skeleton app-skeleton--title"></span>
+              <span class="app-skeleton app-skeleton--line"></span>
+              <div class="pos__drug-skeleton-footer">
+                <span class="app-skeleton app-skeleton--line"></span>
+                <span class="app-skeleton app-skeleton--line"></span>
+              </div>
+            </div>
+          }
         </div>
       }
 
@@ -289,11 +302,7 @@
         [disabled]="cartItems().length === 0 || isSubmitting()"
         (click)="checkout()"
       >
-        @if (isSubmitting()) {
-          <span class="pos__checkout-spinner" aria-hidden="true"></span>
-        } @else {
-          <i class="pi pi-check-circle" aria-hidden="true"></i>
-        }
+        <i class="pi pi-check-circle" aria-hidden="true"></i>
         {{ 'pos.cart.checkout' | translate }}
       </button>
     </div>

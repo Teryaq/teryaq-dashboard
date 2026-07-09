@@ -28,12 +28,34 @@
   </div>
 
   @if (isLoading()) {
-    <div class="dash__loading">
+    <div class="dash__loading" aria-busy="true">
+      <span class="app-sr-only">{{ 'common.loading' | translate }}</span>
       @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-        <div class="dash__skeleton-card" aria-hidden="true"></div>
+        <div class="app-card-skeleton dash__skeleton-card" aria-hidden="true">
+          <div class="app-card-skeleton__top">
+            <span class="app-skeleton app-skeleton--icon"></span>
+            <span class="app-skeleton app-skeleton--pill"></span>
+          </div>
+          <span class="app-skeleton app-skeleton--line"></span>
+          <span class="app-skeleton app-skeleton--title"></span>
+        </div>
       }
     </div>
-    <div class="dash__skeleton-panel" aria-hidden="true"></div>
+    <div class="dash__skeleton-layout" aria-hidden="true">
+      <div class="dash__skeleton-panel">
+        <span class="app-skeleton app-skeleton--title"></span>
+        <div class="app-skeleton dash__skeleton-chart"></div>
+      </div>
+      <div class="dash__skeleton-panel">
+        <span class="app-skeleton app-skeleton--title"></span>
+        @for (row of [1, 2, 3, 4]; track row) {
+          <div class="dash__skeleton-list-row">
+            <span class="app-skeleton app-skeleton--line"></span>
+            <span class="app-skeleton app-skeleton--pill"></span>
+          </div>
+        }
+      </div>
+    </div>
   }
 
   @if (error() && !isLoading()) {

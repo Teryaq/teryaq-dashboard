@@ -105,20 +105,6 @@
 .br__state-box--error { color: #dc2626; }
 .dark .br__state-box--error { color: #f87171; }
 
-.br__spinner {
-  display: block;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  border: 2px solid var(--surface-border);
-  border-top-color: var(--color-primary);
-  animation: br-spin 0.75s linear infinite;
-}
-
-@keyframes br-spin {
-  to { transform: rotate(360deg); }
-}
-
 /* Table card */
 .br__table-card {
   background: var(--surface-panel);
@@ -258,17 +244,6 @@
   border-color: #f59e0b;
   color: #f59e0b;
   background: rgba(245, 158, 11, 0.08);
-}
-
-.br__btn-spinner {
-  display: block;
-  width: 0.875rem;
-  height: 0.875rem;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  animation: br-spin 0.75s linear infinite;
-  opacity: 0.6;
 }
 
 /* Empty state */

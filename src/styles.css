@@ -444,10 +444,6 @@ html.dark .auth-layout {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@keyframes app-spin {
-  to { transform: rotate(360deg); }
-}
-
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -608,14 +604,103 @@ html.dark .auth-layout {
 .btn--primary:hover { background: var(--action-bg-hover); border-color: var(--action-bg-hover); }
 .btn--primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.btn-spinner {
-  display: block;
-  width: 0.875rem;
+/* =====================================================================
+   Shared skeleton states
+   ===================================================================== */
+.app-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.app-skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--surface-elevated) 78%, var(--surface-border));
+}
+
+.app-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--surface-panel) 54%, transparent),
+    transparent
+  );
+  animation: app-skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+.app-skeleton--line { height: 0.75rem; border-radius: 999px; }
+.app-skeleton--title { height: 1rem; border-radius: 999px; }
+.app-skeleton--pill { width: 4.5rem; height: 1.5rem; border-radius: 999px; }
+.app-skeleton--icon { width: 2.25rem; height: 2.25rem; border-radius: 0.625rem; }
+.app-skeleton--button { width: 7rem; height: 2.5rem; border-radius: 0.75rem; }
+
+.app-table-skeleton {
+  overflow: hidden;
+  border: 1px solid var(--surface-border);
+  border-radius: 0.75rem;
+  background: var(--surface-panel);
+}
+
+.app-table-skeleton__row {
+  display: grid;
+  grid-template-columns: repeat(var(--skeleton-cols, 6), minmax(4.5rem, 1fr));
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.app-table-skeleton__row:last-child { border-bottom: 0; }
+
+.app-table-skeleton__row--header {
+  background: var(--surface-elevated);
+}
+
+.app-table-skeleton__cell {
   height: 0.875rem;
-  border-radius: 50%;
-  border: 2px solid color-mix(in srgb, var(--action-text) 40%, transparent);
-  border-top-color: var(--action-text);
-  animation: app-spin 0.75s linear infinite;
+  border-radius: 999px;
+}
+
+.app-table-skeleton__cell--strong { height: 1rem; }
+.app-table-skeleton__cell--short { width: 62%; }
+
+.app-card-skeleton {
+  display: grid;
+  gap: 0.75rem;
+  min-height: 6.5rem;
+  padding: 1rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 0.75rem;
+  background: var(--surface-panel);
+}
+
+.app-card-skeleton__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@keyframes app-skeleton-shimmer {
+  to { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-skeleton::after {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 /* =====================================================================

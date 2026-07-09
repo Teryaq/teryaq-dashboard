@@ -47,9 +47,20 @@
 
   <!-- Loading state -->
   @if (isLoading()) {
-    <div class="cat__state-box">
-      <span class="cat__spinner" aria-hidden="true"></span>
-      <span>{{ 'common.loading' | translate }}</span>
+    <div class="app-table-skeleton" style="--skeleton-cols: 9" aria-busy="true">
+      <span class="app-sr-only">{{ 'common.loading' | translate }}</span>
+      <div class="app-table-skeleton__row app-table-skeleton__row--header" aria-hidden="true">
+        @for (cell of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track cell) {
+          <div class="app-skeleton app-table-skeleton__cell"></div>
+        }
+      </div>
+      @for (row of [1, 2, 3, 4, 5]; track row) {
+        <div class="app-table-skeleton__row" aria-hidden="true">
+          @for (cell of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track cell) {
+            <div class="app-skeleton app-table-skeleton__cell" [class.app-table-skeleton__cell--strong]="cell === 1" [class.app-table-skeleton__cell--short]="cell > 6"></div>
+          }
+        </div>
+      }
     </div>
   }
 
@@ -121,11 +132,7 @@
                       [disabled]="isDeleting()"
                       (click)="confirmDelete()"
                     >
-                      @if (isDeleting()) {
-                        <span class="cat__btn-spinner" aria-hidden="true"></span>
-                      } @else {
-                        <i class="pi pi-check" aria-hidden="true"></i>
-                      }
+                      <i class="pi pi-check" aria-hidden="true"></i>
                     </button>
                     <button
                       class="cat__action-btn"
@@ -252,7 +259,6 @@
         <div class="modal__footer">
           <button class="btn" type="button" (click)="closeCreate()">{{ 'form.cancel' | translate }}</button>
           <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            @if (isSubmitting()) { <span class="btn-spinner" aria-hidden="true"></span> }
             {{ 'form.create' | translate }}
           </button>
         </div>
@@ -349,7 +355,6 @@
         <div class="modal__footer">
           <button class="btn" type="button" (click)="closeEdit()">{{ 'form.cancel' | translate }}</button>
           <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            @if (isSubmitting()) { <span class="btn-spinner" aria-hidden="true"></span> }
             {{ 'form.save' | translate }}
           </button>
         </div>
