@@ -608,6 +608,71 @@ html.dark .auth-layout {
 .btn--primary:hover { background: var(--action-bg-hover); border-color: var(--action-bg-hover); }
 .btn--primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
+.btn:focus-visible,
+.btn--primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--action-focus-ring);
+}
+
+.btn--primary:focus-visible {
+  border-color: var(--action-bg);
+}
+
+.btn--danger {
+  background: var(--danger-text);
+  border-color: var(--danger-border);
+  color: #ffffff;
+}
+
+.btn--danger:hover {
+  background: var(--danger-border);
+  border-color: var(--danger-border);
+  color: #ffffff;
+}
+
+.btn--danger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger-border) 35%, transparent);
+}
+
+/* PrimeNG buttons — keep focus ring on brand color */
+p-button .p-button:focus-visible,
+.p-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--action-focus-ring);
+}
+
+.navbar__text-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--action-focus-ring);
+}
+
+/* Dashboard branch filter panel (appendTo="body") */
+.dash__branch-panel.p-select-overlay {
+  min-width: 11.5rem;
+}
+
+.dash__branch-panel .p-select-option {
+  justify-content: center;
+  text-align: center;
+}
+
+.dash__branch-panel .p-select-option:not(.p-disabled).p-focus,
+.dash__branch-panel .p-select-option:not(.p-disabled):hover {
+  background: color-mix(in srgb, var(--color-primary) 14%, var(--surface-panel)) !important;
+  color: var(--color-primary) !important;
+}
+
+.dash__branch-panel .p-select-option.p-select-option-selected {
+  background: color-mix(in srgb, var(--color-primary) 20%, var(--surface-panel)) !important;
+  color: var(--color-primary) !important;
+}
+
+.dash__branch-panel .p-select-option-label {
+  width: 100%;
+  text-align: center;
+}
+
 .btn-spinner {
   display: block;
   width: 0.875rem;

@@ -6,19 +6,22 @@
     </div>
     <div class="dash__header-actions">
       @if (isOwner() && branches().length > 0) {
-        <label class="dash__branch-filter">
-          <span class="dash__branch-label">{{ 'dashboard.branchFilter' | translate }}</span>
-          <select
-            class="dash__branch-select"
-            [value]="selectedBranchId()"
-            (change)="onBranchChange($event)"
-          >
-            <option value="">{{ 'dashboard.allBranches' | translate }}</option>
-            @for (branch of branches(); track branch.id) {
-              <option [value]="branch.id">{{ branch.name }}</option>
-            }
-          </select>
-        </label>
+        <div class="dash__branch-filter">
+          <label class="dash__branch-label" for="dash-branch-select">
+            {{ 'dashboard.branchFilter' | translate }}
+          </label>
+          <p-select
+            inputId="dash-branch-select"
+            [options]="branchOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [ngModel]="selectedBranchId()"
+            (ngModelChange)="onBranchSelectChange($event)"
+            appendTo="body"
+            styleClass="dash__branch-select"
+            panelStyleClass="dash__branch-panel"
+          />
+        </div>
       }
       <a class="btn btn--primary" routerLink="/pos">
         <i class="pi pi-plus" aria-hidden="true"></i>

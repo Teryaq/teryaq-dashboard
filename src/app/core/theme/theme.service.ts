@@ -98,6 +98,14 @@ export class ThemeService {
     style.setProperty('--p-toggleswitch-checked-border-color', primary);
     style.setProperty('--p-toggleswitch-checked-hover-border-color', primaryHover);
     style.setProperty('--p-toggleswitch-focus-ring-color', 'var(--action-focus-ring)');
+
+    style.setProperty('--p-focus-ring-color', 'var(--color-primary)');
+    style.setProperty('--p-focus-ring-shadow', '0 0 0 3px var(--action-focus-ring)');
+    style.setProperty('--p-inputtext-focus-border-color', 'var(--color-primary)');
+    style.setProperty('--p-password-focus-border-color', 'var(--color-primary)');
+    style.setProperty('--p-button-primary-focus-ring-color', 'var(--action-focus-ring)');
+    style.setProperty('--p-button-secondary-focus-ring-color', 'var(--action-focus-ring)');
+    style.setProperty('--p-button-text-focus-ring-color', 'var(--action-focus-ring)');
   }
 
   private readInitialTheme(): ThemeMode {

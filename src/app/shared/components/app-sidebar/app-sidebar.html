@@ -44,7 +44,7 @@
         class="app-sidebar__link app-sidebar__logout"
         [pTooltip]="sidebarState.collapsed() ? ('nav.logout' | translate) : undefined"
         [tooltipPosition]="i18n.direction() === 'rtl' ? 'left' : 'right'"
-        (click)="logout()"
+        (click)="requestLogout()"
       >
         <i class="pi pi-sign-out" aria-hidden="true"></i>
         <span class="app-sidebar__link-label">{{ 'nav.logout' | translate }}</span>
@@ -95,10 +95,45 @@
         </div>
       }
 
-      <button type="button" class="app-sidebar__link app-sidebar__logout" (click)="logout()">
+      <button type="button" class="app-sidebar__link app-sidebar__logout" (click)="requestLogout()">
         <i class="pi pi-sign-out" aria-hidden="true"></i>
         <span class="app-sidebar__link-label">{{ 'nav.logout' | translate }}</span>
       </button>
     </div>
   </div>
 </p-drawer>
+
+@if (showLogoutConfirm()) {
+  <div
+    class="modal-backdrop"
+    (click)="cancelLogout()"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="'nav.logoutConfirmTitle' | translate"
+  >
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title">{{ 'nav.logoutConfirmTitle' | translate }}</h2>
+        <button
+          class="modal__close"
+          type="button"
+          (click)="cancelLogout()"
+          [attr.aria-label]="'form.close' | translate"
+        >
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="modal__body">
+        <p class="app-sidebar__logout-message">{{ 'nav.logoutConfirmMessage' | translate }}</p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn" type="button" (click)="cancelLogout()">
+          {{ 'form.cancel' | translate }}
+        </button>
+        <button class="btn btn--danger" type="button" (click)="confirmLogout()">
+          {{ 'nav.logoutConfirmAction' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

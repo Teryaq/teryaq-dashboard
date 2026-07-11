@@ -11,7 +11,9 @@ import { DOCUMENT, DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
 import { ChartData, ChartOptions, TooltipItem } from 'chart.js';
+import { FormsModule } from '@angular/forms';
 import { ChartModule } from 'primeng/chart';
+import { Select } from 'primeng/select';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { I18nService } from '../../../core/i18n/i18n.service';
@@ -50,9 +52,14 @@ interface DashboardChartTheme {
 
 const FONT_FAMILY = 'Cairo, system-ui, -apple-system, sans-serif';
 
+interface BranchFilterOption {
+  label: string;
+  value: string;
+}
+
 @Component({
   selector: 'app-dashboard-page',
-  imports: [TranslatePipe, DecimalPipe, DatePipe, RouterLink, ChartModule],
+  imports: [TranslatePipe, DecimalPipe, DatePipe, RouterLink, ChartModule, FormsModule, Select],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.css',
@@ -80,6 +87,14 @@ export class DashboardPage {
 
   protected readonly isOwner = this.authService.isOwner;
   protected readonly isArabic = computed(() => this.i18n.locale() === 'ar');
+
+  protected readonly branchOptions = computed<BranchFilterOption[]>(() => {
+    this.i18n.locale();
+    return [
+      { label: this.i18n.translate('dashboard.allBranches'), value: '' },
+      ...this.branches().map(branch => ({ label: branch.name, value: branch.id })),
+    ];
+  });
 
   protected readonly weeklySalesAnalysis = computed(() =>
     buildWeeklySalesAnalysis(this.weeklySales(), date => this.formatChartDay(date)),
@@ -370,10 +385,10 @@ export class DashboardPage {
 
   private loadSeq = 0;
 
-  protected onBranchChange(event: Event): void {
-    const branchId = (event.target as HTMLSelectElement).value;
-    this.selectedBranchId.set(branchId);
-    this.loadDashboard(branchId || undefined);
+  protected onBranchSelectChange(branchId: string | null): void {
+    const id = branchId ?? '';
+    this.selectedBranchId.set(id);
+    this.loadDashboard(id || undefined);
   }
 
   protected formatChartDay(dateStr: string): string {

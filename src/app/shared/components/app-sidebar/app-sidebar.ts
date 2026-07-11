@@ -4,6 +4,7 @@ import {
   DestroyRef,
   computed,
   inject,
+  signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -65,6 +66,8 @@ export class AppSidebar {
     this.i18n.direction() === 'rtl' ? 'right' : 'left',
   );
 
+  protected readonly showLogoutConfirm = signal(false);
+
   constructor() {
     this.router.events
       .pipe(
@@ -74,7 +77,17 @@ export class AppSidebar {
       .subscribe(() => this.sidebarState.closeMobileOnNavigate());
   }
 
-  protected logout(): void {
+  protected requestLogout(): void {
+    this.showLogoutConfirm.set(true);
+  }
+
+  protected cancelLogout(): void {
+    this.showLogoutConfirm.set(false);
+  }
+
+  protected confirmLogout(): void {
+    this.showLogoutConfirm.set(false);
+    this.sidebarState.closeMobile();
     this.authService.logout();
   }
 
