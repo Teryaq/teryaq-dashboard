@@ -104,7 +104,8 @@ export class AuthService {
       expiresAt: response.expiresAt,
       tenantId: response.tenantId,
       branchId: response.branchId,
-      role: response.role,
+      role: response.user.role,
+      user: response.user,
     };
     this.sessionState.set(session);
     this.tokenStorage.save(session);

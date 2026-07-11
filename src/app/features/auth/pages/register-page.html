@@ -26,8 +26,14 @@
       }
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="reg-progress" role="progressbar" [attr.aria-valuenow]="step()" aria-valuemin="1" aria-valuemax="2">
+          <span [class.reg-progress__step--active]="step() >= 1">1</span>
+          <i></i>
+          <span [class.reg-progress__step--active]="step() >= 2">2</span>
+        </div>
 
         <!-- Section: Pharmacy & Branch -->
+        @if (step() === 1) {
         <p class="reg-section-label">{{ 'auth.register.pharmacySection' | translate }}</p>
         <div class="reg-grid">
           <div class="field-group">
@@ -64,8 +70,8 @@
             </p-floatlabel>
           </div>
         </div>
-
-        <p-divider />
+        <button class="reg-step-btn" type="button" (click)="nextStep()">{{ 'common.next' | translate }} <i class="pi pi-arrow-right" aria-hidden="true"></i></button>
+        } @else {
 
         <!-- Section: Owner Account -->
         <p class="reg-section-label">{{ 'auth.register.ownerSection' | translate }}</p>
@@ -122,12 +128,11 @@
           </div>
         </div>
 
-        <p-button
-          type="submit"
-          [label]="'auth.register.submit' | translate"
-          [disabled]="authServiceRef.isLoading()"
-          styleClass="w-full reg-submit-btn"
-        />
+        <div class="reg-step-actions">
+          <button class="reg-step-btn reg-step-btn--secondary" type="button" (click)="previousStep()">{{ 'common.previous' | translate }}</button>
+          <p-button type="submit" [label]="'auth.register.submit' | translate" [loading]="authServiceRef.isLoading()" styleClass="w-full reg-submit-btn" />
+        </div>
+        }
       </form>
 
       <p class="reg-page__footer">

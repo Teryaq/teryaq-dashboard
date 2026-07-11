@@ -115,6 +115,14 @@
                       <i class="pi pi-ban" aria-hidden="true"></i>
                     </button>
                   }
+                  @if (!branch.isMain) {
+                    @if (deleteConfirmId() === branch.id) {
+                      <button class="br__action-btn" type="button" [title]="'form.cancel' | translate" (click)="cancelDelete()"><i class="pi pi-times" aria-hidden="true"></i></button>
+                      <button class="br__action-btn br__action-btn--warn" type="button" [title]="'branches.deleteConfirm' | translate" [disabled]="isSubmitting()" (click)="deleteBranch(branch.id)"><i class="pi pi-check" aria-hidden="true"></i></button>
+                    } @else {
+                      <button class="br__action-btn br__action-btn--warn" type="button" [title]="'form.delete' | translate" (click)="requestDelete(branch.id)"><i class="pi pi-trash" aria-hidden="true"></i></button>
+                    }
+                  }
                 </div>
               </td>
             </tr>

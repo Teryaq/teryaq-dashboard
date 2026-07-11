@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
-import { catchError, finalize, of } from 'rxjs';
+import { Subject, catchError, debounceTime, finalize, of, switchMap } from 'rxjs';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { AuthService } from '../../../core/auth/services/auth.service';
@@ -16,9 +16,12 @@ import { NotificationService } from '../../../core/notifications/notification.se
 import { InventoryApiService } from '../../inventory/services/inventory-api.service';
 import { StockBatch } from '../../inventory/models/inventory.model';
 import { BranchesApiService } from '../../branches/services/branches-api.service';
+import { Branch } from '../../branches/models/branches.model';
 import { CatalogApiService } from '../../catalog/services/catalog-api.service';
 import { PosApiService } from '../services/pos-api.service';
 import { SaleDto, TodaySaleSummaryDto } from '../models/sale.model';
+import { CustomersApiService } from '../../customers/services/customers-api.service';
+import { Customer } from '../../customers/models/customer.model';
 
 /** A drug row aggregated from one or more stock batches for the same drug. */
 interface DrugRow {
@@ -50,6 +53,7 @@ export class PosPage {
   private readonly branchesApi = inject(BranchesApiService);
   private readonly catalogApi = inject(CatalogApiService);
   private readonly posApi = inject(PosApiService);
+  private readonly customersApi = inject(CustomersApiService);
   private readonly authService = inject(AuthService);
   private readonly notifications = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
@@ -62,9 +66,15 @@ export class PosPage {
   protected readonly discount = signal(0);
   protected readonly cartItems = signal<CartItem[]>([]);
   protected readonly todaysSales = signal<TodaySaleSummaryDto[]>([]);
+  protected readonly branchMissing = signal(false);
+  protected readonly ownerBranches = signal<Branch[]>([]);
+  protected readonly isOwner = this.authService.isOwner;
+  protected readonly customerResults = signal<Customer[]>([]);
+  protected readonly selectedCustomer = signal<Customer | null>(null);
+  private readonly customerSearch = new Subject<string>();
 
   /** Resolved branch for this session — from JWT claim or first active branch. */
-  private readonly activeBranchId = signal<string | null>(
+  protected readonly activeBranchId = signal<string | null>(
     this.authService.session()?.branchId ?? null,
   );
 
@@ -98,6 +108,8 @@ export class PosPage {
 
   /** Cashier display name decoded from the JWT `name` claim. */
   protected readonly cashierName = computed<string>(() => {
+    const userName = this.authService.session()?.user?.name;
+    if (userName) return userName;
     const token = this.authService.session()?.accessToken;
     if (!token) return '—';
     try {
@@ -115,25 +127,39 @@ export class PosPage {
   });
 
   constructor() {
-    // If branchId is not in the JWT (e.g. Pharmacist with no branch assigned),
-    // fall back to the first active branch returned by the API.
+    this.customerSearch
+      .pipe(
+        debounceTime(250),
+        switchMap(search =>
+          this.customersApi
+            .getAll({ search: search || undefined, pageSize: 8 })
+            .pipe(catchError(() => of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 8 }))),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(result => this.customerResults.set(result.items));
+
     if (!this.activeBranchId()) {
-      this.branchesApi
-        .getAll()
-        .pipe(
-          catchError(() => of([])),
-          takeUntilDestroyed(this.destroyRef),
-        )
-        .subscribe(branches => {
-          const first = branches.find(b => b.isActive);
-          if (first) {
+      if (this.authService.isOwner()) {
+        this.branchesApi
+          .getAll()
+          .pipe(catchError(() => of([])), takeUntilDestroyed(this.destroyRef))
+          .subscribe(branches => {
+            this.ownerBranches.set(branches.filter(branch => branch.isActive));
+            const first = branches.find(branch => branch.isActive);
+            if (!first) {
+              this.branchMissing.set(true);
+              this.isLoading.set(false);
+              return;
+            }
             this.activeBranchId.set(first.id);
             this.loadInventory();
             this.loadTodaysSales();
-          } else {
-            this.isLoading.set(false);
-          }
-        });
+          });
+      } else {
+        this.branchMissing.set(true);
+        this.isLoading.set(false);
+      }
     } else {
       this.loadInventory();
       this.loadTodaysSales();
@@ -145,16 +171,16 @@ export class PosPage {
   private loadInventory(): void {
     const branchId = this.activeBranchId() ?? undefined;
     this.inventoryApi
-      .getAll({ branchId, pageSize: 500 })
+      .getAllPages({ branchId })
       .pipe(
         catchError(() => {
           this.isLoading.set(false);
-          return of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 500 });
+          return of([] as StockBatch[]);
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(result => {
-        this.allDrugRows.set(this.aggregateBatches(result.items));
+      .subscribe(items => {
+        this.allDrugRows.set(this.aggregateBatches(items));
         this.isLoading.set(false);
       });
   }
@@ -253,6 +279,27 @@ export class PosPage {
     this.discount.set(val);
   }
 
+  protected onBranchChange(event: Event): void {
+    const branchId = (event.target as HTMLSelectElement).value;
+    if (!branchId || branchId === this.activeBranchId()) return;
+    this.activeBranchId.set(branchId);
+    this.clearCart();
+    this.isLoading.set(true);
+    this.loadInventory();
+    this.loadTodaysSales();
+  }
+
+  protected onCustomerSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement).value.trim();
+    if (!value) this.selectedCustomer.set(null);
+    this.customerSearch.next(value);
+  }
+
+  protected selectCustomer(customer: Customer): void {
+    this.selectedCustomer.set(customer);
+    this.customerResults.set([]);
+  }
+
   protected addToCart(drug: DrugRow): void {
     if (drug.status === 'out') return;
     this.cartItems.update(items => {
@@ -308,7 +355,7 @@ export class PosPage {
         items: items.map(i => ({ drugId: i.drug.id, quantity: i.quantity })),
         discount: this.discount(),
         paymentMethod: 'Cash',
-        customerId: null,
+        customerId: this.selectedCustomer()?.id ?? null,
       })
       .pipe(
         finalize(() => this.isSubmitting.set(false)),
@@ -319,6 +366,7 @@ export class PosPage {
           this.lastSale.set(sale);
           this.showReceiptModal.set(true);
           this.clearCart();
+          this.selectedCustomer.set(null);
           // Refresh today's sales and reload inventory (stock has changed)
           this.loadTodaysSales();
           this.isLoading.set(true);
@@ -346,6 +394,16 @@ export class PosPage {
       month: 'long',
       day: 'numeric',
     });
+  }
+
+  protected viewSale(id: string): void {
+    this.posApi
+      .getSaleById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(sale => {
+        this.lastSale.set(sale);
+        this.showReceiptModal.set(true);
+      });
   }
 
   protected closeReceipt(): void {

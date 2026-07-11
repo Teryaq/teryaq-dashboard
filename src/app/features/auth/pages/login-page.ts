@@ -88,6 +88,9 @@ export class LoginPage {
     if (control.errors['email']) {
       return 'auth.validation.email';
     }
+    if (control.errors['server']) {
+      return control.errors['server'] as string;
+    }
 
     return null;
   }

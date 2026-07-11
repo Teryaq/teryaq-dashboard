@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/auth/guards/auth.guard';
 import { guestGuard } from './core/auth/guards/guest.guard';
+import { ownerGuard } from './core/auth/guards/owner.guard';
 
 export const routes: Routes = [
   {
@@ -49,11 +50,13 @@ export const routes: Routes = [
       },
       {
         path: 'branches',
+        canActivate: [ownerGuard],
         loadChildren: () =>
           import('./features/branches/branches.routes').then((m) => m.BRANCHES_ROUTES),
       },
       {
         path: 'users',
+        canActivate: [ownerGuard],
         loadChildren: () =>
           import('./features/users/users.routes').then((m) => m.USERS_ROUTES),
       },
@@ -61,6 +64,13 @@ export const routes: Routes = [
         path: 'alerts',
         loadChildren: () =>
           import('./features/alerts/alerts.routes').then((m) => m.ALERTS_ROUTES),
+      },
+      {
+        path: 'customers',
+        loadChildren: () =>
+          import('./features/customers/customers.routes').then(
+            module => module.CUSTOMERS_ROUTES,
+          ),
       },
     ],
   },

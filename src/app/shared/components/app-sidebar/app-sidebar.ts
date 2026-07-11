@@ -21,6 +21,7 @@ interface SidebarNavItem {
   route: string;
   labelKey: string;
   icon: string;
+  ownerOnly?: boolean;
 }
 
 @Component({
@@ -50,10 +51,15 @@ export class AppSidebar {
     { route: '/inventory', labelKey: 'nav.inventory', icon: 'pi pi-box' },
     { route: '/catalog', labelKey: 'nav.catalog', icon: 'pi pi-database' },
     { route: '/pos', labelKey: 'nav.pos', icon: 'pi pi-shopping-cart' },
-    { route: '/branches', labelKey: 'nav.branches', icon: 'pi pi-building' },
-    { route: '/users', labelKey: 'nav.users', icon: 'pi pi-users' },
+    { route: '/customers', labelKey: 'nav.customers', icon: 'pi pi-address-book' },
+    { route: '/branches', labelKey: 'nav.branches', icon: 'pi pi-building', ownerOnly: true },
+    { route: '/users', labelKey: 'nav.users', icon: 'pi pi-users', ownerOnly: true },
     { route: '/alerts', labelKey: 'nav.alerts', icon: 'pi pi-bell' },
   ];
+
+  protected readonly visibleNavItems = computed(() =>
+    this.navItems.filter(item => !item.ownerOnly || this.authService.isOwner()),
+  );
 
   protected readonly drawerPosition = computed(() =>
     this.i18n.direction() === 'rtl' ? 'right' : 'left',

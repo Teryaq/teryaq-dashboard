@@ -12,13 +12,24 @@ export interface RegisterRequest {
   ownerPassword: string;
 }
 
+export type AuthRole = 'Owner' | 'Pharmacist';
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  role: AuthRole;
+  tenantId: string;
+  branchId: string | null;
+}
+
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
   expiresAt: string;
+  user: AuthUser;
   tenantId: string;
   branchId: string | null;
-  role: string;
 }
 
 export interface AuthSession {
@@ -27,7 +38,8 @@ export interface AuthSession {
   expiresAt: string;
   tenantId: string;
   branchId: string | null;
-  role: string;
+  role: AuthRole;
+  user: AuthUser;
 }
 
 export interface RefreshTokenRequest {

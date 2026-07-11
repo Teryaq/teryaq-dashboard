@@ -11,11 +11,11 @@
           <i class="pi pi-upload" aria-hidden="true"></i>
           {{ 'catalog.import.import_from_catalog' | translate }}
         </a>
+        <button class="cat__add-btn" type="button" (click)="openCreate()">
+          <i class="pi pi-plus" aria-hidden="true"></i>
+          {{ 'catalog.action.add' | translate }}
+        </button>
       }
-      <button class="cat__add-btn" type="button" (click)="openCreate()">
-        <i class="pi pi-plus" aria-hidden="true"></i>
-        {{ 'catalog.action.add' | translate }}
-      </button>
     </div>
   </div>
 
@@ -115,6 +115,7 @@
                 </span>
               </td>
               <td>
+                @if (isOwner()) {
                 <div class="cat__actions">
                   <button
                     class="cat__action-btn"
@@ -153,6 +154,7 @@
                     </button>
                   }
                 </div>
+                }
               </td>
             </tr>
           } @empty {
@@ -166,6 +168,11 @@
         </tbody>
       </table>
     </div>
+    <nav class="data-pagination" [attr.aria-label]="'common.pagination' | translate">
+      <button type="button" (click)="previousPage()" [disabled]="pageNumber() === 1">{{ 'common.previous' | translate }}</button>
+      <span>{{ 'common.page' | translate }} {{ pageNumber() }}</span>
+      <button type="button" (click)="nextPage()" [disabled]="pageNumber() * pageSize >= totalCount()">{{ 'common.next' | translate }}</button>
+    </nav>
   }
 </div>
 
