@@ -172,20 +172,6 @@
 .cat__state-box--error { color: #dc2626; }
 .dark .cat__state-box--error { color: #f87171; }
 
-.cat__spinner {
-  display: block;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  border: 2px solid var(--surface-border);
-  border-top-color: var(--color-primary);
-  animation: cat-spin 0.75s linear infinite;
-}
-
-@keyframes cat-spin {
-  to { transform: rotate(360deg); }
-}
-
 /* Table card */
 .cat__table-card {
   background: var(--surface-panel);
@@ -361,15 +347,3 @@
 }
 
 .cat__action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-
-.cat__btn-spinner {
-  display: block;
-  width: 0.875rem;
-  height: 0.875rem;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  animation: cat-spin 0.75s linear infinite;
-  opacity: 0.7;
-}

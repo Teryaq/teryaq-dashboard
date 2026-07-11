@@ -67,7 +67,7 @@
         <p-button
           type="submit"
           [label]="'auth.login.submit' | translate"
-          [loading]="authServiceRef.isLoading()"
+          [disabled]="authServiceRef.isLoading()"
           styleClass="w-full"
         />
       </form>

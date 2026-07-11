@@ -44,9 +44,20 @@
 
   <!-- Loading state -->
   @if (isLoading()) {
-    <div class="inv__state-box">
-      <span class="inv__spinner" aria-hidden="true"></span>
-      <span>{{ 'common.loading' | translate }}</span>
+    <div class="app-table-skeleton" style="--skeleton-cols: 9" aria-busy="true">
+      <span class="app-sr-only">{{ 'common.loading' | translate }}</span>
+      <div class="app-table-skeleton__row app-table-skeleton__row--header" aria-hidden="true">
+        @for (cell of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track cell) {
+          <div class="app-skeleton app-table-skeleton__cell"></div>
+        }
+      </div>
+      @for (row of [1, 2, 3, 4, 5]; track row) {
+        <div class="app-table-skeleton__row" aria-hidden="true">
+          @for (cell of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track cell) {
+            <div class="app-skeleton app-table-skeleton__cell" [class.app-table-skeleton__cell--strong]="cell === 1" [class.app-table-skeleton__cell--short]="cell > 7"></div>
+          }
+        </div>
+      }
     </div>
   }
 
@@ -180,7 +191,7 @@
                 autocomplete="off"
               />
               @if (isDrugSearching()) {
-                <span class="drug-search-spinner" aria-hidden="true"></span>
+                <span class="app-skeleton app-skeleton--icon drug-search-skeleton" aria-hidden="true"></span>
               }
               @if (drugResults().length > 0) {
                 <ul class="drug-dropdown" role="listbox">
@@ -244,7 +255,6 @@
         <div class="modal__footer">
           <button class="btn" type="button" (click)="closeReceive()">{{ 'form.cancel' | translate }}</button>
           <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            @if (isSubmitting()) { <span class="btn-spinner" aria-hidden="true"></span> }
             {{ 'inventory.form.submitReceive' | translate }}
           </button>
         </div>
@@ -297,7 +307,6 @@
         <div class="modal__footer">
           <button class="btn" type="button" (click)="closeAdjust()">{{ 'form.cancel' | translate }}</button>
           <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            @if (isSubmitting()) { <span class="btn-spinner" aria-hidden="true"></span> }
             {{ 'inventory.form.submitAdjust' | translate }}
           </button>
         </div>
