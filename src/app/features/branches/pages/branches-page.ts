@@ -29,6 +29,7 @@ export class BranchesPage {
   protected readonly error = signal<string | null>(null);
   protected readonly searchQuery = signal('');
   protected readonly deactivatingId = signal<string | null>(null);
+  protected readonly deleteConfirmId = signal<string | null>(null);
 
   protected readonly isCreateOpen = signal(false);
   protected readonly isEditOpen = signal(false);
@@ -154,6 +155,26 @@ export class BranchesPage {
         },
         error: () => this.deactivatingId.set(null),
       });
+  }
+
+  protected requestDelete(id: string): void {
+    this.deleteConfirmId.set(id);
+  }
+
+  protected cancelDelete(): void {
+    this.deleteConfirmId.set(null);
+  }
+
+  protected deleteBranch(id: string): void {
+    this.isSubmitting.set(true);
+    this.api.delete(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.allBranches.update(branches => branches.filter(branch => branch.id !== id));
+        this.deleteConfirmId.set(null);
+        this.isSubmitting.set(false);
+      },
+      error: () => this.isSubmitting.set(false),
+    });
   }
 
   protected createFieldError(field: string): string | null {

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable, expand, reduce } from 'rxjs';
 
 import { ApiService } from '../../../core/api/api.service';
 import { PaginatedList } from '../../../shared/models/paginated-list.model';
@@ -18,6 +18,20 @@ export class InventoryApiService {
     return this.api.get<PaginatedList<StockBatch>>('inventory', {
       params: this.toParams(params),
     });
+  }
+
+  getAllPages(
+    params?: Omit<InventorySearchParams, 'pageNumber' | 'pageSize'>,
+  ): Observable<StockBatch[]> {
+    const pageSize = 100;
+    return this.getAll({ ...params, pageNumber: 1, pageSize }).pipe(
+      expand(page =>
+        page.pageNumber * page.pageSize < page.totalCount
+          ? this.getAll({ ...params, pageNumber: page.pageNumber + 1, pageSize })
+          : EMPTY,
+      ),
+      reduce((items, page) => [...items, ...page.items], [] as StockBatch[]),
+    );
   }
 
   getById(id: string): Observable<StockBatch> {

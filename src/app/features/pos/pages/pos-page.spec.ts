@@ -9,6 +9,7 @@ import { CatalogApiService } from '../../catalog/services/catalog-api.service';
 import { InventoryApiService } from '../../inventory/services/inventory-api.service';
 import { PosApiService } from '../services/pos-api.service';
 import { PosPage } from './pos-page';
+import { CustomersApiService } from '../../customers/services/customers-api.service';
 
 describe('PosPage', () => {
   let fixture: ComponentFixture<PosPage>;
@@ -21,6 +22,9 @@ describe('PosPage', () => {
       tenantId: 'tenant-1',
       branchId: 'branch-1',
       role: 'Pharmacist',
+      user: {
+        id: 'user-1', email: 'pharmacist@example.com', name: 'Pharmacist', role: 'Pharmacist', tenantId: 'tenant-1', branchId: 'branch-1',
+      },
     });
 
     await TestBed.configureTestingModule({
@@ -30,18 +34,19 @@ describe('PosPage', () => {
           provide: AuthService,
           useValue: {
             session: session.asReadonly(),
+            isOwner: () => false,
           },
         },
         {
           provide: InventoryApiService,
           useValue: {
-            getAll: () =>
-              of({
-                items: [],
-                totalCount: 0,
-                pageNumber: 1,
-                pageSize: 500,
-              }),
+            getAllPages: () => of([]),
+          },
+        },
+        {
+          provide: CustomersApiService,
+          useValue: {
+            getAll: () => of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 8 }),
           },
         },
         {

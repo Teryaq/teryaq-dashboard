@@ -109,14 +109,12 @@
                   >
                     <i class="pi pi-sliders-h" aria-hidden="true"></i>
                   </button>
-                  <button
-                    class="inv__action-btn"
-                    type="button"
-                    [title]="'form.edit' | translate"
-                    (click)="openAdjust(batch)"
-                  >
-                    <i class="pi pi-pencil" aria-hidden="true"></i>
-                  </button>
+                  @if (confirmWriteOffId() === batch.id) {
+                    <button class="inv__action-btn" type="button" [title]="'form.cancel' | translate" (click)="cancelWriteOff()"><i class="pi pi-times" aria-hidden="true"></i></button>
+                    <button class="inv__action-btn" type="button" [title]="'inventory.writeOffConfirm' | translate" [disabled]="isSubmitting()" (click)="confirmWriteOff(batch.id)"><i class="pi pi-check" aria-hidden="true"></i></button>
+                  } @else {
+                    <button class="inv__action-btn" type="button" [title]="'inventory.writeOff' | translate" (click)="requestWriteOff(batch.id)"><i class="pi pi-trash" aria-hidden="true"></i></button>
+                  }
                 </div>
               </td>
             </tr>
@@ -131,6 +129,11 @@
         </tbody>
       </table>
     </div>
+    <nav class="data-pagination" [attr.aria-label]="'common.pagination' | translate">
+      <button type="button" (click)="previousPage()" [disabled]="pageNumber() === 1">{{ 'common.previous' | translate }}</button>
+      <span>{{ 'common.page' | translate }} {{ pageNumber() }}</span>
+      <button type="button" (click)="nextPage()" [disabled]="pageNumber() * pageSize >= totalCount()">{{ 'common.next' | translate }}</button>
+    </nav>
   }
 </div>
 
@@ -263,6 +266,8 @@
       <div class="modal__drug-info">
         <span class="modal__drug-name">{{ selectedBatch()!.drugTradeNameEn }}</span>
         <span class="modal__batch-no">{{ selectedBatch()!.batchNumber }}</span>
+        <span class="modal__batch-no">{{ 'inventory.receivedQuantity' | translate }}: {{ selectedBatch()!.quantityReceived }}</span>
+        <span class="modal__batch-no">{{ 'inventory.receivedAt' | translate }}: {{ formatDate(selectedBatch()!.receivedAt) }}</span>
       </div>
       <form [formGroup]="adjustForm" (ngSubmit)="onAdjustSubmit()">
         <div class="modal__body">

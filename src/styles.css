@@ -934,3 +934,12 @@ html.dark .auth-layout {
   .receipt__actions { display: none; }
 }
 
+.pos__customer-picker { position: relative; display: grid; gap: .45rem; }
+.pos__customer-picker .pos__discount-input { width: 100%; }
+.pos__customer-results { position: absolute; inset-inline: 0; inset-block-end: calc(100% + .25rem); z-index: 5; max-height: 12rem; overflow-y: auto; border: 1px solid var(--surface-border); border-radius: .75rem; background: var(--surface-panel); box-shadow: 0 12px 30px rgb(0 0 0 / .2); }
+.pos__customer-results button { display: flex; justify-content: space-between; gap: .75rem; width: 100%; padding: .7rem .8rem; border: 0; border-bottom: 1px solid var(--surface-border); background: transparent; color: var(--text-color); text-align: start; cursor: pointer; }
+.pos__customer-results button:hover, .pos__customer-results button:focus-visible { background: color-mix(in srgb, var(--color-primary) 10%, transparent); }
+.pos__customer-results small { color: var(--text-muted); }
+.data-pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1rem; }
+.data-pagination button { padding: .55rem .9rem; border: 1px solid var(--surface-border); border-radius: .5rem; background: var(--surface-panel); color: var(--text-color); cursor: pointer; }
+.data-pagination button:disabled { opacity: .45; cursor: not-allowed; }

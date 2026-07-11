@@ -17,6 +17,7 @@ import { CatalogApiService } from '../../catalog/services/catalog-api.service';
 import { Drug } from '../../catalog/models/catalog.model';
 import { BranchesApiService } from '../../branches/services/branches-api.service';
 import { Branch } from '../../branches/models/branches.model';
+import { AuthService } from '../../../core/auth/services/auth.service';
 
 type BatchStatus = 'ok' | 'nearExpiry' | 'expired';
 type ActiveFilter = 'all' | BatchStatus;
@@ -36,6 +37,7 @@ export class InventoryPage {
   private readonly api = inject(InventoryApiService);
   private readonly catalogApi = inject(CatalogApiService);
   private readonly branchesApi = inject(BranchesApiService);
+  private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
 
@@ -43,11 +45,15 @@ export class InventoryPage {
   protected readonly error = signal<string | null>(null);
   protected readonly searchQuery = signal('');
   protected readonly activeFilter = signal<ActiveFilter>('all');
+  protected readonly pageNumber = signal(1);
+  protected readonly totalCount = signal(0);
+  protected readonly pageSize = 20;
 
   protected readonly isReceiveOpen = signal(false);
   protected readonly isAdjustOpen = signal(false);
   protected readonly selectedBatch = signal<BatchRow | null>(null);
   protected readonly isSubmitting = signal(false);
+  protected readonly confirmWriteOffId = signal<string | null>(null);
 
   protected readonly branches = signal<Branch[]>([]);
   protected readonly drugResults = signal<Drug[]>([]);
@@ -55,6 +61,7 @@ export class InventoryPage {
   protected readonly drugDisplayValue = signal('');
 
   private readonly drugSearch$ = new Subject<string>();
+  private readonly batchSearch$ = new Subject<string>();
   private readonly allBatches = signal<BatchRow[]>([]);
 
   protected readonly filteredBatches = computed(() => {
@@ -91,26 +98,22 @@ export class InventoryPage {
   });
 
   constructor() {
-    this.api
-      .getAll()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: result => {
-          this.allBatches.set(
-            result.items.map(b => ({ ...b, status: this.computeStatus(b.expiryDate) })),
-          );
-          this.isLoading.set(false);
-        },
-        error: () => {
-          this.error.set('common.error');
-          this.isLoading.set(false);
-        },
-      });
+    this.batchSearch$
+      .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadBatches(1));
+    this.loadBatches(1);
 
-    this.branchesApi
-      .getAll()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: branches => this.branches.set(branches) });
+    const assignedBranchId = this.authService.session()?.branchId;
+    if (this.authService.isOwner()) {
+      this.branchesApi
+        .getAll()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({ next: branches => this.branches.set(branches) });
+    } else if (assignedBranchId) {
+      this.branches.set([
+        { id: assignedBranchId, name: 'Assigned branch', address: null, phone: null, isMain: false, isActive: true },
+      ]);
+    }
 
     this.drugSearch$
       .pipe(
@@ -137,6 +140,7 @@ export class InventoryPage {
 
   protected onSearch(event: Event): void {
     this.searchQuery.set((event.target as HTMLInputElement).value);
+    this.batchSearch$.next(this.searchQuery());
   }
 
   protected setFilter(filter: ActiveFilter): void {
@@ -144,7 +148,13 @@ export class InventoryPage {
   }
 
   protected openReceive(): void {
-    this.receiveForm.reset({ quantity: '1', reorderLevel: '0', costPrice: '0', sellingPrice: '' });
+    this.receiveForm.reset({
+      branchId: this.authService.isOwner() ? '' : (this.authService.session()?.branchId ?? ''),
+      quantity: '1',
+      reorderLevel: '0',
+      costPrice: '0',
+      sellingPrice: '',
+    });
     this.drugDisplayValue.set('');
     this.drugResults.set([]);
     this.isReceiveOpen.set(true);
@@ -247,6 +257,43 @@ export class InventoryPage {
       });
   }
 
+  protected previousPage(): void {
+    if (this.pageNumber() > 1) this.loadBatches(this.pageNumber() - 1);
+  }
+
+  protected nextPage(): void {
+    if (this.pageNumber() * this.pageSize < this.totalCount()) {
+      this.loadBatches(this.pageNumber() + 1);
+    }
+  }
+
+  protected requestWriteOff(id: string): void {
+    this.confirmWriteOffId.set(id);
+  }
+
+  protected cancelWriteOff(): void {
+    this.confirmWriteOffId.set(null);
+  }
+
+  protected confirmWriteOff(id: string): void {
+    this.isSubmitting.set(true);
+    this.api
+      .delete(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.allBatches.update(batches => batches.filter(batch => batch.id !== id));
+          this.confirmWriteOffId.set(null);
+          this.isSubmitting.set(false);
+        },
+        error: () => this.isSubmitting.set(false),
+      });
+  }
+
+  protected formatDate(value: string): string {
+    return new Date(value).toLocaleDateString();
+  }
+
   protected receiveFieldError(field: string): string | null {
     const c = this.receiveForm.get(field);
     if (!c?.touched || !c.errors) return null;
@@ -270,5 +317,25 @@ export class InventoryPage {
     if (days < 0) return 'expired';
     if (days <= 90) return 'nearExpiry';
     return 'ok';
+  }
+
+  private loadBatches(pageNumber: number): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+    this.api
+      .getAll({ search: this.searchQuery().trim() || undefined, pageNumber, pageSize: this.pageSize })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: result => {
+          this.allBatches.set(result.items.map(batch => ({ ...batch, status: this.computeStatus(batch.expiryDate) })));
+          this.pageNumber.set(result.pageNumber);
+          this.totalCount.set(result.totalCount);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.error.set('common.error');
+          this.isLoading.set(false);
+        },
+      });
   }
 }

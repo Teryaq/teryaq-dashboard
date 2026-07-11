@@ -18,6 +18,7 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { ThemeService } from '../../../core/theme/theme.service';
 import { AppLogo } from '../app-logo/app-logo';
+import { ThemePicker } from '../theme-picker/theme-picker';
 
 @Component({
   selector: 'app-navbar',
@@ -30,6 +31,7 @@ import { AppLogo } from '../app-logo/app-logo';
     ToggleSwitch,
     TranslatePipe,
     AppLogo,
+    ThemePicker,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app-navbar.html',

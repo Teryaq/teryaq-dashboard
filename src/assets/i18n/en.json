@@ -9,6 +9,7 @@
     "inventory": "Inventory",
     "catalog": "Drug Catalog",
     "pos": "Point of Sale",
+    "customers": "Customers",
     "branches": "Branches",
     "users": "Team",
     "signIn": "Sign in",
@@ -125,6 +126,10 @@
     }
   },
   "inventory": {
+    "writeOff": "Write off batch",
+    "writeOffConfirm": "Confirm write-off",
+    "receivedQuantity": "Quantity received",
+    "receivedAt": "Received",
     "title": "Drug Inventory & Warehouse",
     "subtitle": "Track every box, every batch, and every expiry date.",
     "search": "Search by trade name, generic name, or barcode...",
@@ -238,6 +243,7 @@
     }
   },
   "branches": {
+    "deleteConfirm": "Confirm branch deletion",
     "title": "Branches",
     "subtitle": "Manage your pharmacy locations and branches.",
     "search": "Search by name or address...",
@@ -305,6 +311,10 @@
     }
   },
   "pos": {
+    "branchRequired": "Assign this account to an active branch before using POS.",
+    "customer": "Customer",
+    "customerSearch": "Search customer (optional)",
+    "walkIn": "Walk-in customer",
     "title": "Instant Drug Dispensing (POS)",
     "subtitle": "Build sales receipts and dispense drugs instantly.",
     "search": "Search by drug name, generic name, or barcode...",
@@ -358,6 +368,11 @@
       "noAccount": "Don't have an account?",
       "createAccount": "Create pharmacy account",
       "invalidCredentials": "Invalid email or password."
+      ,"heroTitle": "Run every pharmacy operation with confidence",
+      "heroText": "Teryaq brings stock, expiry alerts, sales, and teams into one focused workspace.",
+      "benefitInventory": "Live inventory across every branch",
+      "benefitSales": "Fast, traceable point-of-sale",
+      "benefitAlerts": "Early low-stock and expiry alerts"
     },
     "register": {
       "title": "Create your pharmacy",
@@ -414,10 +429,25 @@
     },
     "empty": "No alerts — everything looks good!"
   },
+  "customers": {
+    "title": "Customers",
+    "subtitle": "Search and register pharmacy customers.",
+    "add": "Add customer",
+    "search": "Search customers by name or phone",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "empty": "No customers found.",
+    "createTitle": "Register customer"
+  },
   "common": {
     "loading": "Loading...",
     "error": "Something went wrong. Please try again.",
-    "success": "Success"
+    "success": "Success",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "pagination": "Pagination"
   },
   "errors": {
     "title": "Error",

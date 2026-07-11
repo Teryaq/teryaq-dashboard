@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject, debounceTime } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -29,6 +30,10 @@ export class CatalogPage {
   protected readonly error = signal<string | null>(null);
   protected readonly searchQuery = signal('');
   protected readonly sourceFilter = signal<SourceFilter>('all');
+  protected readonly pageNumber = signal(1);
+  protected readonly totalCount = signal(0);
+  protected readonly pageSize = 20;
+  private readonly searchChanges = new Subject<string>();
 
   protected readonly isCreateOpen = signal(false);
   protected readonly isEditOpen = signal(false);
@@ -84,28 +89,22 @@ export class CatalogPage {
   });
 
   constructor() {
-    this.api
-      .getAll({ pageSize: 100 })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: result => {
-          this.allDrugs.set(result.items);
-          this.isLoading.set(false);
-        },
-        error: () => {
-          this.error.set('common.error');
-          this.isLoading.set(false);
-        },
-      });
+    this.searchChanges.pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef)).subscribe(() => this.load(1));
+    this.load(1);
   }
 
   protected onSearch(event: Event): void {
     this.searchQuery.set((event.target as HTMLInputElement).value);
+    this.searchChanges.next(this.searchQuery());
   }
 
   protected setSourceFilter(source: SourceFilter): void {
     this.sourceFilter.set(source);
+    this.load(1);
   }
+
+  protected previousPage(): void { if (this.pageNumber() > 1) this.load(this.pageNumber() - 1); }
+  protected nextPage(): void { if (this.pageNumber() * this.pageSize < this.totalCount()) this.load(this.pageNumber() + 1); }
 
   protected sourceKey(source: SourceFilter): string {
     return source === 'all' ? 'catalog.source.all' : `catalog.source.${source}`;
@@ -247,5 +246,26 @@ export class CatalogPage {
     if (c.errors['required']) return 'form.validation.required';
     if (c.errors['maxlength']) return 'form.validation.tooLong';
     return null;
+  }
+
+  private load(pageNumber: number): void {
+    const sourceMap: Record<DrugSource, DrugSourceValue> = { EDA: 0, Import: 1, Manual: 2 };
+    const source = this.sourceFilter();
+    this.isLoading.set(true);
+    this.error.set(null);
+    this.api.getAll({
+      search: this.searchQuery().trim() || undefined,
+      source: source === 'all' ? undefined : sourceMap[source],
+      pageNumber,
+      pageSize: this.pageSize,
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: result => {
+        this.allDrugs.set(result.items);
+        this.pageNumber.set(result.pageNumber);
+        this.totalCount.set(result.totalCount);
+        this.isLoading.set(false);
+      },
+      error: () => { this.error.set('common.error'); this.isLoading.set(false); },
+    });
   }
 }

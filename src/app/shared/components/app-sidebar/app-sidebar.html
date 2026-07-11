@@ -8,7 +8,7 @@
     </div>
 
     <nav class="app-sidebar__nav" aria-label="Main navigation">
-      @for (item of navItems; track item.route) {
+      @for (item of visibleNavItems(); track item.route) {
         <a
           [routerLink]="item.route"
           routerLinkActive="is-active"
@@ -69,7 +69,7 @@
 
   <div class="app-sidebar__inner app-sidebar__inner--drawer">
     <nav class="app-sidebar__nav" aria-label="Main navigation">
-      @for (item of navItems; track item.route) {
+      @for (item of visibleNavItems(); track item.route) {
         <a
           [routerLink]="item.route"
           routerLinkActive="is-active"

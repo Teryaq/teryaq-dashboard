@@ -17,7 +17,6 @@ import {
 import { RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
-import { Divider } from 'primeng/divider';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
@@ -46,7 +45,6 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
     RouterLink,
     Button,
     Card,
-    Divider,
     FloatLabel,
     InputText,
     Message,
@@ -65,6 +63,7 @@ export class RegisterPage {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly step = signal<1 | 2>(1);
   protected readonly authServiceRef = this.authService;
 
   protected readonly form = this.fb.nonNullable.group(
@@ -103,6 +102,22 @@ export class RegisterPage {
       .subscribe({
         error: (error) => this.handleError(error as HttpErrorResponse),
       });
+  }
+
+  protected nextStep(): void {
+    const controls = [
+      this.form.controls.pharmacyName,
+      this.form.controls.branchName,
+      this.form.controls.branchAddress,
+      this.form.controls.branchPhone,
+    ];
+    controls.forEach(control => control.markAsTouched());
+    if (controls.some(control => control.invalid)) return;
+    this.step.set(2);
+  }
+
+  protected previousStep(): void {
+    this.step.set(1);
   }
 
   protected fieldError(field: string): string | null {

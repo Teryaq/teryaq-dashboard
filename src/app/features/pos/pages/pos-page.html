@@ -27,6 +27,10 @@
             <span>{{ cashierName() }}</span>
           </div>
           <div class="receipt__meta-row">
+            <span>{{ 'pos.customer' | translate }}:</span>
+            <span>{{ sale.customerName || ('pos.walkIn' | translate) }}</span>
+          </div>
+          <div class="receipt__meta-row">
             <span>حالة العملية:</span>
             <span class="receipt__paid">مدفوعة نقداً (كاش)</span>
           </div>
@@ -47,6 +51,10 @@
 
         <!-- Totals -->
         <div class="receipt__totals">
+          <div class="receipt__total-row">
+            <span>{{ 'pos.cart.subtotal' | translate }}:</span>
+            <span>{{ sale.total | number:'1.2-2' }} EGP</span>
+          </div>
           @if (sale.discount > 0) {
             <div class="receipt__total-row receipt__total-row--discount">
               <span>الخصم الممنوح:</span>
@@ -86,12 +94,28 @@
 <div class="pos">
   <!-- Left panel: drug search + grid -->
   <div class="pos__left">
+    @if (branchMissing()) {
+      <div class="pos__empty" role="alert">
+        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+        {{ 'pos.branchRequired' | translate }}
+      </div>
+    }
     <!-- Header -->
     <div class="pos__header">
       <div>
         <h1 class="pos__title">{{ 'pos.title' | translate }}</h1>
         <p class="pos__subtitle">{{ 'pos.subtitle' | translate }}</p>
       </div>
+      @if (isOwner() && ownerBranches().length > 0) {
+        <label>
+          <span class="sr-only">{{ 'inventory.form.branch' | translate }}</span>
+          <select class="form-select" [value]="activeBranchId()" (change)="onBranchChange($event)">
+            @for (branch of ownerBranches(); track branch.id) {
+              <option [value]="branch.id">{{ branch.name }}</option>
+            }
+          </select>
+        </label>
+      }
     </div>
 
     <section class="pos__search-panel" role="search" [attr.aria-label]="'pos.search' | translate">
@@ -179,12 +203,13 @@
         </div>
         <div class="pos__today-list">
           @for (sale of todaysSales(); track sale.id) {
-            <div class="pos__today-row">
+            <button class="pos__today-row" type="button" (click)="viewSale(sale.id)">
               <span class="pos__today-number">{{ sale.saleNumber }}</span>
+              <span class="pos__today-items">{{ sale.customerName || ('pos.walkIn' | translate) }}</span>
               <span class="pos__today-items">{{ sale.itemCount }} {{ 'pos.cart.items' | translate }}</span>
               <span class="pos__today-amount">{{ sale.grandTotal | number:'1.2-2' }} EGP</span>
               <span class="pos__today-time">{{ formatTime(sale.completedAt) }}</span>
-            </div>
+            </button>
           }
         </div>
       </div>
@@ -242,6 +267,27 @@
 
     <!-- Totals -->
     <div class="pos__cart-footer">
+      <div class="pos__customer-picker">
+        <label class="pos__discount-label" for="customer-search">{{ 'pos.customer' | translate }}</label>
+        <input
+          id="customer-search"
+          class="pos__discount-input"
+          type="search"
+          [placeholder]="'pos.customerSearch' | translate"
+          [value]="selectedCustomer()?.name || ''"
+          (input)="onCustomerSearch($event)"
+          autocomplete="off"
+        />
+        @if (customerResults().length > 0) {
+          <div class="pos__customer-results">
+            @for (customer of customerResults(); track customer.id) {
+              <button type="button" (click)="selectCustomer(customer)">
+                <span>{{ customer.name }}</span><small>{{ customer.phone || customer.email || '' }}</small>
+              </button>
+            }
+          </div>
+        }
+      </div>
       <!-- Discount -->
       <div class="pos__discount-row">
         <label class="pos__discount-label" for="discount-input">
