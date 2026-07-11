@@ -91,7 +91,6 @@
 .pos__search-field--barcode .pos__search-icon { color: var(--st); }
 .pos__search-field--barcode .pos__search { border-color: var(--sb); background: var(--s); }
 
-.pos__loading-state,
 .pos__empty,
 .pos__cart-empty {
   display: flex;
@@ -102,7 +101,6 @@
   text-align: center;
 }
 
-.pos__loading-state,
 .pos__empty {
   min-height: 13rem;
   padding: 2rem;
@@ -118,20 +116,34 @@
 .pos__empty i,
 .pos__cart-empty i { color: var(--st); font-size: 2rem; }
 
-.pos__spinner,
-.pos__checkout-spinner {
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid var(--sb);
-  border-top-color: var(--st);
-  border-radius: 999px;
-  animation: pos-spin 0.75s linear infinite;
-}
-
 .pos__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr));
   gap: 0.875rem;
+}
+
+.pos__drug-card-skeleton {
+  display: grid;
+  gap: 1rem;
+  min-height: 10.75rem;
+  padding: 0.875rem;
+  border: 1px solid var(--b);
+  border-radius: 0.5rem;
+  background: var(--p);
+}
+
+.pos__drug-skeleton-top,
+.pos__drug-skeleton-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.pos__drug-skeleton-footer {
+  align-self: end;
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--b);
 }
 
 .pos__drug-card {
@@ -329,8 +341,6 @@
 
 .pos__checkout-btn:hover:not(:disabled) { background: var(--action-bg-hover); }
 .pos__checkout-btn:disabled { border-color: var(--b); background: var(--e); color: var(--m); cursor: not-allowed; }
-
-@keyframes pos-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 767px) {
   .pos { padding: 0.875rem; }

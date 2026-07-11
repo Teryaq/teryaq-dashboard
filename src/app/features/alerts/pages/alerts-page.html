@@ -52,9 +52,20 @@
 
   <!-- Loading state -->
   @if (isLoading()) {
-    <div class="alerts__state-box">
-      <span class="alerts__spinner" aria-hidden="true"></span>
-      <span>{{ 'common.loading' | translate }}</span>
+    <div class="app-table-skeleton" style="--skeleton-cols: 9" aria-busy="true">
+      <span class="app-sr-only">{{ 'common.loading' | translate }}</span>
+      <div class="app-table-skeleton__row app-table-skeleton__row--header" aria-hidden="true">
+        @for (cell of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track cell) {
+          <div class="app-skeleton app-table-skeleton__cell"></div>
+        }
+      </div>
+      @for (row of [1, 2, 3, 4, 5]; track row) {
+        <div class="app-table-skeleton__row" aria-hidden="true">
+          @for (cell of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track cell) {
+            <div class="app-skeleton app-table-skeleton__cell" [class.app-table-skeleton__cell--strong]="cell === 1" [class.app-table-skeleton__cell--short]="cell > 6"></div>
+          }
+        </div>
+      }
     </div>
   }
 

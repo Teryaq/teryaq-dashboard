@@ -83,17 +83,10 @@
   clip: rect(0, 0, 0, 0);
 }
 
-.import__spinner {
+.import__progress-mark {
   width: 2rem;
   height: 2rem;
-  border: 3px solid var(--surface-border);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: import-spin 0.7s linear infinite;
-}
-
-@keyframes import-spin {
-  to { transform: rotate(360deg); }
+  border-radius: 0.75rem;
 }
 
 .import__summary {

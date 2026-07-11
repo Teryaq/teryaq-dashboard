@@ -28,9 +28,20 @@
 
   <!-- Loading state -->
   @if (isLoading()) {
-    <div class="usr__state-box">
-      <span class="usr__spinner" aria-hidden="true"></span>
-      <span>{{ 'common.loading' | translate }}</span>
+    <div class="app-table-skeleton" style="--skeleton-cols: 6" aria-busy="true">
+      <span class="app-sr-only">{{ 'common.loading' | translate }}</span>
+      <div class="app-table-skeleton__row app-table-skeleton__row--header" aria-hidden="true">
+        @for (cell of [1, 2, 3, 4, 5, 6]; track cell) {
+          <div class="app-skeleton app-table-skeleton__cell"></div>
+        }
+      </div>
+      @for (row of [1, 2, 3, 4, 5]; track row) {
+        <div class="app-table-skeleton__row" aria-hidden="true">
+          @for (cell of [1, 2, 3, 4, 5, 6]; track cell) {
+            <div class="app-skeleton app-table-skeleton__cell" [class.app-table-skeleton__cell--strong]="cell === 1" [class.app-table-skeleton__cell--short]="cell > 4"></div>
+          }
+        </div>
+      }
     </div>
   }
 
@@ -100,11 +111,7 @@
                       [disabled]="deactivatingId() === user.id"
                       (click)="deactivate(user)"
                     >
-                      @if (deactivatingId() === user.id) {
-                        <span class="usr__btn-spinner" aria-hidden="true"></span>
-                      } @else {
-                        <i class="pi pi-lock" aria-hidden="true"></i>
-                      }
+                      <i class="pi pi-lock" aria-hidden="true"></i>
                     </button>
                   }
                 </div>
@@ -195,9 +202,6 @@
             {{ 'form.cancel' | translate }}
           </button>
           <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            @if (isSubmitting()) {
-              <span class="btn-spinner" aria-hidden="true"></span>
-            }
             {{ 'users.form.submit' | translate }}
           </button>
         </div>
@@ -249,9 +253,6 @@
             {{ 'form.cancel' | translate }}
           </button>
           <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            @if (isSubmitting()) {
-              <span class="btn-spinner" aria-hidden="true"></span>
-            }
             {{ 'form.save' | translate }}
           </button>
         </div>
