@@ -5,10 +5,11 @@
       <h1 class="inv__title">{{ 'inventory.title' | translate }}</h1>
       <p class="inv__subtitle">{{ 'inventory.subtitle' | translate }}</p>
     </div>
-    <button class="inv__receive-btn" type="button" (click)="openReceive()">
-      <i class="pi pi-download" aria-hidden="true"></i>
-      {{ 'inventory.action.receive' | translate }}
-    </button>
+    <p-button
+      icon="pi pi-download"
+      [label]="'inventory.action.receive' | translate"
+      (onClick)="openReceive()"
+    />
   </div>
 
   <!-- Search + filter bar -->
@@ -112,19 +113,44 @@
               </td>
               <td>
                 <div class="inv__actions">
-                  <button
-                    class="inv__action-btn"
-                    type="button"
+                  <p-button
+                    icon="pi pi-sliders-h"
+                    [rounded]="true"
+                    [text]="true"
+                    [attr.aria-label]="'inventory.adjust' | translate"
                     [title]="'inventory.adjust' | translate"
-                    (click)="openAdjust(batch)"
-                  >
-                    <i class="pi pi-sliders-h" aria-hidden="true"></i>
-                  </button>
+                    (onClick)="openAdjust(batch)"
+                  />
                   @if (confirmWriteOffId() === batch.id) {
-                    <button class="inv__action-btn" type="button" [title]="'form.cancel' | translate" (click)="cancelWriteOff()"><i class="pi pi-times" aria-hidden="true"></i></button>
-                    <button class="inv__action-btn" type="button" [title]="'inventory.writeOffConfirm' | translate" [disabled]="isSubmitting()" (click)="confirmWriteOff(batch.id)"><i class="pi pi-check" aria-hidden="true"></i></button>
+                    <p-button
+                      icon="pi pi-times"
+                      severity="secondary"
+                      [rounded]="true"
+                      [text]="true"
+                      [attr.aria-label]="'form.cancel' | translate"
+                      [title]="'form.cancel' | translate"
+                      (onClick)="cancelWriteOff()"
+                    />
+                    <p-button
+                      icon="pi pi-check"
+                      severity="danger"
+                      [rounded]="true"
+                      [text]="true"
+                      [disabled]="isSubmitting()"
+                      [attr.aria-label]="'inventory.writeOffConfirm' | translate"
+                      [title]="'inventory.writeOffConfirm' | translate"
+                      (onClick)="confirmWriteOff(batch.id)"
+                    />
                   } @else {
-                    <button class="inv__action-btn" type="button" [title]="'inventory.writeOff' | translate" (click)="requestWriteOff(batch.id)"><i class="pi pi-trash" aria-hidden="true"></i></button>
+                    <p-button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      [rounded]="true"
+                      [text]="true"
+                      [attr.aria-label]="'inventory.writeOff' | translate"
+                      [title]="'inventory.writeOff' | translate"
+                      (onClick)="requestWriteOff(batch.id)"
+                    />
                   }
                 </div>
               </td>
@@ -149,17 +175,15 @@
 </div>
 
 <!-- Receive stock dialog -->
-@if (isReceiveOpen()) {
-  <div class="modal-backdrop" (click)="closeReceive()" role="dialog" aria-modal="true" [attr.aria-label]="'inventory.form.receiveTitle' | translate">
-    <div class="modal modal--wide" (click)="$event.stopPropagation()">
-      <div class="modal__header">
-        <h2 class="modal__title">{{ 'inventory.form.receiveTitle' | translate }}</h2>
-        <button class="modal__close" type="button" (click)="closeReceive()" [attr.aria-label]="'form.close' | translate">
-          <i class="pi pi-times" aria-hidden="true"></i>
-        </button>
-      </div>
+<p-dialog
+  [modal]="true"
+  [visible]="isReceiveOpen()"
+  (visibleChange)="$event ? isReceiveOpen.set(true) : closeReceive()"
+  [header]="'inventory.form.receiveTitle' | translate"
+  styleClass="app-dialog app-dialog--wide"
+>
       <form [formGroup]="receiveForm" (ngSubmit)="onReceiveSubmit()">
-        <div class="modal__body">
+        <div class="app-dialog__body">
           <div class="form-field">
             <label class="form-label" for="r-branch">{{ 'inventory.form.branch' | translate }}</label>
             <select
@@ -252,35 +276,40 @@
             </div>
           </div>
         </div>
-        <div class="modal__footer">
-          <button class="btn" type="button" (click)="closeReceive()">{{ 'form.cancel' | translate }}</button>
-          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            {{ 'inventory.form.submitReceive' | translate }}
-          </button>
+        <div class="app-dialog__footer">
+          <p-button
+            severity="secondary"
+            [outlined]="true"
+            [label]="'form.cancel' | translate"
+            (onClick)="closeReceive()"
+          />
+          <p-button
+            type="submit"
+            [label]="'inventory.form.submitReceive' | translate"
+            [loading]="isSubmitting()"
+            [disabled]="isSubmitting()"
+          />
         </div>
       </form>
-    </div>
-  </div>
-}
+</p-dialog>
 
 <!-- Adjust stock dialog -->
-@if (isAdjustOpen() && selectedBatch()) {
-  <div class="modal-backdrop" (click)="closeAdjust()" role="dialog" aria-modal="true" [attr.aria-label]="'inventory.form.adjustTitle' | translate">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal__header">
-        <h2 class="modal__title">{{ 'inventory.form.adjustTitle' | translate }}</h2>
-        <button class="modal__close" type="button" (click)="closeAdjust()" [attr.aria-label]="'form.close' | translate">
-          <i class="pi pi-times" aria-hidden="true"></i>
-        </button>
-      </div>
-      <div class="modal__drug-info">
-        <span class="modal__drug-name">{{ selectedBatch()!.drugTradeNameEn }}</span>
-        <span class="modal__batch-no">{{ selectedBatch()!.batchNumber }}</span>
-        <span class="modal__batch-no">{{ 'inventory.receivedQuantity' | translate }}: {{ selectedBatch()!.quantityReceived }}</span>
-        <span class="modal__batch-no">{{ 'inventory.receivedAt' | translate }}: {{ formatDate(selectedBatch()!.receivedAt) }}</span>
+<p-dialog
+  [modal]="true"
+  [visible]="isAdjustOpen()"
+  (visibleChange)="$event ? isAdjustOpen.set(true) : closeAdjust()"
+  [header]="'inventory.form.adjustTitle' | translate"
+  styleClass="app-dialog"
+>
+  @if (selectedBatch()) {
+      <div class="inv__batch-summary">
+        <span class="inv__batch-summary-name">{{ selectedBatch()!.drugTradeNameEn }}</span>
+        <span class="inv__batch-summary-meta">{{ selectedBatch()!.batchNumber }}</span>
+        <span class="inv__batch-summary-meta">{{ 'inventory.receivedQuantity' | translate }}: {{ selectedBatch()!.quantityReceived }}</span>
+        <span class="inv__batch-summary-meta">{{ 'inventory.receivedAt' | translate }}: {{ formatDate(selectedBatch()!.receivedAt) }}</span>
       </div>
       <form [formGroup]="adjustForm" (ngSubmit)="onAdjustSubmit()">
-        <div class="modal__body">
+        <div class="app-dialog__body">
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="a-qty">{{ 'inventory.form.quantityOnHand' | translate }}</label>
@@ -304,13 +333,20 @@
             @if (adjustFieldError('expiryDate'); as key) { <small class="form-error">{{ key | translate }}</small> }
           </div>
         </div>
-        <div class="modal__footer">
-          <button class="btn" type="button" (click)="closeAdjust()">{{ 'form.cancel' | translate }}</button>
-          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            {{ 'inventory.form.submitAdjust' | translate }}
-          </button>
+        <div class="app-dialog__footer">
+          <p-button
+            severity="secondary"
+            [outlined]="true"
+            [label]="'form.cancel' | translate"
+            (onClick)="closeAdjust()"
+          />
+          <p-button
+            type="submit"
+            [label]="'inventory.form.submitAdjust' | translate"
+            [loading]="isSubmitting()"
+            [disabled]="isSubmitting()"
+          />
         </div>
       </form>
-    </div>
-  </div>
-}
+  }
+</p-dialog>

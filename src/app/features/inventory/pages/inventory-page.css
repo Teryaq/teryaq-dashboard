@@ -28,25 +28,6 @@
   color: var(--text-muted);
 }
 
-.inv__receive-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.75rem;
-  background: var(--color-primary);
-  color: #fff;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s;
-  font-family: inherit;
-  white-space: nowrap;
-}
-
-.inv__receive-btn:hover { background: var(--color-primary-hover); }
-
 /* Toolbar */
 .inv__toolbar {
   display: flex;
@@ -256,27 +237,6 @@
   gap: 0.375rem;
 }
 
-.inv__action-btn {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--surface-border);
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.875rem;
-  transition: all 0.15s;
-}
-
-.inv__action-btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-}
-
 /* Branch name chip */
 .inv__branch-name {
   font-size: 0.75rem;
@@ -320,21 +280,21 @@
 }
 
 
-.modal__drug-info {
+.inv__batch-summary {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.75rem;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 1.25rem 0;
   background: color-mix(in srgb, var(--color-primary) 6%, transparent);
-  border-bottom: 1px solid var(--surface-border);
 }
 
-.modal__drug-name {
+.inv__batch-summary-name {
   font-weight: 600;
   color: var(--text-color);
 }
 
-.modal__batch-no {
+.inv__batch-summary-meta {
   font-size: 0.8125rem;
   color: var(--text-muted);
   font-family: ui-monospace, monospace;

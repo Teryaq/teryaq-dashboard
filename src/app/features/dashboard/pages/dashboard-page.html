@@ -23,10 +23,11 @@
           />
         </div>
       }
-      <a class="btn btn--primary" routerLink="/pos">
-        <i class="pi pi-plus" aria-hidden="true"></i>
-        {{ 'dashboard.recent.newInvoice' | translate }}
-      </a>
+      <p-button
+        icon="pi pi-plus"
+        [label]="'dashboard.recent.newInvoice' | translate"
+        routerLink="/pos"
+      />
     </div>
   </div>
 

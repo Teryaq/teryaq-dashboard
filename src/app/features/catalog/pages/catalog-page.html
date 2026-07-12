@@ -11,10 +11,11 @@
           <i class="pi pi-upload" aria-hidden="true"></i>
           {{ 'catalog.import.import_from_catalog' | translate }}
         </a>
-        <button class="cat__add-btn" type="button" (click)="openCreate()">
-          <i class="pi pi-plus" aria-hidden="true"></i>
-          {{ 'catalog.action.add' | translate }}
-        </button>
+        <p-button
+          icon="pi pi-plus"
+          [label]="'catalog.action.add' | translate"
+          (onClick)="openCreate()"
+        />
       }
     </div>
   </div>
@@ -117,41 +118,44 @@
               <td>
                 @if (isOwner()) {
                 <div class="cat__actions">
-                  <button
-                    class="cat__action-btn"
-                    type="button"
+                  <p-button
+                    icon="pi pi-pencil"
+                    [rounded]="true"
+                    [text]="true"
+                    [attr.aria-label]="'form.edit' | translate"
                     [title]="'form.edit' | translate"
-                    (click)="openEdit(drug)"
-                  >
-                    <i class="pi pi-pencil" aria-hidden="true"></i>
-                  </button>
+                    (onClick)="openEdit(drug)"
+                  />
                   @if (confirmDeleteId() === drug.id) {
-                    <button
-                      class="cat__action-btn cat__action-btn--danger"
-                      type="button"
-                      [title]="'catalog.form.deleteConfirm' | translate"
+                    <p-button
+                      icon="pi pi-check"
+                      severity="danger"
+                      [rounded]="true"
+                      [text]="true"
                       [disabled]="isDeleting()"
-                      (click)="confirmDelete()"
-                    >
-                      <i class="pi pi-check" aria-hidden="true"></i>
-                    </button>
-                    <button
-                      class="cat__action-btn"
-                      type="button"
+                      [attr.aria-label]="'catalog.form.deleteConfirm' | translate"
+                      [title]="'catalog.form.deleteConfirm' | translate"
+                      (onClick)="confirmDelete()"
+                    />
+                    <p-button
+                      icon="pi pi-times"
+                      severity="secondary"
+                      [rounded]="true"
+                      [text]="true"
+                      [attr.aria-label]="'form.cancel' | translate"
                       [title]="'form.cancel' | translate"
-                      (click)="cancelDelete()"
-                    >
-                      <i class="pi pi-times" aria-hidden="true"></i>
-                    </button>
+                      (onClick)="cancelDelete()"
+                    />
                   } @else {
-                    <button
-                      class="cat__action-btn cat__action-btn--danger"
-                      type="button"
+                    <p-button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      [rounded]="true"
+                      [text]="true"
+                      [attr.aria-label]="'form.delete' | translate"
                       [title]="'form.delete' | translate"
-                      (click)="requestDelete(drug.id)"
-                    >
-                      <i class="pi pi-trash" aria-hidden="true"></i>
-                    </button>
+                      (onClick)="requestDelete(drug.id)"
+                    />
                   }
                 </div>
                 }
@@ -177,17 +181,15 @@
 </div>
 
 <!-- Create drug dialog -->
-@if (isCreateOpen()) {
-  <div class="modal-backdrop" (click)="closeCreate()" role="dialog" aria-modal="true" [attr.aria-label]="'catalog.form.createTitle' | translate">
-    <div class="modal modal--wide" (click)="$event.stopPropagation()">
-      <div class="modal__header">
-        <h2 class="modal__title">{{ 'catalog.form.createTitle' | translate }}</h2>
-        <button class="modal__close" type="button" (click)="closeCreate()" [attr.aria-label]="'form.close' | translate">
-          <i class="pi pi-times" aria-hidden="true"></i>
-        </button>
-      </div>
+<p-dialog
+  [modal]="true"
+  [visible]="isCreateOpen()"
+  (visibleChange)="$event ? isCreateOpen.set(true) : closeCreate()"
+  [header]="'catalog.form.createTitle' | translate"
+  styleClass="app-dialog app-dialog--wide"
+>
       <form [formGroup]="createForm" (ngSubmit)="onCreateSubmit()">
-        <div class="modal__body">
+        <div class="app-dialog__body">
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="c-nameEn">{{ 'catalog.form.tradeNameEn' | translate }}</label>
@@ -263,29 +265,34 @@
             </div>
           </div>
         </div>
-        <div class="modal__footer">
-          <button class="btn" type="button" (click)="closeCreate()">{{ 'form.cancel' | translate }}</button>
-          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            {{ 'form.create' | translate }}
-          </button>
+        <div class="app-dialog__footer">
+          <p-button
+            severity="secondary"
+            [outlined]="true"
+            [label]="'form.cancel' | translate"
+            (onClick)="closeCreate()"
+          />
+          <p-button
+            type="submit"
+            [label]="'form.create' | translate"
+            [loading]="isSubmitting()"
+            [disabled]="isSubmitting()"
+          />
         </div>
       </form>
-    </div>
-  </div>
-}
+</p-dialog>
 
 <!-- Edit drug dialog -->
-@if (isEditOpen() && selectedDrug()) {
-  <div class="modal-backdrop" (click)="closeEdit()" role="dialog" aria-modal="true" [attr.aria-label]="'catalog.form.editTitle' | translate">
-    <div class="modal modal--wide" (click)="$event.stopPropagation()">
-      <div class="modal__header">
-        <h2 class="modal__title">{{ 'catalog.form.editTitle' | translate }}</h2>
-        <button class="modal__close" type="button" (click)="closeEdit()" [attr.aria-label]="'form.close' | translate">
-          <i class="pi pi-times" aria-hidden="true"></i>
-        </button>
-      </div>
+<p-dialog
+  [modal]="true"
+  [visible]="isEditOpen()"
+  (visibleChange)="$event ? isEditOpen.set(true) : closeEdit()"
+  [header]="'catalog.form.editTitle' | translate"
+  styleClass="app-dialog app-dialog--wide"
+>
+  @if (selectedDrug()) {
       <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()">
-        <div class="modal__body">
+        <div class="app-dialog__body">
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="e-nameEn">{{ 'catalog.form.tradeNameEn' | translate }}</label>
@@ -359,13 +366,20 @@
             </div>
           </div>
         </div>
-        <div class="modal__footer">
-          <button class="btn" type="button" (click)="closeEdit()">{{ 'form.cancel' | translate }}</button>
-          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            {{ 'form.save' | translate }}
-          </button>
+        <div class="app-dialog__footer">
+          <p-button
+            severity="secondary"
+            [outlined]="true"
+            [label]="'form.cancel' | translate"
+            (onClick)="closeEdit()"
+          />
+          <p-button
+            type="submit"
+            [label]="'form.save' | translate"
+            [loading]="isSubmitting()"
+            [disabled]="isSubmitting()"
+          />
         </div>
       </form>
-    </div>
-  </div>
-}
+  }
+</p-dialog>

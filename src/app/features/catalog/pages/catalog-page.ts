@@ -3,6 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { AuthService } from '../../../core/auth/services/auth.service';
@@ -13,7 +15,7 @@ type SourceFilter = 'all' | DrugSource;
 
 @Component({
   selector: 'app-catalog-page',
-  imports: [TranslatePipe, ReactiveFormsModule, RouterLink],
+  imports: [TranslatePipe, ReactiveFormsModule, RouterLink, Button, Dialog],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './catalog-page.html',
   styleUrl: './catalog-page.css',

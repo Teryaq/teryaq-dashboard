@@ -13,14 +13,10 @@
       </div>
       <div class="purchase-actions purchase-actions--large">
         @if (canSend()) {
-          <button class="btn btn--primary" type="button" (click)="send()" [disabled]="isSubmitting()">
-            <i class="pi pi-send" aria-hidden="true"></i>{{ 'purchasing.orders.send' | translate }}
-          </button>
+          <p-button icon="pi pi-send" [label]="'purchasing.orders.send' | translate" [loading]="isSubmitting()" (onClick)="send()" />
         }
         @if (canReceive()) {
-          <button class="btn btn--primary" type="button" (click)="openReceive()" [disabled]="isSubmitting()">
-            <i class="pi pi-download" aria-hidden="true"></i>{{ 'purchasing.orders.receive' | translate }}
-          </button>
+          <p-button icon="pi pi-download" [label]="'purchasing.orders.receive' | translate" [disabled]="isSubmitting()" (onClick)="openReceive()" />
         }
       </div>
     </header>
@@ -56,15 +52,15 @@
   }
 </section>
 
-@if (isReceiveOpen()) {
-  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="receive-po-title" (click)="closeReceive()">
-    <div class="modal modal--wide" (click)="$event.stopPropagation()">
-      <div class="modal__header">
-        <h2 id="receive-po-title">{{ 'purchasing.orders.receiveTitle' | translate }}</h2>
-        <button class="modal__close" type="button" (click)="closeReceive()" [attr.aria-label]="'form.close' | translate"><i class="pi pi-times" aria-hidden="true"></i></button>
-      </div>
+<p-dialog
+  [modal]="true"
+  [visible]="isReceiveOpen()"
+  (visibleChange)="isReceiveOpen.set($event)"
+  [header]="'purchasing.orders.receiveTitle' | translate"
+  styleClass="app-dialog app-dialog--wide"
+>
       <form [formGroup]="receiveForm" (ngSubmit)="receive()">
-        <div class="modal__body purchase-lines" formArrayName="lines">
+        <div class="app-dialog__body purchase-lines" formArrayName="lines">
           @for (line of receiveLines.controls; track $index) {
             <div class="purchase-line purchase-line--receive" [formGroupName]="$index">
               <div class="purchase-line__title">
@@ -79,11 +75,9 @@
             </div>
           }
         </div>
-        <div class="modal__footer">
-          <button class="btn" type="button" (click)="closeReceive()">{{ 'form.cancel' | translate }}</button>
-          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">{{ 'purchasing.orders.receive' | translate }}</button>
+        <div class="app-dialog__footer">
+          <p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeReceive()" />
+          <p-button type="submit" [label]="'purchasing.orders.receive' | translate" [loading]="isSubmitting()" />
         </div>
       </form>
-    </div>
-  </div>
-}
+</p-dialog>

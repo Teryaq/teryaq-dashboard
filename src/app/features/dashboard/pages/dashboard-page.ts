@@ -14,6 +14,7 @@ import { ChartData, ChartOptions, TooltipItem } from 'chart.js';
 import { FormsModule } from '@angular/forms';
 import { ChartModule } from 'primeng/chart';
 import { Select } from 'primeng/select';
+import { Button } from 'primeng/button';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { I18nService } from '../../../core/i18n/i18n.service';
@@ -59,7 +60,7 @@ interface BranchFilterOption {
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [TranslatePipe, DecimalPipe, DatePipe, RouterLink, ChartModule, FormsModule, Select],
+  imports: [TranslatePipe, DecimalPipe, DatePipe, RouterLink, ChartModule, FormsModule, Select, Button],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.css',

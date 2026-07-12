@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, debounceTime } from 'rxjs';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { Supplier } from '../models/purchasing.model';
@@ -9,7 +11,7 @@ import { SuppliersApiService } from '../services/suppliers-api.service';
 
 @Component({
   selector: 'app-suppliers-page',
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, Button, Dialog, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './suppliers-page.html',
   styleUrl: './purchasing-pages.css',

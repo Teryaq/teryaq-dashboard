@@ -9,6 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { catchError, of } from 'rxjs';
+import { Button } from 'primeng/button';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { extractErrorMessage } from '../../../core/api/utils/api-error.mapper';
@@ -21,7 +22,7 @@ const CSV_TEMPLATE_HEADER =
 
 @Component({
   selector: 'app-drug-import-page',
-  imports: [TranslatePipe, RouterLink],
+  imports: [TranslatePipe, RouterLink, Button],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './drug-import-page.html',
   styleUrl: './drug-import-page.css',

@@ -5,10 +5,7 @@
       <h1 class="usr__title">{{ 'users.title' | translate }}</h1>
       <p class="usr__subtitle">{{ 'users.subtitle' | translate }}</p>
     </div>
-    <button class="usr__invite-btn" type="button" (click)="openInvite()">
-      <i class="pi pi-user-plus" aria-hidden="true"></i>
-      {{ 'users.action.invite' | translate }}
-    </button>
+    <p-button icon="pi pi-user-plus" [label]="'users.action.invite' | translate" (onClick)="openInvite()" />
   </div>
 
   <!-- Search bar -->
@@ -95,24 +92,9 @@
               </td>
               <td>
                 <div class="usr__actions">
-                  <button
-                    class="usr__action-btn"
-                    type="button"
-                    [title]="'form.edit' | translate"
-                    (click)="openEdit(user)"
-                  >
-                    <i class="pi pi-pencil" aria-hidden="true"></i>
-                  </button>
+                  <p-button icon="pi pi-pencil" severity="secondary" [text]="true" [rounded]="true" [attr.aria-label]="'form.edit' | translate" (onClick)="openEdit(user)" />
                   @if (!user.isLocked) {
-                    <button
-                      class="usr__action-btn usr__action-btn--warn"
-                      type="button"
-                      [title]="'users.deactivate' | translate"
-                      [disabled]="deactivatingId() === user.id"
-                      (click)="deactivate(user)"
-                    >
-                      <i class="pi pi-lock" aria-hidden="true"></i>
-                    </button>
+                    <p-button icon="pi pi-lock" severity="warn" [text]="true" [rounded]="true" [disabled]="deactivatingId() === user.id" [attr.aria-label]="'users.deactivate' | translate" (onClick)="deactivate(user)" />
                   }
                 </div>
               </td>
@@ -132,17 +114,15 @@
 </div>
 
 <!-- Invite dialog -->
-@if (isInviteOpen()) {
-  <div class="modal-backdrop" (click)="closeInvite()" role="dialog" aria-modal="true" [attr.aria-label]="'users.form.inviteTitle' | translate">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal__header">
-        <h2 class="modal__title">{{ 'users.form.inviteTitle' | translate }}</h2>
-        <button class="modal__close" type="button" (click)="closeInvite()" [attr.aria-label]="'form.close' | translate">
-          <i class="pi pi-times" aria-hidden="true"></i>
-        </button>
-      </div>
+<p-dialog
+  [modal]="true"
+  [visible]="isInviteOpen()"
+  (visibleChange)="isInviteOpen.set($event)"
+  [header]="'users.form.inviteTitle' | translate"
+  styleClass="app-dialog"
+>
       <form [formGroup]="inviteForm" (ngSubmit)="onInviteSubmit()">
-        <div class="modal__body">
+        <div class="app-dialog__body">
           <div class="form-field">
             <label class="form-label" for="invite-fullname">{{ 'users.form.fullName' | translate }}</label>
             <input
@@ -197,31 +177,24 @@
             </select>
           </div>
         </div>
-        <div class="modal__footer">
-          <button class="btn" type="button" (click)="closeInvite()">
-            {{ 'form.cancel' | translate }}
-          </button>
-          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            {{ 'users.form.submit' | translate }}
-          </button>
+        <div class="app-dialog__footer">
+          <p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeInvite()" />
+          <p-button type="submit" [label]="'users.form.submit' | translate" [loading]="isSubmitting()" />
         </div>
       </form>
-    </div>
-  </div>
-}
+</p-dialog>
 
 <!-- Edit dialog -->
-@if (isEditOpen() && selectedUser()) {
-  <div class="modal-backdrop" (click)="closeEdit()" role="dialog" aria-modal="true" [attr.aria-label]="'users.form.editTitle' | translate">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal__header">
-        <h2 class="modal__title">{{ 'users.form.editTitle' | translate }}</h2>
-        <button class="modal__close" type="button" (click)="closeEdit()" [attr.aria-label]="'form.close' | translate">
-          <i class="pi pi-times" aria-hidden="true"></i>
-        </button>
-      </div>
+<p-dialog
+  [modal]="true"
+  [visible]="isEditOpen()"
+  (visibleChange)="$event ? isEditOpen.set(true) : closeEdit()"
+  [header]="'users.form.editTitle' | translate"
+  styleClass="app-dialog"
+>
+  @if (selectedUser()) {
       <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()">
-        <div class="modal__body">
+        <div class="app-dialog__body">
           <div class="form-field">
             <label class="form-label" for="edit-fullname">{{ 'users.form.fullName' | translate }}</label>
             <input
@@ -248,15 +221,10 @@
             </select>
           </div>
         </div>
-        <div class="modal__footer">
-          <button class="btn" type="button" (click)="closeEdit()">
-            {{ 'form.cancel' | translate }}
-          </button>
-          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            {{ 'form.save' | translate }}
-          </button>
+        <div class="app-dialog__footer">
+          <p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeEdit()" />
+          <p-button type="submit" [label]="'form.save' | translate" [loading]="isSubmitting()" />
         </div>
       </form>
-    </div>
-  </div>
-}
+  }
+</p-dialog>

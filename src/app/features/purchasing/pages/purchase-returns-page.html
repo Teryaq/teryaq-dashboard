@@ -1,7 +1,7 @@
 <section class="purchase-page">
   <header class="purchase-page__header">
     <div><h1>{{ 'purchasing.returns.title' | translate }}</h1><p>{{ 'purchasing.returns.subtitle' | translate }}</p></div>
-    <button class="btn btn--primary" type="button" (click)="openCreate()"><i class="pi pi-plus" aria-hidden="true"></i>{{ 'purchasing.returns.add' | translate }}</button>
+    <p-button icon="pi pi-plus" [label]="'purchasing.returns.add' | translate" (onClick)="openCreate()" />
   </header>
 
   <div class="purchase-filters">
@@ -30,24 +30,27 @@
   }
 </section>
 
-@if (isFormOpen()) {
-  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="return-form-title" (click)="closeForm()"><div class="modal modal--wide" (click)="$event.stopPropagation()">
-    <div class="modal__header"><h2 id="return-form-title">{{ 'purchasing.returns.createTitle' | translate }}</h2><button class="modal__close" type="button" (click)="closeForm()" [attr.aria-label]="'form.close' | translate"><i class="pi pi-times" aria-hidden="true"></i></button></div>
-    <form [formGroup]="form" (ngSubmit)="submit()"><div class="modal__body">
+<p-dialog
+  [modal]="true"
+  [visible]="isFormOpen()"
+  (visibleChange)="isFormOpen.set($event)"
+  [header]="'purchasing.returns.createTitle' | translate"
+  styleClass="app-dialog app-dialog--wide"
+>
+    <form [formGroup]="form" (ngSubmit)="submit()"><div class="app-dialog__body">
       <div class="form-row"><label class="form-field"><span class="form-label">{{ 'purchasing.common.branch' | translate }}</span><select class="form-select" formControlName="branchId"><option value="">{{ 'inventory.form.selectBranch' | translate }}</option>@for (branch of branches(); track branch.id) { <option [value]="branch.id">{{ branch.name }}</option> }</select></label><label class="form-field"><span class="form-label">{{ 'purchasing.common.supplier' | translate }}</span><select class="form-select" formControlName="supplierId"><option value="">{{ 'purchasing.common.selectSupplier' | translate }}</option>@for (supplier of suppliers(); track supplier.id) { <option [value]="supplier.id">{{ supplier.name }}</option> }</select></label></div>
       <label class="form-field"><span class="form-label">{{ 'purchasing.returns.reason' | translate }}</span><textarea class="form-input" formControlName="reason"></textarea></label>
       <div class="form-row"><label class="form-field"><span class="form-label">{{ 'purchasing.orders.number' | translate }} <span class="form-label__optional">{{ 'form.optional' | translate }}</span></span><input class="form-input" formControlName="purchaseOrderId" /></label><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.number' | translate }} <span class="form-label__optional">{{ 'form.optional' | translate }}</span></span><input class="form-input" formControlName="supplierInvoiceId" /></label></div>
       <div class="purchase-lines" formArrayName="lines">
-        <div class="purchase-lines__head"><h3>{{ 'purchasing.returns.lines' | translate }}</h3><button class="btn" type="button" (click)="addLine()"><i class="pi pi-plus" aria-hidden="true"></i>{{ 'purchasing.common.addLine' | translate }}</button></div>
+        <div class="purchase-lines__head"><h3>{{ 'purchasing.returns.lines' | translate }}</h3><p-button icon="pi pi-plus" severity="secondary" [outlined]="true" [label]="'purchasing.common.addLine' | translate" (onClick)="addLine()" /></div>
         @for (line of lines.controls; track $index) {
           <div class="purchase-line" [formGroupName]="$index">
             <label class="form-field purchase-line__drug"><span class="form-label">{{ 'inventory.col.batch' | translate }}</span><select class="form-select" formControlName="batchId" (change)="onBatchChange($index, $event)"><option value="">{{ 'purchasing.returns.selectBatch' | translate }}</option>@for (batch of batches(); track batch.id) { <option [value]="batch.id">{{ batch.drugTradeNameEn }} - {{ batch.batchNumber }} ({{ batch.quantityOnHand }})</option> }</select></label>
             <label class="form-field"><span class="form-label">{{ 'purchasing.returns.quantity' | translate }}</span><input class="form-input" type="number" min="1" formControlName="quantity" /></label>
             <label class="form-field"><span class="form-label">{{ 'purchasing.orders.unitCost' | translate }}</span><input class="form-input" type="number" min="0" step="0.01" formControlName="unitCost" /></label>
-            <button class="purchase-line__remove" type="button" (click)="removeLine($index)" [attr.aria-label]="'form.delete' | translate"><i class="pi pi-trash" aria-hidden="true"></i></button>
+            <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [attr.aria-label]="'form.delete' | translate" (onClick)="removeLine($index)" />
           </div>
         }
       </div>
-    </div><div class="modal__footer"><button class="btn" type="button" (click)="closeForm()">{{ 'form.cancel' | translate }}</button><button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">{{ 'form.create' | translate }}</button></div></form>
-  </div></div>
-}
+    </div><div class="app-dialog__footer"><p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeForm()" /><p-button type="submit" [label]="'form.create' | translate" [loading]="isSubmitting()" /></div></form>
+</p-dialog>

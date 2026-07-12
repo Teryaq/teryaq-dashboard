@@ -9,6 +9,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, catchError, debounceTime, of, switchMap } from 'rxjs';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { InventoryApiService } from '../services/inventory-api.service';
@@ -28,7 +30,7 @@ interface BatchRow extends StockBatch {
 
 @Component({
   selector: 'app-inventory-page',
-  imports: [TranslatePipe, ReactiveFormsModule],
+  imports: [TranslatePipe, ReactiveFormsModule, Button, Dialog],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './inventory-page.html',
   styleUrl: './inventory-page.css',

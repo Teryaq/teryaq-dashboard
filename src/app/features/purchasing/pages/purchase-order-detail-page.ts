@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signa
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { PurchaseOrder, PurchaseOrderStatus } from '../models/purchasing.model';
@@ -9,7 +11,7 @@ import { PurchaseOrdersApiService } from '../services/purchase-orders-api.servic
 
 @Component({
   selector: 'app-purchase-order-detail-page',
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, Button, Dialog, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './purchase-order-detail-page.html',
   styleUrl: './purchasing-pages.css',

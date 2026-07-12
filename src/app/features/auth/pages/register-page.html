@@ -129,7 +129,14 @@
         </div>
 
         <div class="reg-step-actions">
-          <button class="reg-step-btn reg-step-btn--secondary" type="button" (click)="previousStep()">{{ 'common.previous' | translate }}</button>
+          <p-button
+            type="button"
+            severity="secondary"
+            [outlined]="true"
+            [label]="'common.previous' | translate"
+            styleClass="w-full"
+            (onClick)="previousStep()"
+          />
           <p-button type="submit" [label]="'auth.register.submit' | translate" [loading]="authServiceRef.isLoading()" styleClass="w-full reg-submit-btn" />
         </div>
         }

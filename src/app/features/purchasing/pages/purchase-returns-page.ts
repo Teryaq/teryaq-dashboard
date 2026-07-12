@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, of } from 'rxjs';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { AuthService } from '../../../core/auth/services/auth.service';
@@ -15,7 +17,7 @@ import { SuppliersApiService } from '../services/suppliers-api.service';
 
 @Component({
   selector: 'app-purchase-returns-page',
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, Button, Dialog, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './purchase-returns-page.html',
   styleUrl: './purchasing-pages.css',
