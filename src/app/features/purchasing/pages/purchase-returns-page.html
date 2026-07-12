@@ -5,8 +5,8 @@
   </header>
 
   <div class="purchase-filters">
-    <select class="form-select" [value]="branchFilter()" (change)="branchFilter.set($any($event.target).value); onFilterChange()"><option value="">{{ 'purchasing.common.allBranches' | translate }}</option>@for (branch of branches(); track branch.id) { <option [value]="branch.id">{{ branch.name }}</option> }</select>
-    <select class="form-select" [value]="supplierFilter()" (change)="supplierFilter.set($any($event.target).value); onFilterChange()"><option value="">{{ 'purchasing.common.allSuppliers' | translate }}</option>@for (supplier of suppliers(); track supplier.id) { <option [value]="supplier.id">{{ supplier.name }}</option> }</select>
+    <p-select [ngModel]="branchFilter()" (ngModelChange)="branchFilter.set($event || ''); onFilterChange()" [options]="branches()" optionLabel="name" optionValue="id" [placeholder]="'purchasing.common.allBranches' | translate" [showClear]="true" appendTo="body" styleClass="w-full" />
+    <p-select [ngModel]="supplierFilter()" (ngModelChange)="supplierFilter.set($event || ''); onFilterChange()" [options]="suppliers()" optionLabel="name" optionValue="id" [placeholder]="'purchasing.common.allSuppliers' | translate" [showClear]="true" appendTo="body" styleClass="w-full" />
   </div>
 
   @if (isLoading()) {
@@ -38,16 +38,16 @@
   styleClass="app-dialog app-dialog--wide"
 >
     <form [formGroup]="form" (ngSubmit)="submit()"><div class="app-dialog__body">
-      <div class="form-row"><label class="form-field"><span class="form-label">{{ 'purchasing.common.branch' | translate }}</span><select class="form-select" formControlName="branchId"><option value="">{{ 'inventory.form.selectBranch' | translate }}</option>@for (branch of branches(); track branch.id) { <option [value]="branch.id">{{ branch.name }}</option> }</select></label><label class="form-field"><span class="form-label">{{ 'purchasing.common.supplier' | translate }}</span><select class="form-select" formControlName="supplierId"><option value="">{{ 'purchasing.common.selectSupplier' | translate }}</option>@for (supplier of suppliers(); track supplier.id) { <option [value]="supplier.id">{{ supplier.name }}</option> }</select></label></div>
-      <label class="form-field"><span class="form-label">{{ 'purchasing.returns.reason' | translate }}</span><textarea class="form-input" formControlName="reason"></textarea></label>
-      <div class="form-row"><label class="form-field"><span class="form-label">{{ 'purchasing.orders.number' | translate }} <span class="form-label__optional">{{ 'form.optional' | translate }}</span></span><input class="form-input" formControlName="purchaseOrderId" /></label><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.number' | translate }} <span class="form-label__optional">{{ 'form.optional' | translate }}</span></span><input class="form-input" formControlName="supplierInvoiceId" /></label></div>
+      <div class="form-row"><label class="form-field"><span class="form-label">{{ 'purchasing.common.branch' | translate }}</span><p-select formControlName="branchId" [options]="branches()" optionLabel="name" optionValue="id" [placeholder]="'inventory.form.selectBranch' | translate" appendTo="body" styleClass="w-full" /></label><label class="form-field"><span class="form-label">{{ 'purchasing.common.supplier' | translate }}</span><p-select formControlName="supplierId" [options]="suppliers()" optionLabel="name" optionValue="id" [placeholder]="'purchasing.common.selectSupplier' | translate" appendTo="body" styleClass="w-full" /></label></div>
+      <label class="form-field"><span class="form-label">{{ 'purchasing.returns.reason' | translate }}</span><textarea pTextarea class="w-full" formControlName="reason"></textarea></label>
+      <div class="form-row"><label class="form-field"><span class="form-label">{{ 'purchasing.orders.number' | translate }} <span class="form-label__optional">{{ 'form.optional' | translate }}</span></span><input pInputText class="w-full" formControlName="purchaseOrderId" /></label><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.number' | translate }} <span class="form-label__optional">{{ 'form.optional' | translate }}</span></span><input pInputText class="w-full" formControlName="supplierInvoiceId" /></label></div>
       <div class="purchase-lines" formArrayName="lines">
         <div class="purchase-lines__head"><h3>{{ 'purchasing.returns.lines' | translate }}</h3><p-button icon="pi pi-plus" severity="secondary" [outlined]="true" [label]="'purchasing.common.addLine' | translate" (onClick)="addLine()" /></div>
         @for (line of lines.controls; track $index) {
           <div class="purchase-line" [formGroupName]="$index">
-            <label class="form-field purchase-line__drug"><span class="form-label">{{ 'inventory.col.batch' | translate }}</span><select class="form-select" formControlName="batchId" (change)="onBatchChange($index, $event)"><option value="">{{ 'purchasing.returns.selectBatch' | translate }}</option>@for (batch of batches(); track batch.id) { <option [value]="batch.id">{{ batch.drugTradeNameEn }} - {{ batch.batchNumber }} ({{ batch.quantityOnHand }})</option> }</select></label>
-            <label class="form-field"><span class="form-label">{{ 'purchasing.returns.quantity' | translate }}</span><input class="form-input" type="number" min="1" formControlName="quantity" /></label>
-            <label class="form-field"><span class="form-label">{{ 'purchasing.orders.unitCost' | translate }}</span><input class="form-input" type="number" min="0" step="0.01" formControlName="unitCost" /></label>
+            <label class="form-field purchase-line__drug"><span class="form-label">{{ 'inventory.col.batch' | translate }}</span><p-select formControlName="batchId" [options]="batchOptions()" optionLabel="label" optionValue="value" [placeholder]="'purchasing.returns.selectBatch' | translate" appendTo="body" styleClass="w-full" (onChange)="onBatchChange($index, $event.value)" /></label>
+            <label class="form-field"><span class="form-label">{{ 'purchasing.returns.quantity' | translate }}</span><p-inputnumber formControlName="quantity" [min]="1" [showButtons]="true" styleClass="w-full" /></label>
+            <label class="form-field"><span class="form-label">{{ 'purchasing.orders.unitCost' | translate }}</span><p-inputnumber formControlName="unitCost" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" /></label>
             <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [attr.aria-label]="'form.delete' | translate" (onClick)="removeLine($index)" />
           </div>
         }

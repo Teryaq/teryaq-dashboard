@@ -11,6 +11,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, catchError, debounceTime, of, switchMap } from 'rxjs';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
+import { DatePicker } from 'primeng/datepicker';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
+import { Select } from 'primeng/select';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { InventoryApiService } from '../services/inventory-api.service';
@@ -30,7 +34,7 @@ interface BatchRow extends StockBatch {
 
 @Component({
   selector: 'app-inventory-page',
-  imports: [TranslatePipe, ReactiveFormsModule, Button, Dialog],
+  imports: [TranslatePipe, ReactiveFormsModule, Button, Dialog, DatePicker, InputNumber, InputText, Select],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './inventory-page.html',
   styleUrl: './inventory-page.css',
@@ -85,18 +89,18 @@ export class InventoryPage {
     branchId: ['', [Validators.required]],
     drugId: ['', [Validators.required]],
     batchNumber: ['', [Validators.required, Validators.maxLength(100)]],
-    expiryDate: ['', [Validators.required]],
-    quantity: ['1', [Validators.required]],
-    reorderLevel: ['0', [Validators.required]],
-    costPrice: ['0', [Validators.required]],
-    sellingPrice: [''],
+    expiryDate: this.fb.control<Date | null>(null, [Validators.required]),
+    quantity: [1, [Validators.required]],
+    reorderLevel: [0, [Validators.required]],
+    costPrice: [0, [Validators.required]],
+    sellingPrice: this.fb.control<number | null>(null),
   });
 
   protected readonly adjustForm = this.fb.nonNullable.group({
-    quantityOnHand: ['0', [Validators.required]],
-    reorderLevel: ['0', [Validators.required]],
-    sellingPrice: ['0', [Validators.required]],
-    expiryDate: ['', [Validators.required]],
+    quantityOnHand: [0, [Validators.required]],
+    reorderLevel: [0, [Validators.required]],
+    sellingPrice: [0, [Validators.required]],
+    expiryDate: this.fb.control<Date | null>(null, [Validators.required]),
   });
 
   constructor() {
@@ -152,10 +156,11 @@ export class InventoryPage {
   protected openReceive(): void {
     this.receiveForm.reset({
       branchId: this.authService.isOwner() ? '' : (this.authService.session()?.branchId ?? ''),
-      quantity: '1',
-      reorderLevel: '0',
-      costPrice: '0',
-      sellingPrice: '',
+      expiryDate: null,
+      quantity: 1,
+      reorderLevel: 0,
+      costPrice: 0,
+      sellingPrice: null,
     });
     this.drugDisplayValue.set('');
     this.drugResults.set([]);
@@ -192,11 +197,11 @@ export class InventoryPage {
         branchId: raw.branchId,
         drugId: raw.drugId,
         batchNumber: raw.batchNumber,
-        expiryDate: raw.expiryDate,
+        expiryDate: this.formatDatePayload(raw.expiryDate),
         quantity: Number(raw.quantity),
         reorderLevel: Number(raw.reorderLevel),
         costPrice: Number(raw.costPrice),
-        sellingPrice: raw.sellingPrice ? Number(raw.sellingPrice) : null,
+        sellingPrice: raw.sellingPrice == null ? null : Number(raw.sellingPrice),
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -215,10 +220,10 @@ export class InventoryPage {
   protected openAdjust(batch: BatchRow): void {
     this.selectedBatch.set(batch);
     this.adjustForm.reset({
-      quantityOnHand: String(batch.quantityOnHand),
-      reorderLevel: String(batch.reorderLevel),
-      sellingPrice: String(batch.sellingPrice),
-      expiryDate: batch.expiryDate,
+      quantityOnHand: batch.quantityOnHand,
+      reorderLevel: batch.reorderLevel,
+      sellingPrice: batch.sellingPrice,
+      expiryDate: this.parseDateValue(batch.expiryDate),
     });
     this.isAdjustOpen.set(true);
   }
@@ -240,7 +245,7 @@ export class InventoryPage {
         quantityOnHand: Number(raw.quantityOnHand),
         reorderLevel: Number(raw.reorderLevel),
         sellingPrice: Number(raw.sellingPrice),
-        expiryDate: raw.expiryDate,
+        expiryDate: this.formatDatePayload(raw.expiryDate),
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -319,6 +324,20 @@ export class InventoryPage {
     if (days < 0) return 'expired';
     if (days <= 90) return 'nearExpiry';
     return 'ok';
+  }
+
+  private parseDateValue(value: string | null | undefined): Date | null {
+    return value ? new Date(`${value}T00:00:00`) : null;
+  }
+
+  private formatDatePayload(value: Date | string | null): string {
+    if (value instanceof Date) {
+      const year = value.getFullYear();
+      const month = String(value.getMonth() + 1).padStart(2, '0');
+      const day = String(value.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    return value ?? '';
   }
 
   private loadBatches(pageNumber: number): void {

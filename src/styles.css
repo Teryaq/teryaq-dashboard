@@ -466,29 +466,13 @@ html.dark .auth-layout {
   color: var(--text-muted);
 }
 
-.form-input,
-.form-select {
-  width: 100%;
-  padding: 0.625rem 0.875rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--surface-border);
-  background: var(--surface-panel);
-  color: var(--text-color);
-  font-size: 0.9375rem;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  box-sizing: border-box;
+.form-input--error,
+.form-input--error .p-inputtext,
+.form-input--error .p-select,
+.form-input--error .p-datepicker-input,
+.form-input--error .p-inputnumber-input {
+  border-color: var(--danger-border) !important;
 }
-
-.form-input:focus,
-.form-select:focus {
-  border-color: var(--action-subtle-border);
-  box-shadow: 0 0 0 3px var(--action-focus-ring);
-}
-
-.form-input::placeholder { color: var(--text-muted); }
-.form-input--error { border-color: var(--danger-border); }
 
 .form-error {
   font-size: 0.75rem;

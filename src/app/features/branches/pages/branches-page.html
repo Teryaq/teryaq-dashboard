@@ -13,6 +13,7 @@
     <div class="br__search-wrap">
       <i class="pi pi-search br__search-icon" aria-hidden="true"></i>
       <input
+        pInputText
         class="br__search"
         type="search"
         [placeholder]="'branches.search' | translate"
@@ -135,8 +136,9 @@
           <div class="form-field">
             <label class="form-label" for="create-name">{{ 'branches.form.name' | translate }}</label>
             <input
+              pInputText
               id="create-name"
-              class="form-input"
+              class="w-full"
               [class.form-input--error]="createFieldError('name')"
               type="text"
               formControlName="name"
@@ -151,8 +153,9 @@
               <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
             </label>
             <input
+              pInputText
               id="create-address"
-              class="form-input"
+              class="w-full"
               type="text"
               formControlName="address"
             />
@@ -163,8 +166,9 @@
               <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
             </label>
             <input
+              pInputText
               id="create-phone"
-              class="form-input"
+              class="w-full"
               type="tel"
               formControlName="phone"
             />
@@ -191,8 +195,9 @@
           <div class="form-field">
             <label class="form-label" for="edit-name">{{ 'branches.form.name' | translate }}</label>
             <input
+              pInputText
               id="edit-name"
-              class="form-input"
+              class="w-full"
               [class.form-input--error]="editFieldError('name')"
               type="text"
               formControlName="name"
@@ -207,8 +212,9 @@
               <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
             </label>
             <input
+              pInputText
               id="edit-address"
-              class="form-input"
+              class="w-full"
               type="text"
               formControlName="address"
             />
@@ -219,8 +225,9 @@
               <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
             </label>
             <input
+              pInputText
               id="edit-phone"
-              class="form-input"
+              class="w-full"
               type="tel"
               formControlName="phone"
             />

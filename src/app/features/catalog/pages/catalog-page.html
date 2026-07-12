@@ -25,6 +25,7 @@
     <div class="cat__search-wrap">
       <i class="pi pi-search cat__search-icon" aria-hidden="true"></i>
       <input
+        pInputText
         class="cat__search"
         type="search"
         [placeholder]="'catalog.search' | translate"
@@ -193,59 +194,55 @@
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="c-nameEn">{{ 'catalog.form.tradeNameEn' | translate }}</label>
-              <input id="c-nameEn" class="form-input" [class.form-input--error]="createFieldError('tradeNameEn')" type="text" formControlName="tradeNameEn" dir="ltr" />
+              <input pInputText id="c-nameEn" class="w-full" [class.form-input--error]="createFieldError('tradeNameEn')" type="text" formControlName="tradeNameEn" dir="ltr" />
               @if (createFieldError('tradeNameEn'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
               <label class="form-label" for="c-nameAr">{{ 'catalog.form.tradeNameAr' | translate }}</label>
-              <input id="c-nameAr" class="form-input" [class.form-input--error]="createFieldError('tradeNameAr')" type="text" formControlName="tradeNameAr" dir="rtl" />
+              <input pInputText id="c-nameAr" class="w-full" [class.form-input--error]="createFieldError('tradeNameAr')" type="text" formControlName="tradeNameAr" dir="rtl" />
               @if (createFieldError('tradeNameAr'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
           </div>
           <div class="form-field">
             <label class="form-label" for="c-generic">{{ 'catalog.form.genericName' | translate }}</label>
-            <input id="c-generic" class="form-input" [class.form-input--error]="createFieldError('genericName')" type="text" formControlName="genericName" />
+            <input pInputText id="c-generic" class="w-full" [class.form-input--error]="createFieldError('genericName')" type="text" formControlName="genericName" />
             @if (createFieldError('genericName'); as key) { <small class="form-error">{{ key | translate }}</small> }
           </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="c-form">{{ 'catalog.form.dosageForm' | translate }}</label>
-              <input id="c-form" class="form-input" [class.form-input--error]="createFieldError('dosageForm')" type="text" formControlName="dosageForm" />
+              <input pInputText id="c-form" class="w-full" [class.form-input--error]="createFieldError('dosageForm')" type="text" formControlName="dosageForm" />
               @if (createFieldError('dosageForm'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
               <label class="form-label" for="c-strength">{{ 'catalog.form.strength' | translate }}</label>
-              <input id="c-strength" class="form-input" [class.form-input--error]="createFieldError('strength')" type="text" formControlName="strength" />
+              <input pInputText id="c-strength" class="w-full" [class.form-input--error]="createFieldError('strength')" type="text" formControlName="strength" />
               @if (createFieldError('strength'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="c-pack">{{ 'catalog.form.packSize' | translate }}</label>
-              <input id="c-pack" class="form-input" [class.form-input--error]="createFieldError('packSize')" type="number" min="1" step="1" formControlName="packSize" />
+              <p-inputnumber inputId="c-pack" formControlName="packSize" [min]="1" [showButtons]="true" styleClass="w-full" [class.form-input--error]="createFieldError('packSize')" />
               @if (createFieldError('packSize'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
               <label class="form-label" for="c-price">{{ 'catalog.form.price' | translate }}</label>
-              <input id="c-price" class="form-input" [class.form-input--error]="createFieldError('price')" type="number" min="0" step="0.01" formControlName="price" />
+              <p-inputnumber inputId="c-price" formControlName="price" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" [class.form-input--error]="createFieldError('price')" />
               @if (createFieldError('price'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="c-source">{{ 'catalog.form.source' | translate }}</label>
-              <select id="c-source" class="form-select" formControlName="source">
-                <option value="0">{{ 'catalog.source.EDA' | translate }}</option>
-                <option value="1">{{ 'catalog.source.Import' | translate }}</option>
-                <option value="2">{{ 'catalog.source.Manual' | translate }}</option>
-              </select>
+              <p-select inputId="c-source" formControlName="source" [options]="sourceOptions()" optionLabel="label" optionValue="value" appendTo="body" styleClass="w-full" />
             </div>
             <div class="form-field">
               <label class="form-label" for="c-barcode">
                 {{ 'catalog.form.barcode' | translate }}
                 <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
               </label>
-              <input id="c-barcode" class="form-input" type="text" formControlName="barcode" dir="ltr" />
+              <input pInputText id="c-barcode" class="w-full" type="text" formControlName="barcode" dir="ltr" />
             </div>
           </div>
           <div class="form-row">
@@ -254,14 +251,14 @@
                 {{ 'catalog.form.manufacturerEn' | translate }}
                 <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
               </label>
-              <input id="c-mfrEn" class="form-input" type="text" formControlName="manufacturerEn" dir="ltr" />
+              <input pInputText id="c-mfrEn" class="w-full" type="text" formControlName="manufacturerEn" dir="ltr" />
             </div>
             <div class="form-field">
               <label class="form-label" for="c-mfrAr">
                 {{ 'catalog.form.manufacturerAr' | translate }}
                 <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
               </label>
-              <input id="c-mfrAr" class="form-input" type="text" formControlName="manufacturerAr" dir="rtl" />
+              <input pInputText id="c-mfrAr" class="w-full" type="text" formControlName="manufacturerAr" dir="rtl" />
             </div>
           </div>
         </div>
@@ -296,41 +293,41 @@
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="e-nameEn">{{ 'catalog.form.tradeNameEn' | translate }}</label>
-              <input id="e-nameEn" class="form-input" [class.form-input--error]="editFieldError('tradeNameEn')" type="text" formControlName="tradeNameEn" dir="ltr" />
+              <input pInputText id="e-nameEn" class="w-full" [class.form-input--error]="editFieldError('tradeNameEn')" type="text" formControlName="tradeNameEn" dir="ltr" />
               @if (editFieldError('tradeNameEn'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
               <label class="form-label" for="e-nameAr">{{ 'catalog.form.tradeNameAr' | translate }}</label>
-              <input id="e-nameAr" class="form-input" [class.form-input--error]="editFieldError('tradeNameAr')" type="text" formControlName="tradeNameAr" dir="rtl" />
+              <input pInputText id="e-nameAr" class="w-full" [class.form-input--error]="editFieldError('tradeNameAr')" type="text" formControlName="tradeNameAr" dir="rtl" />
               @if (editFieldError('tradeNameAr'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
           </div>
           <div class="form-field">
             <label class="form-label" for="e-generic">{{ 'catalog.form.genericName' | translate }}</label>
-            <input id="e-generic" class="form-input" [class.form-input--error]="editFieldError('genericName')" type="text" formControlName="genericName" />
+            <input pInputText id="e-generic" class="w-full" [class.form-input--error]="editFieldError('genericName')" type="text" formControlName="genericName" />
             @if (editFieldError('genericName'); as key) { <small class="form-error">{{ key | translate }}</small> }
           </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="e-form">{{ 'catalog.form.dosageForm' | translate }}</label>
-              <input id="e-form" class="form-input" [class.form-input--error]="editFieldError('dosageForm')" type="text" formControlName="dosageForm" />
+              <input pInputText id="e-form" class="w-full" [class.form-input--error]="editFieldError('dosageForm')" type="text" formControlName="dosageForm" />
               @if (editFieldError('dosageForm'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
               <label class="form-label" for="e-strength">{{ 'catalog.form.strength' | translate }}</label>
-              <input id="e-strength" class="form-input" [class.form-input--error]="editFieldError('strength')" type="text" formControlName="strength" />
+              <input pInputText id="e-strength" class="w-full" [class.form-input--error]="editFieldError('strength')" type="text" formControlName="strength" />
               @if (editFieldError('strength'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="e-pack">{{ 'catalog.form.packSize' | translate }}</label>
-              <input id="e-pack" class="form-input" [class.form-input--error]="editFieldError('packSize')" type="number" min="1" step="1" formControlName="packSize" />
+              <p-inputnumber inputId="e-pack" formControlName="packSize" [min]="1" [showButtons]="true" styleClass="w-full" [class.form-input--error]="editFieldError('packSize')" />
               @if (editFieldError('packSize'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
               <label class="form-label" for="e-price">{{ 'catalog.form.price' | translate }}</label>
-              <input id="e-price" class="form-input" [class.form-input--error]="editFieldError('price')" type="number" min="0" step="0.01" formControlName="price" />
+              <p-inputnumber inputId="e-price" formControlName="price" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" [class.form-input--error]="editFieldError('price')" />
               @if (editFieldError('price'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
           </div>
@@ -340,11 +337,11 @@
                 {{ 'catalog.form.barcode' | translate }}
                 <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
               </label>
-              <input id="e-barcode" class="form-input" type="text" formControlName="barcode" dir="ltr" />
+              <input pInputText id="e-barcode" class="w-full" type="text" formControlName="barcode" dir="ltr" />
             </div>
             <div class="form-field form-field--checkbox">
               <label class="form-checkbox-label" for="e-active">
-                <input id="e-active" type="checkbox" formControlName="isActive" class="form-checkbox" />
+                <p-checkbox inputId="e-active" formControlName="isActive" [binary]="true" />
                 {{ 'catalog.form.isActive' | translate }}
               </label>
             </div>
@@ -355,14 +352,14 @@
                 {{ 'catalog.form.manufacturerEn' | translate }}
                 <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
               </label>
-              <input id="e-mfrEn" class="form-input" type="text" formControlName="manufacturerEn" dir="ltr" />
+              <input pInputText id="e-mfrEn" class="w-full" type="text" formControlName="manufacturerEn" dir="ltr" />
             </div>
             <div class="form-field">
               <label class="form-label" for="e-mfrAr">
                 {{ 'catalog.form.manufacturerAr' | translate }}
                 <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
               </label>
-              <input id="e-mfrAr" class="form-input" type="text" formControlName="manufacturerAr" dir="rtl" />
+              <input pInputText id="e-mfrAr" class="w-full" type="text" formControlName="manufacturerAr" dir="rtl" />
             </div>
           </div>
         </div>

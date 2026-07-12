@@ -67,11 +67,11 @@
                 <strong>{{ line.value.label }}</strong>
                 <span>{{ 'purchasing.orders.remaining' | translate }}: {{ line.value.remaining }}</span>
               </div>
-              <label class="form-field"><span class="form-label">{{ 'purchasing.orders.qtyReceived' | translate }}</span><input class="form-input" type="number" min="0" formControlName="quantityReceived" /></label>
-              <label class="form-field"><span class="form-label">{{ 'inventory.form.batchNumber' | translate }}</span><input class="form-input" formControlName="batchNumber" /></label>
-              <label class="form-field"><span class="form-label">{{ 'inventory.form.expiryDate' | translate }}</span><input class="form-input" type="date" formControlName="expiryDate" /></label>
-              <label class="form-field"><span class="form-label">{{ 'inventory.form.sellingPrice' | translate }}</span><input class="form-input" type="number" min="0" step="0.01" formControlName="sellingPrice" /></label>
-              <label class="form-field"><span class="form-label">{{ 'inventory.form.reorderLevel' | translate }}</span><input class="form-input" type="number" min="0" formControlName="reorderLevel" /></label>
+              <label class="form-field"><span class="form-label">{{ 'purchasing.orders.qtyReceived' | translate }}</span><p-inputnumber formControlName="quantityReceived" [min]="0" [showButtons]="true" styleClass="w-full" /></label>
+              <label class="form-field"><span class="form-label">{{ 'inventory.form.batchNumber' | translate }}</span><input pInputText class="w-full" formControlName="batchNumber" /></label>
+              <label class="form-field"><span class="form-label">{{ 'inventory.form.expiryDate' | translate }}</span><p-datepicker formControlName="expiryDate" dateFormat="yy-mm-dd" [showIcon]="true" appendTo="body" styleClass="w-full" /></label>
+              <label class="form-field"><span class="form-label">{{ 'inventory.form.sellingPrice' | translate }}</span><p-inputnumber formControlName="sellingPrice" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" /></label>
+              <label class="form-field"><span class="form-label">{{ 'inventory.form.reorderLevel' | translate }}</span><p-inputnumber formControlName="reorderLevel" [min]="0" [showButtons]="true" styleClass="w-full" /></label>
             </div>
           }
         </div>

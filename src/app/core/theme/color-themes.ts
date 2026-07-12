@@ -3,9 +3,8 @@
  *
  * Ported from COLOR_THEMES.md. Each color theme is a full 50–950 primary
  * palette; the ThemeService maps shades to the app's `--color-primary` tokens
- * and feeds PrimeNG via `updatePrimaryPalette`. Dark presets are standalone
- * dark looks that override surfaces (CSS); the selected color theme still
- * controls the primary/action palette.
+ * and feeds PrimeNG via `updatePrimaryPalette`. Dark presets can provide their
+ * own full primary palette so the selected preset owns the full dark look.
  */
 
 export type PaletteShade =
@@ -193,6 +192,12 @@ export interface DarkPreset {
   readonly swatch: string;
   /** CSS class toggled on <html> (empty for `none`). */
   readonly className: string;
+  /** Optional palette that overrides the selected color theme while active. */
+  readonly palette?: Palette;
+  /** Optional dark-mode action shades for presets whose palette[400] is too light for filled buttons. */
+  readonly actionPrimary?: string;
+  readonly actionPrimaryHover?: string;
+  readonly actionText?: string;
 }
 
 export const DARK_PRESETS: Record<DarkPresetKey, DarkPreset> = {
@@ -205,11 +210,28 @@ export const DARK_PRESETS: Record<DarkPresetKey, DarkPreset> = {
     labelKey: 'theme.presets.obsidian',
     swatch: '#0a0b0f',
     className: 'theme-obsidian',
+    actionPrimary: '#27272a',
+    actionPrimaryHover: '#3f3f46',
+    actionText: '#f4f4f5',
+    palette: {
+      50: '#fafafa',
+      100: '#f4f4f5',
+      200: '#e4e4e7',
+      300: '#d4d4d8',
+      400: '#a1a1aa',
+      500: '#71717a',
+      600: '#52525b',
+      700: '#3f3f46',
+      800: '#27272a',
+      900: '#18181b',
+      950: '#09090b',
+    },
   },
   amber: {
     labelKey: 'theme.presets.amber',
     swatch: '#f5a100',
     className: 'theme-amber',
+    palette: COLOR_THEMES.amber.palette,
   },
 };
 
@@ -221,3 +243,35 @@ export const DEFAULT_DARK_PRESET: DarkPresetKey = 'none';
 export const DARK_PRESET_CLASSES = DARK_PRESET_KEYS.map((k) => DARK_PRESETS[k].className).filter(
   Boolean,
 );
+
+export function getEffectivePalette(
+  colorTheme: ColorThemeKey,
+  darkPreset: DarkPresetKey,
+  isDark: boolean,
+): Palette {
+  const presetPalette = isDark ? DARK_PRESETS[darkPreset].palette : undefined;
+  return presetPalette ?? COLOR_THEMES[colorTheme].palette;
+}
+
+export interface EffectiveThemeColors {
+  readonly palette: Palette;
+  readonly primary: string;
+  readonly primaryHover: string;
+  readonly actionText: string;
+}
+
+export function getEffectiveThemeColors(
+  colorTheme: ColorThemeKey,
+  darkPreset: DarkPresetKey,
+  isDark: boolean,
+): EffectiveThemeColors {
+  const palette = getEffectivePalette(colorTheme, darkPreset, isDark);
+  const preset = isDark ? DARK_PRESETS[darkPreset] : undefined;
+
+  return {
+    palette,
+    primary: preset?.actionPrimary ?? (isDark ? palette[400] : palette[500]),
+    primaryHover: preset?.actionPrimaryHover ?? (isDark ? palette[500] : palette[600]),
+    actionText: preset?.actionText ?? '#052e24',
+  };
+}

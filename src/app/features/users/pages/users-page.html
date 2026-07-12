@@ -13,6 +13,7 @@
     <div class="usr__search-wrap">
       <i class="pi pi-search usr__search-icon" aria-hidden="true"></i>
       <input
+        pInputText
         class="usr__search"
         type="search"
         [placeholder]="'users.search' | translate"
@@ -126,8 +127,9 @@
           <div class="form-field">
             <label class="form-label" for="invite-fullname">{{ 'users.form.fullName' | translate }}</label>
             <input
+              pInputText
               id="invite-fullname"
-              class="form-input"
+              class="w-full"
               [class.form-input--error]="inviteFieldError('fullName')"
               type="text"
               formControlName="fullName"
@@ -139,8 +141,9 @@
           <div class="form-field">
             <label class="form-label" for="invite-email">{{ 'users.form.email' | translate }}</label>
             <input
+              pInputText
               id="invite-email"
-              class="form-input"
+              class="w-full"
               [class.form-input--error]="inviteFieldError('email')"
               type="email"
               formControlName="email"
@@ -152,13 +155,15 @@
           </div>
           <div class="form-field">
             <label class="form-label" for="invite-password">{{ 'users.form.password' | translate }}</label>
-            <input
-              id="invite-password"
-              class="form-input"
-              [class.form-input--error]="inviteFieldError('password')"
-              type="password"
+            <p-password
+              inputId="invite-password"
               formControlName="password"
+              [feedback]="false"
+              [toggleMask]="true"
+              styleClass="w-full"
+              inputStyleClass="w-full"
               autocomplete="new-password"
+              [class.form-input--error]="inviteFieldError('password')"
             />
             @if (inviteFieldError('password'); as key) {
               <small class="form-error">{{ key | translate }}</small>
@@ -169,12 +174,7 @@
               {{ 'users.form.branch' | translate }}
               <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
             </label>
-            <select id="invite-branch" class="form-select" formControlName="branchId">
-              <option value="">{{ 'users.form.noBranch' | translate }}</option>
-              @for (branch of branches(); track branch.id) {
-                <option [value]="branch.id">{{ branch.name }}</option>
-              }
-            </select>
+            <p-select inputId="invite-branch" formControlName="branchId" [options]="branches()" optionLabel="name" optionValue="id" [placeholder]="'users.form.noBranch' | translate" [showClear]="true" appendTo="body" styleClass="w-full" />
           </div>
         </div>
         <div class="app-dialog__footer">
@@ -198,8 +198,9 @@
           <div class="form-field">
             <label class="form-label" for="edit-fullname">{{ 'users.form.fullName' | translate }}</label>
             <input
+              pInputText
               id="edit-fullname"
-              class="form-input"
+              class="w-full"
               [class.form-input--error]="editFieldError('fullName')"
               type="text"
               formControlName="fullName"
@@ -213,12 +214,7 @@
               {{ 'users.form.branch' | translate }}
               <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
             </label>
-            <select id="edit-branch" class="form-select" formControlName="branchId">
-              <option value="">{{ 'users.form.noBranch' | translate }}</option>
-              @for (branch of branches(); track branch.id) {
-                <option [value]="branch.id">{{ branch.name }}</option>
-              }
-            </select>
+            <p-select inputId="edit-branch" formControlName="branchId" [options]="branches()" optionLabel="name" optionValue="id" [placeholder]="'users.form.noBranch' | translate" [showClear]="true" appendTo="body" styleClass="w-full" />
           </div>
         </div>
         <div class="app-dialog__footer">

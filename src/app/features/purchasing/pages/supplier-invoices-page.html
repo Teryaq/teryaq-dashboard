@@ -5,11 +5,18 @@
   </header>
 
   <div class="purchase-filters">
-    <select class="form-select" [value]="supplierFilter()" (change)="supplierFilter.set($any($event.target).value); onFilterChange()">
-      <option value="">{{ 'purchasing.common.allSuppliers' | translate }}</option>
-      @for (supplier of suppliers(); track supplier.id) { <option [value]="supplier.id">{{ supplier.name }}</option> }
-    </select>
-    <label class="purchase-checkbox"><input type="checkbox" [checked]="outstandingOnly()" (change)="outstandingOnly.set($any($event.target).checked); onFilterChange()" /> <span>{{ 'purchasing.invoices.outstandingOnly' | translate }}</span></label>
+    <p-select
+      [ngModel]="supplierFilter()"
+      (ngModelChange)="supplierFilter.set($event || ''); onFilterChange()"
+      [options]="suppliers()"
+      optionLabel="name"
+      optionValue="id"
+      [placeholder]="'purchasing.common.allSuppliers' | translate"
+      [showClear]="true"
+      appendTo="body"
+      styleClass="w-full"
+    />
+    <label class="purchase-checkbox"><p-checkbox [binary]="true" [ngModel]="outstandingOnly()" (ngModelChange)="outstandingOnly.set($event); onFilterChange()" /> <span>{{ 'purchasing.invoices.outstandingOnly' | translate }}</span></label>
   </div>
 
   @if (isLoading()) {
@@ -44,11 +51,11 @@
   styleClass="app-dialog app-dialog--wide"
 >
     <form [formGroup]="form" (ngSubmit)="submit()"><div class="app-dialog__body">
-      <label class="form-field"><span class="form-label">{{ 'purchasing.common.supplier' | translate }}</span><select class="form-select" formControlName="supplierId" [disabled]="!!selected()"><option value="">{{ 'purchasing.common.selectSupplier' | translate }}</option>@for (supplier of suppliers(); track supplier.id) { <option [value]="supplier.id">{{ supplier.name }}</option> }</select></label>
-      <label class="form-field"><span class="form-label">{{ 'purchasing.invoices.number' | translate }}</span><input class="form-input" formControlName="invoiceNumber" /></label>
-      @if (!selected()) { <label class="form-field"><span class="form-label">{{ 'purchasing.invoices.amount' | translate }}</span><input class="form-input" type="number" min="0.01" step="0.01" formControlName="amount" /></label> }
-      <div class="form-row"><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.issuedAt' | translate }}</span><input class="form-input" type="date" formControlName="issuedAt" [disabled]="!!selected()" /></label><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.dueAt' | translate }}</span><input class="form-input" type="date" formControlName="dueAt" /></label></div>
-      <label class="form-field"><span class="form-label">{{ 'purchasing.orders.number' | translate }} <span class="form-label__optional">{{ 'form.optional' | translate }}</span></span><input class="form-input" formControlName="purchaseOrderId" [disabled]="!!selected()" /></label>
+      <label class="form-field"><span class="form-label">{{ 'purchasing.common.supplier' | translate }}</span><p-select formControlName="supplierId" [options]="suppliers()" optionLabel="name" optionValue="id" [placeholder]="'purchasing.common.selectSupplier' | translate" [disabled]="!!selected()" appendTo="body" styleClass="w-full" /></label>
+      <label class="form-field"><span class="form-label">{{ 'purchasing.invoices.number' | translate }}</span><input pInputText class="w-full" formControlName="invoiceNumber" /></label>
+      @if (!selected()) { <label class="form-field"><span class="form-label">{{ 'purchasing.invoices.amount' | translate }}</span><p-inputnumber formControlName="amount" [min]="0.01" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" /></label> }
+      <div class="form-row"><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.issuedAt' | translate }}</span><p-datepicker formControlName="issuedAt" dateFormat="yy-mm-dd" [showIcon]="true" appendTo="body" styleClass="w-full" [disabled]="!!selected()" /></label><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.dueAt' | translate }}</span><p-datepicker formControlName="dueAt" dateFormat="yy-mm-dd" [showIcon]="true" appendTo="body" styleClass="w-full" /></label></div>
+      <label class="form-field"><span class="form-label">{{ 'purchasing.orders.number' | translate }} <span class="form-label__optional">{{ 'form.optional' | translate }}</span></span><input pInputText class="w-full" formControlName="purchaseOrderId" [disabled]="!!selected()" /></label>
     </div><div class="app-dialog__footer"><p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeForm()" /><p-button type="submit" [label]="'form.save' | translate" [loading]="isSubmitting()" /></div></form>
 </p-dialog>
 
@@ -60,6 +67,6 @@
   styleClass="app-dialog"
 >
     @if (paymentTarget()) {
-      <form [formGroup]="paymentForm" (ngSubmit)="recordPayment()"><div class="app-dialog__body"><p class="purchase-muted">{{ paymentTarget()!.invoiceNumber }} - {{ paymentTarget()!.outstandingBalance }} EGP</p><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.paymentAmount' | translate }}</span><input class="form-input" type="number" min="0.01" step="0.01" formControlName="amount" /></label></div><div class="app-dialog__footer"><p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closePayment()" /><p-button type="submit" [label]="'purchasing.invoices.recordPayment' | translate" [loading]="isSubmitting()" /></div></form>
+      <form [formGroup]="paymentForm" (ngSubmit)="recordPayment()"><div class="app-dialog__body"><p class="purchase-muted">{{ paymentTarget()!.invoiceNumber }} - {{ paymentTarget()!.outstandingBalance }} EGP</p><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.paymentAmount' | translate }}</span><p-inputnumber formControlName="amount" [min]="0.01" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" /></label></div><div class="app-dialog__footer"><p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closePayment()" /><p-button type="submit" [label]="'purchasing.invoices.recordPayment' | translate" [loading]="isSubmitting()" /></div></form>
     }
 </p-dialog>

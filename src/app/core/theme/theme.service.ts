@@ -10,6 +10,7 @@ import {
   DEFAULT_COLOR_THEME,
   DEFAULT_DARK_PRESET,
   DarkPresetKey,
+  getEffectiveThemeColors,
 } from './color-themes';
 
 export type ThemeMode = 'light' | 'dark';
@@ -77,14 +78,18 @@ export class ThemeService {
 
   private applyColorVars(isDark: boolean): void {
     const style = this.document.documentElement.style;
-    const palette = COLOR_THEMES[this.colorTheme()].palette;
-    // Light: 500/600 · Dark: 400/500 (matches existing emerald tokens).
-    const primary = isDark ? palette[400] : palette[500];
-    const primaryHover = isDark ? palette[500] : palette[600];
-
+    const { palette, primary, primaryHover, actionText } = getEffectiveThemeColors(
+      this.colorTheme(),
+      this.darkPreset(),
+      isDark,
+    );
     style.setProperty('--color-primary', primary);
     style.setProperty('--color-primary-hover', primaryHover);
-    this.applyPrimeNgComponentVars(style, primary, primaryHover);
+    style.setProperty('--action-bg', primary);
+    style.setProperty('--action-bg-hover', primaryHover);
+    style.setProperty('--action-text', actionText);
+    style.setProperty('--sidebar-active-bg', primary);
+    this.applyPrimeNgComponentVars(style, primary, primaryHover, actionText);
     updatePrimaryPalette({ ...palette });
   }
 
@@ -92,6 +97,7 @@ export class ThemeService {
     style: CSSStyleDeclaration,
     primary: string,
     primaryHover: string,
+    actionText: string,
   ): void {
     style.setProperty('--p-toggleswitch-checked-background', primary);
     style.setProperty('--p-toggleswitch-checked-hover-background', primaryHover);
@@ -103,6 +109,26 @@ export class ThemeService {
     style.setProperty('--p-focus-ring-shadow', '0 0 0 3px var(--action-focus-ring)');
     style.setProperty('--p-inputtext-focus-border-color', 'var(--color-primary)');
     style.setProperty('--p-password-focus-border-color', 'var(--color-primary)');
+    style.setProperty('--p-select-focus-border-color', 'var(--color-primary)');
+    style.setProperty('--p-select-option-selected-background', 'var(--action-subtle-bg)');
+    style.setProperty('--p-select-option-selected-focus-background', 'var(--action-subtle-bg-hover)');
+    style.setProperty('--p-select-option-selected-color', 'var(--color-primary)');
+    style.setProperty('--p-datepicker-date-selected-background', primary);
+    style.setProperty('--p-datepicker-date-selected-color', actionText);
+    style.setProperty('--p-datepicker-date-selected-hover-background', primaryHover);
+    style.setProperty('--p-checkbox-checked-background', primary);
+    style.setProperty('--p-checkbox-checked-border-color', primary);
+    style.setProperty('--p-checkbox-checked-hover-background', primaryHover);
+    style.setProperty('--p-checkbox-checked-hover-border-color', primaryHover);
+    style.setProperty('--p-button-primary-background', primary);
+    style.setProperty('--p-button-primary-hover-background', primaryHover);
+    style.setProperty('--p-button-primary-active-background', primaryHover);
+    style.setProperty('--p-button-primary-border-color', primary);
+    style.setProperty('--p-button-primary-hover-border-color', primaryHover);
+    style.setProperty('--p-button-primary-active-border-color', primaryHover);
+    style.setProperty('--p-button-primary-color', actionText);
+    style.setProperty('--p-button-primary-hover-color', actionText);
+    style.setProperty('--p-button-primary-active-color', actionText);
     style.setProperty('--p-button-primary-focus-ring-color', 'var(--action-focus-ring)');
     style.setProperty('--p-button-secondary-focus-ring-color', 'var(--action-focus-ring)');
     style.setProperty('--p-button-text-focus-ring-color', 'var(--action-focus-ring)');

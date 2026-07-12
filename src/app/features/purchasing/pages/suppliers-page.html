@@ -10,7 +10,7 @@
   <label class="purchase-page__search">
     <span class="sr-only">{{ 'purchasing.suppliers.search' | translate }}</span>
     <i class="pi pi-search" aria-hidden="true"></i>
-    <input type="search" [placeholder]="'purchasing.suppliers.search' | translate" (input)="onSearch($event)" />
+    <input pInputText type="search" [placeholder]="'purchasing.suppliers.search' | translate" (input)="onSearch($event)" />
   </label>
 
   @if (isLoading()) {
@@ -72,15 +72,15 @@
 >
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="app-dialog__body">
-          <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.name' | translate }}</span><input class="form-input" formControlName="name" />@if (fieldError('name'); as key) { <small class="form-error">{{ key | translate }}</small> }</label>
-          <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.contact' | translate }}</span><input class="form-input" formControlName="contactPerson" /></label>
+          <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.name' | translate }}</span><input pInputText class="w-full" formControlName="name" />@if (fieldError('name'); as key) { <small class="form-error">{{ key | translate }}</small> }</label>
+          <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.contact' | translate }}</span><input pInputText class="w-full" formControlName="contactPerson" /></label>
           <div class="form-row">
-            <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.phone' | translate }}</span><input class="form-input" type="tel" formControlName="phone" /></label>
-            <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.email' | translate }}</span><input class="form-input" type="email" formControlName="email" />@if (fieldError('email'); as key) { <small class="form-error">{{ key | translate }}</small> }</label>
+            <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.phone' | translate }}</span><input pInputText class="w-full" type="tel" formControlName="phone" /></label>
+            <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.email' | translate }}</span><input pInputText class="w-full" type="email" formControlName="email" />@if (fieldError('email'); as key) { <small class="form-error">{{ key | translate }}</small> }</label>
           </div>
-          <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.address' | translate }}</span><textarea class="form-input" formControlName="address"></textarea></label>
+          <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.address' | translate }}</span><textarea pTextarea class="w-full" formControlName="address"></textarea></label>
           @if (selected()) {
-            <label class="purchase-checkbox"><input type="checkbox" formControlName="isActive" /> <span>{{ 'purchasing.common.active' | translate }}</span></label>
+            <label class="purchase-checkbox"><p-checkbox formControlName="isActive" [binary]="true" /> <span>{{ 'purchasing.common.active' | translate }}</span></label>
           }
         </div>
         <div class="app-dialog__footer">

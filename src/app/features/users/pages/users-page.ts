@@ -10,6 +10,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
+import { InputText } from 'primeng/inputtext';
+import { Password } from 'primeng/password';
+import { Select } from 'primeng/select';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { UsersApiService } from '../services/users-api.service';
@@ -19,7 +22,7 @@ import { Branch } from '../../branches/models/branches.model';
 
 @Component({
   selector: 'app-users-page',
-  imports: [TranslatePipe, ReactiveFormsModule, Button, Dialog],
+  imports: [TranslatePipe, ReactiveFormsModule, Button, Dialog, InputText, Password, Select],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './users-page.html',
   styleUrl: './users-page.css',

@@ -55,7 +55,7 @@
   flex-wrap: wrap;
 }
 
-.purchase-filters .form-select {
+.purchase-filters p-select {
   max-width: 16rem;
 }
 
@@ -101,8 +101,8 @@
   min-height: 1.75rem;
   padding: 0 0.65rem;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
-  color: var(--primary-color);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
   font-size: 0.82rem;
   font-weight: 700;
 }
@@ -246,7 +246,7 @@
   align-items: center;
   gap: 0.45rem;
   width: fit-content;
-  color: var(--primary-color);
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 700;
 }

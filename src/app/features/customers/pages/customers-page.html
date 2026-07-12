@@ -10,7 +10,7 @@
   <label class="customers__search">
     <span class="sr-only">{{ 'customers.search' | translate }}</span>
     <i class="pi pi-search" aria-hidden="true"></i>
-    <input type="search" [placeholder]="'customers.search' | translate" (input)="onSearch($event)" />
+    <input pInputText type="search" [placeholder]="'customers.search' | translate" (input)="onSearch($event)" />
   </label>
 
   @if (isLoading()) {
@@ -47,9 +47,9 @@
 >
       <form [formGroup]="createForm" (ngSubmit)="submit()">
         <div class="app-dialog__body">
-          <label class="form-field"><span class="form-label">{{ 'customers.name' | translate }}</span><input class="form-input" formControlName="name" [attr.aria-invalid]="createForm.controls.name.invalid && createForm.controls.name.touched" /></label>
-          <label class="form-field"><span class="form-label">{{ 'customers.phone' | translate }}</span><input class="form-input" type="tel" formControlName="phone" /></label>
-          <label class="form-field"><span class="form-label">{{ 'customers.email' | translate }}</span><input class="form-input" type="email" formControlName="email" /></label>
+          <label class="form-field"><span class="form-label">{{ 'customers.name' | translate }}</span><input pInputText class="w-full" formControlName="name" [attr.aria-invalid]="createForm.controls.name.invalid && createForm.controls.name.touched" /></label>
+          <label class="form-field"><span class="form-label">{{ 'customers.phone' | translate }}</span><input pInputText class="w-full" type="tel" formControlName="phone" /></label>
+          <label class="form-field"><span class="form-label">{{ 'customers.email' | translate }}</span><input pInputText class="w-full" type="email" formControlName="email" /></label>
         </div>
         <div class="app-dialog__footer"><p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeCreate()" /><p-button type="submit" [label]="'form.create' | translate" [loading]="isSubmitting()" /></div>
       </form>

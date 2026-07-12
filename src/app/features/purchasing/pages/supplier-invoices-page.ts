@@ -1,9 +1,15 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { catchError, of } from 'rxjs';
 import { Button } from 'primeng/button';
+import { Checkbox } from 'primeng/checkbox';
+import { DatePicker } from 'primeng/datepicker';
 import { Dialog } from 'primeng/dialog';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
+import { Select } from 'primeng/select';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { Supplier, SupplierInvoice } from '../models/purchasing.model';
@@ -12,7 +18,7 @@ import { SuppliersApiService } from '../services/suppliers-api.service';
 
 @Component({
   selector: 'app-supplier-invoices-page',
-  imports: [ReactiveFormsModule, Button, Dialog, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, Button, Checkbox, DatePicker, Dialog, InputNumber, InputText, Select, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './supplier-invoices-page.html',
   styleUrl: './purchasing-pages.css',
@@ -42,13 +48,13 @@ export class SupplierInvoicesPage {
     supplierId: ['', [Validators.required]],
     purchaseOrderId: [''],
     invoiceNumber: ['', [Validators.required, Validators.maxLength(50)]],
-    amount: ['0', [Validators.required, Validators.min(0.01)]],
-    issuedAt: ['', [Validators.required]],
-    dueAt: [''],
+    amount: [0, [Validators.required, Validators.min(0.01)]],
+    issuedAt: this.fb.control<Date | null>(null, [Validators.required]),
+    dueAt: this.fb.control<Date | null>(null),
   });
 
   protected readonly paymentForm = this.fb.nonNullable.group({
-    amount: ['0', [Validators.required, Validators.min(0.01)]],
+    amount: [0, [Validators.required, Validators.min(0.01)]],
   });
 
   constructor() {
@@ -62,7 +68,7 @@ export class SupplierInvoicesPage {
 
   protected openCreate(): void {
     this.selected.set(null);
-    this.form.reset({ supplierId: '', purchaseOrderId: '', invoiceNumber: '', amount: '0', issuedAt: '', dueAt: '' });
+    this.form.reset({ supplierId: '', purchaseOrderId: '', invoiceNumber: '', amount: 0, issuedAt: null, dueAt: null });
     this.isFormOpen.set(true);
   }
 
@@ -72,9 +78,9 @@ export class SupplierInvoicesPage {
       supplierId: invoice.supplierId,
       purchaseOrderId: invoice.purchaseOrderId ?? '',
       invoiceNumber: invoice.invoiceNumber,
-      amount: String(invoice.amount),
-      issuedAt: invoice.issuedAt,
-      dueAt: invoice.dueAt ?? '',
+      amount: invoice.amount,
+      issuedAt: this.parseDateValue(invoice.issuedAt),
+      dueAt: this.parseDateValue(invoice.dueAt),
     });
     this.isFormOpen.set(true);
   }
@@ -92,15 +98,15 @@ export class SupplierInvoicesPage {
     const request = selected
       ? this.api.updateSupplierInvoice(selected.id, {
           invoiceNumber: raw.invoiceNumber,
-          dueAt: raw.dueAt || null,
+          dueAt: this.formatNullableDatePayload(raw.dueAt),
         })
       : this.api.createSupplierInvoice({
           supplierId: raw.supplierId,
           purchaseOrderId: raw.purchaseOrderId || null,
           invoiceNumber: raw.invoiceNumber,
           amount: Number(raw.amount),
-          issuedAt: raw.issuedAt,
-          dueAt: raw.dueAt || null,
+          issuedAt: this.formatDatePayload(raw.issuedAt),
+          dueAt: this.formatNullableDatePayload(raw.dueAt),
         });
     request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
@@ -114,7 +120,7 @@ export class SupplierInvoicesPage {
 
   protected openPayment(invoice: SupplierInvoice): void {
     this.paymentTarget.set(invoice);
-    this.paymentForm.reset({ amount: String(invoice.outstandingBalance) });
+    this.paymentForm.reset({ amount: invoice.outstandingBalance });
     this.isPaymentOpen.set(true);
   }
 
@@ -188,5 +194,23 @@ export class SupplierInvoicesPage {
       .getSuppliers(undefined, true, 1, 100)
       .pipe(takeUntilDestroyed(this.destroyRef), catchError(() => of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 100 })))
       .subscribe(result => this.suppliers.set(result.items));
+  }
+
+  private parseDateValue(value: string | null | undefined): Date | null {
+    return value ? new Date(`${value}T00:00:00`) : null;
+  }
+
+  private formatDatePayload(value: Date | string | null): string {
+    if (value instanceof Date) {
+      const year = value.getFullYear();
+      const month = String(value.getMonth() + 1).padStart(2, '0');
+      const day = String(value.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    return value ?? '';
+  }
+
+  private formatNullableDatePayload(value: Date | string | null): string | null {
+    return value ? this.formatDatePayload(value) : null;
   }
 }

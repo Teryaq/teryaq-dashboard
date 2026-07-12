@@ -186,17 +186,17 @@
         <div class="app-dialog__body">
           <div class="form-field">
             <label class="form-label" for="r-branch">{{ 'inventory.form.branch' | translate }}</label>
-            <select
-              id="r-branch"
-              class="form-select"
-              [class.form-input--error]="receiveFieldError('branchId')"
+            <p-select
+              inputId="r-branch"
               formControlName="branchId"
-            >
-              <option value="">{{ 'inventory.form.selectBranch' | translate }}</option>
-              @for (branch of branches(); track branch.id) {
-                <option [value]="branch.id">{{ branch.name }}</option>
-              }
-            </select>
+              [options]="branches()"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'inventory.form.selectBranch' | translate"
+              appendTo="body"
+              styleClass="w-full"
+              [class.form-input--error]="receiveFieldError('branchId')"
+            />
             @if (receiveFieldError('branchId'); as key) { <small class="form-error">{{ key | translate }}</small> }
           </div>
 
@@ -205,8 +205,9 @@
             <label class="form-label" for="r-drug">{{ 'inventory.form.drug' | translate }}</label>
             <div class="drug-search-wrap">
               <input
+                pInputText
                 id="r-drug"
-                class="form-input"
+                class="w-full"
                 [class.form-input--error]="receiveFieldError('drugId')"
                 type="text"
                 [placeholder]="'inventory.form.drugSearch' | translate"
@@ -240,31 +241,31 @@
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="r-batch">{{ 'inventory.form.batchNumber' | translate }}</label>
-              <input id="r-batch" class="form-input" [class.form-input--error]="receiveFieldError('batchNumber')" type="text" formControlName="batchNumber" dir="ltr" />
+              <input pInputText id="r-batch" class="w-full" [class.form-input--error]="receiveFieldError('batchNumber')" type="text" formControlName="batchNumber" dir="ltr" />
               @if (receiveFieldError('batchNumber'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
               <label class="form-label" for="r-expiry">{{ 'inventory.form.expiryDate' | translate }}</label>
-              <input id="r-expiry" class="form-input" [class.form-input--error]="receiveFieldError('expiryDate')" type="date" formControlName="expiryDate" />
+              <p-datepicker inputId="r-expiry" formControlName="expiryDate" dateFormat="yy-mm-dd" [showIcon]="true" appendTo="body" styleClass="w-full" [class.form-input--error]="receiveFieldError('expiryDate')" />
               @if (receiveFieldError('expiryDate'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="r-qty">{{ 'inventory.form.quantity' | translate }}</label>
-              <input id="r-qty" class="form-input" [class.form-input--error]="receiveFieldError('quantity')" type="number" min="1" step="1" formControlName="quantity" />
+              <p-inputnumber inputId="r-qty" formControlName="quantity" [min]="1" [showButtons]="true" styleClass="w-full" [class.form-input--error]="receiveFieldError('quantity')" />
               @if (receiveFieldError('quantity'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
               <label class="form-label" for="r-reorder">{{ 'inventory.form.reorderLevel' | translate }}</label>
-              <input id="r-reorder" class="form-input" [class.form-input--error]="receiveFieldError('reorderLevel')" type="number" min="0" step="1" formControlName="reorderLevel" />
+              <p-inputnumber inputId="r-reorder" formControlName="reorderLevel" [min]="0" [showButtons]="true" styleClass="w-full" [class.form-input--error]="receiveFieldError('reorderLevel')" />
               @if (receiveFieldError('reorderLevel'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="r-cost">{{ 'inventory.form.costPrice' | translate }}</label>
-              <input id="r-cost" class="form-input" [class.form-input--error]="receiveFieldError('costPrice')" type="number" min="0" step="0.01" formControlName="costPrice" />
+              <p-inputnumber inputId="r-cost" formControlName="costPrice" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" [class.form-input--error]="receiveFieldError('costPrice')" />
               @if (receiveFieldError('costPrice'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
@@ -272,7 +273,7 @@
                 {{ 'inventory.form.sellingPrice' | translate }}
                 <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
               </label>
-              <input id="r-sell" class="form-input" type="number" min="0" step="0.01" formControlName="sellingPrice" />
+              <p-inputnumber inputId="r-sell" formControlName="sellingPrice" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" />
             </div>
           </div>
         </div>
@@ -313,23 +314,23 @@
           <div class="form-row">
             <div class="form-field">
               <label class="form-label" for="a-qty">{{ 'inventory.form.quantityOnHand' | translate }}</label>
-              <input id="a-qty" class="form-input" [class.form-input--error]="adjustFieldError('quantityOnHand')" type="number" min="0" step="1" formControlName="quantityOnHand" />
+              <p-inputnumber inputId="a-qty" formControlName="quantityOnHand" [min]="0" [showButtons]="true" styleClass="w-full" [class.form-input--error]="adjustFieldError('quantityOnHand')" />
               @if (adjustFieldError('quantityOnHand'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
             <div class="form-field">
               <label class="form-label" for="a-reorder">{{ 'inventory.form.reorderLevel' | translate }}</label>
-              <input id="a-reorder" class="form-input" [class.form-input--error]="adjustFieldError('reorderLevel')" type="number" min="0" step="1" formControlName="reorderLevel" />
+              <p-inputnumber inputId="a-reorder" formControlName="reorderLevel" [min]="0" [showButtons]="true" styleClass="w-full" [class.form-input--error]="adjustFieldError('reorderLevel')" />
               @if (adjustFieldError('reorderLevel'); as key) { <small class="form-error">{{ key | translate }}</small> }
             </div>
           </div>
           <div class="form-field">
             <label class="form-label" for="a-sell">{{ 'inventory.form.sellingPrice' | translate }}</label>
-            <input id="a-sell" class="form-input" [class.form-input--error]="adjustFieldError('sellingPrice')" type="number" min="0" step="0.01" formControlName="sellingPrice" />
+            <p-inputnumber inputId="a-sell" formControlName="sellingPrice" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" [class.form-input--error]="adjustFieldError('sellingPrice')" />
             @if (adjustFieldError('sellingPrice'); as key) { <small class="form-error">{{ key | translate }}</small> }
           </div>
           <div class="form-field">
             <label class="form-label" for="a-expiry">{{ 'inventory.form.expiryDate' | translate }}</label>
-            <input id="a-expiry" class="form-input" [class.form-input--error]="adjustFieldError('expiryDate')" type="date" formControlName="expiryDate" />
+            <p-datepicker inputId="a-expiry" formControlName="expiryDate" dateFormat="yy-mm-dd" [showIcon]="true" appendTo="body" styleClass="w-full" [class.form-input--error]="adjustFieldError('expiryDate')" />
             @if (adjustFieldError('expiryDate'); as key) { <small class="form-error">{{ key | translate }}</small> }
           </div>
         </div>

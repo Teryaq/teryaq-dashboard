@@ -4,6 +4,9 @@ import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
+import { DatePicker } from 'primeng/datepicker';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { PurchaseOrder, PurchaseOrderStatus } from '../models/purchasing.model';
@@ -11,7 +14,7 @@ import { PurchaseOrdersApiService } from '../services/purchase-orders-api.servic
 
 @Component({
   selector: 'app-purchase-order-detail-page',
-  imports: [ReactiveFormsModule, RouterLink, Button, Dialog, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, Button, Dialog, DatePicker, InputNumber, InputText, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './purchase-order-detail-page.html',
   styleUrl: './purchasing-pages.css',
@@ -72,11 +75,11 @@ export class PurchaseOrderDetailPage {
           purchaseOrderLineId: [line.id, [Validators.required]],
           label: [`${line.drugTradeNameEn} - ${line.drugTradeNameAr}`],
           remaining: [String(line.quantityOrdered - line.quantityReceived)],
-          quantityReceived: ['0', [Validators.required, Validators.min(0)]],
+          quantityReceived: [0, [Validators.required, Validators.min(0)]],
           batchNumber: ['', [Validators.required, Validators.maxLength(100)]],
-          expiryDate: ['', [Validators.required]],
-          sellingPrice: [''],
-          reorderLevel: ['0', [Validators.required, Validators.min(0)]],
+          expiryDate: this.fb.control<Date | null>(null, [Validators.required]),
+          sellingPrice: this.fb.control<number | null>(null),
+          reorderLevel: [0, [Validators.required, Validators.min(0)]],
         }),
       );
     }
@@ -98,8 +101,8 @@ export class PurchaseOrderDetailPage {
         purchaseOrderLineId: line.purchaseOrderLineId,
         quantityReceived: Number(line.quantityReceived),
         batchNumber: line.batchNumber,
-        expiryDate: line.expiryDate,
-        sellingPrice: line.sellingPrice ? Number(line.sellingPrice) : null,
+        expiryDate: this.formatDatePayload(line.expiryDate),
+        sellingPrice: line.sellingPrice == null ? null : Number(line.sellingPrice),
         reorderLevel: Number(line.reorderLevel),
       }));
     if (!lines.length) return;
@@ -141,5 +144,15 @@ export class PurchaseOrderDetailPage {
           this.isLoading.set(false);
         },
       });
+  }
+
+  private formatDatePayload(value: Date | string | null): string {
+    if (value instanceof Date) {
+      const year = value.getFullYear();
+      const month = String(value.getMonth() + 1).padStart(2, '0');
+      const day = String(value.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    return value ?? '';
   }
 }
