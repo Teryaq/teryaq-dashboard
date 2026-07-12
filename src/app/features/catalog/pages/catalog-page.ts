@@ -3,8 +3,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Button } from 'primeng/button';
+import { Checkbox } from 'primeng/checkbox';
+import { Dialog } from 'primeng/dialog';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
+import { Select } from 'primeng/select';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { CatalogApiService } from '../services/catalog-api.service';
 import { Drug, DrugSource, DrugSourceValue } from '../models/catalog.model';
@@ -13,7 +20,7 @@ type SourceFilter = 'all' | DrugSource;
 
 @Component({
   selector: 'app-catalog-page',
-  imports: [TranslatePipe, ReactiveFormsModule, RouterLink],
+  imports: [TranslatePipe, ReactiveFormsModule, RouterLink, Button, Checkbox, Dialog, InputNumber, InputText, Select],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './catalog-page.html',
   styleUrl: './catalog-page.css',
@@ -21,6 +28,7 @@ type SourceFilter = 'all' | DrugSource;
 export class CatalogPage {
   private readonly api = inject(CatalogApiService);
   private readonly authService = inject(AuthService);
+  private readonly i18n = inject(I18nService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
 
@@ -59,6 +67,14 @@ export class CatalogPage {
   });
 
   protected readonly sources: SourceFilter[] = ['all', 'EDA', 'Import', 'Manual'];
+  protected readonly sourceOptions = computed(() => {
+    this.i18n.locale();
+    return [
+      { label: this.i18n.translate('catalog.source.EDA'), value: '0' },
+      { label: this.i18n.translate('catalog.source.Import'), value: '1' },
+      { label: this.i18n.translate('catalog.source.Manual'), value: '2' },
+    ];
+  });
 
   protected readonly createForm = this.fb.nonNullable.group({
     tradeNameEn: ['', [Validators.required, Validators.maxLength(300)]],
@@ -66,8 +82,8 @@ export class CatalogPage {
     genericName: ['', [Validators.required, Validators.maxLength(300)]],
     dosageForm: ['', [Validators.required, Validators.maxLength(100)]],
     strength: ['', [Validators.required, Validators.maxLength(100)]],
-    packSize: ['1', [Validators.required]],
-    price: ['0', [Validators.required]],
+    packSize: [1, [Validators.required]],
+    price: [0, [Validators.required]],
     barcode: [''],
     manufacturerEn: [''],
     manufacturerAr: [''],
@@ -80,8 +96,8 @@ export class CatalogPage {
     genericName: ['', [Validators.required, Validators.maxLength(300)]],
     dosageForm: ['', [Validators.required, Validators.maxLength(100)]],
     strength: ['', [Validators.required, Validators.maxLength(100)]],
-    packSize: ['1', [Validators.required]],
-    price: ['0', [Validators.required]],
+    packSize: [1, [Validators.required]],
+    price: [0, [Validators.required]],
     barcode: [''],
     manufacturerEn: [''],
     manufacturerAr: [''],
@@ -111,7 +127,7 @@ export class CatalogPage {
   }
 
   protected openCreate(): void {
-    this.createForm.reset({ source: '0', packSize: '1', price: '0' });
+    this.createForm.reset({ source: '0', packSize: 1, price: 0 });
     this.isCreateOpen.set(true);
   }
 
@@ -157,8 +173,8 @@ export class CatalogPage {
       genericName: drug.genericName,
       dosageForm: drug.dosageForm,
       strength: drug.strength,
-      packSize: String(drug.packSize),
-      price: String(drug.price),
+      packSize: drug.packSize,
+      price: drug.price,
       barcode: drug.barcode ?? '',
       manufacturerEn: drug.manufacturerEn ?? '',
       manufacturerAr: drug.manufacturerAr ?? '',

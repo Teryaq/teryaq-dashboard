@@ -5,10 +5,7 @@
       <h1 class="br__title">{{ 'branches.title' | translate }}</h1>
       <p class="br__subtitle">{{ 'branches.subtitle' | translate }}</p>
     </div>
-    <button class="br__add-btn" type="button" (click)="openCreate()">
-      <i class="pi pi-plus" aria-hidden="true"></i>
-      {{ 'branches.action.add' | translate }}
-    </button>
+    <p-button icon="pi pi-plus" [label]="'branches.action.add' | translate" (onClick)="openCreate()" />
   </div>
 
   <!-- Search bar -->
@@ -16,6 +13,7 @@
     <div class="br__search-wrap">
       <i class="pi pi-search br__search-icon" aria-hidden="true"></i>
       <input
+        pInputText
         class="br__search"
         type="search"
         [placeholder]="'branches.search' | translate"
@@ -96,31 +94,16 @@
               </td>
               <td>
                 <div class="br__actions">
-                  <button
-                    class="br__action-btn"
-                    type="button"
-                    [title]="'form.edit' | translate"
-                    (click)="openEdit(branch)"
-                  >
-                    <i class="pi pi-pencil" aria-hidden="true"></i>
-                  </button>
+                  <p-button icon="pi pi-pencil" severity="secondary" [text]="true" [rounded]="true" [attr.aria-label]="'form.edit' | translate" (onClick)="openEdit(branch)" />
                   @if (!branch.isMain && branch.isActive) {
-                    <button
-                      class="br__action-btn br__action-btn--warn"
-                      type="button"
-                      [title]="'branches.deactivate' | translate"
-                      [disabled]="deactivatingId() === branch.id"
-                      (click)="deactivate(branch)"
-                    >
-                      <i class="pi pi-ban" aria-hidden="true"></i>
-                    </button>
+                    <p-button icon="pi pi-ban" severity="warn" [text]="true" [rounded]="true" [disabled]="deactivatingId() === branch.id" [attr.aria-label]="'branches.deactivate' | translate" (onClick)="deactivate(branch)" />
                   }
                   @if (!branch.isMain) {
                     @if (deleteConfirmId() === branch.id) {
-                      <button class="br__action-btn" type="button" [title]="'form.cancel' | translate" (click)="cancelDelete()"><i class="pi pi-times" aria-hidden="true"></i></button>
-                      <button class="br__action-btn br__action-btn--warn" type="button" [title]="'branches.deleteConfirm' | translate" [disabled]="isSubmitting()" (click)="deleteBranch(branch.id)"><i class="pi pi-check" aria-hidden="true"></i></button>
+                      <p-button icon="pi pi-times" severity="secondary" [text]="true" [rounded]="true" [attr.aria-label]="'form.cancel' | translate" (onClick)="cancelDelete()" />
+                      <p-button icon="pi pi-check" severity="danger" [text]="true" [rounded]="true" [disabled]="isSubmitting()" [attr.aria-label]="'branches.deleteConfirm' | translate" (onClick)="deleteBranch(branch.id)" />
                     } @else {
-                      <button class="br__action-btn br__action-btn--warn" type="button" [title]="'form.delete' | translate" (click)="requestDelete(branch.id)"><i class="pi pi-trash" aria-hidden="true"></i></button>
+                      <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [attr.aria-label]="'form.delete' | translate" (onClick)="requestDelete(branch.id)" />
                     }
                   }
                 </div>
@@ -141,22 +124,21 @@
 </div>
 
 <!-- Create dialog -->
-@if (isCreateOpen()) {
-  <div class="modal-backdrop" (click)="closeCreate()" role="dialog" aria-modal="true" [attr.aria-label]="'branches.form.createTitle' | translate">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal__header">
-        <h2 class="modal__title">{{ 'branches.form.createTitle' | translate }}</h2>
-        <button class="modal__close" type="button" (click)="closeCreate()" [attr.aria-label]="'form.close' | translate">
-          <i class="pi pi-times" aria-hidden="true"></i>
-        </button>
-      </div>
+<p-dialog
+  [modal]="true"
+  [visible]="isCreateOpen()"
+  (visibleChange)="isCreateOpen.set($event)"
+  [header]="'branches.form.createTitle' | translate"
+  styleClass="app-dialog"
+>
       <form [formGroup]="createForm" (ngSubmit)="onCreateSubmit()">
-        <div class="modal__body">
+        <div class="app-dialog__body">
           <div class="form-field">
             <label class="form-label" for="create-name">{{ 'branches.form.name' | translate }}</label>
             <input
+              pInputText
               id="create-name"
-              class="form-input"
+              class="w-full"
               [class.form-input--error]="createFieldError('name')"
               type="text"
               formControlName="name"
@@ -171,8 +153,9 @@
               <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
             </label>
             <input
+              pInputText
               id="create-address"
-              class="form-input"
+              class="w-full"
               type="text"
               formControlName="address"
             />
@@ -183,43 +166,38 @@
               <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
             </label>
             <input
+              pInputText
               id="create-phone"
-              class="form-input"
+              class="w-full"
               type="tel"
               formControlName="phone"
             />
           </div>
         </div>
-        <div class="modal__footer">
-          <button class="btn" type="button" (click)="closeCreate()">
-            {{ 'form.cancel' | translate }}
-          </button>
-          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            {{ 'form.create' | translate }}
-          </button>
+        <div class="app-dialog__footer">
+          <p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeCreate()" />
+          <p-button type="submit" [label]="'form.create' | translate" [loading]="isSubmitting()" />
         </div>
       </form>
-    </div>
-  </div>
-}
+</p-dialog>
 
 <!-- Edit dialog -->
-@if (isEditOpen() && selectedBranch()) {
-  <div class="modal-backdrop" (click)="closeEdit()" role="dialog" aria-modal="true" [attr.aria-label]="'branches.form.editTitle' | translate">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal__header">
-        <h2 class="modal__title">{{ 'branches.form.editTitle' | translate }}</h2>
-        <button class="modal__close" type="button" (click)="closeEdit()" [attr.aria-label]="'form.close' | translate">
-          <i class="pi pi-times" aria-hidden="true"></i>
-        </button>
-      </div>
+<p-dialog
+  [modal]="true"
+  [visible]="isEditOpen()"
+  (visibleChange)="$event ? isEditOpen.set(true) : closeEdit()"
+  [header]="'branches.form.editTitle' | translate"
+  styleClass="app-dialog"
+>
+  @if (selectedBranch()) {
       <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()">
-        <div class="modal__body">
+        <div class="app-dialog__body">
           <div class="form-field">
             <label class="form-label" for="edit-name">{{ 'branches.form.name' | translate }}</label>
             <input
+              pInputText
               id="edit-name"
-              class="form-input"
+              class="w-full"
               [class.form-input--error]="editFieldError('name')"
               type="text"
               formControlName="name"
@@ -234,8 +212,9 @@
               <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
             </label>
             <input
+              pInputText
               id="edit-address"
-              class="form-input"
+              class="w-full"
               type="text"
               formControlName="address"
             />
@@ -246,22 +225,18 @@
               <span class="form-label__optional">{{ 'form.optional' | translate }}</span>
             </label>
             <input
+              pInputText
               id="edit-phone"
-              class="form-input"
+              class="w-full"
               type="tel"
               formControlName="phone"
             />
           </div>
         </div>
-        <div class="modal__footer">
-          <button class="btn" type="button" (click)="closeEdit()">
-            {{ 'form.cancel' | translate }}
-          </button>
-          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">
-            {{ 'form.save' | translate }}
-          </button>
+        <div class="app-dialog__footer">
+          <p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeEdit()" />
+          <p-button type="submit" [label]="'form.save' | translate" [loading]="isSubmitting()" />
         </div>
       </form>
-    </div>
-  </div>
-}
+  }
+</p-dialog>

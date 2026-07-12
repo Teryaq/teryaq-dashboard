@@ -8,10 +8,13 @@
       <h1 class="import__title">{{ 'catalog.import.title' | translate }}</h1>
       <p class="import__subtitle">{{ 'catalog.import.subtitle' | translate }}</p>
     </div>
-    <button class="btn" type="button" (click)="downloadTemplate()">
-      <i class="pi pi-download" aria-hidden="true"></i>
-      {{ 'catalog.import.download_template' | translate }}
-    </button>
+    <p-button
+      icon="pi pi-download"
+      severity="secondary"
+      [outlined]="true"
+      [label]="'catalog.import.download_template' | translate"
+      (onClick)="downloadTemplate()"
+    />
   </div>
 
   <div
@@ -28,16 +31,23 @@
     } @else {
       <i class="pi pi-upload import__dropzone-icon" aria-hidden="true"></i>
       <span>{{ 'catalog.import.drop_file' | translate }}</span>
-      <label class="import__file-label">
+      <div class="import__file-label">
         <input
+          #drugImportFile
           class="import__file-input"
           type="file"
           accept=".csv,text/csv"
           [disabled]="importing()"
           (change)="onFileSelected($event)"
         />
-        <span class="btn btn--primary">{{ 'catalog.import.choose_file' | translate }}</span>
-      </label>
+        <p-button
+          icon="pi pi-upload"
+          [label]="'catalog.import.choose_file' | translate"
+          [disabled]="importing()"
+          styleClass="import__file-button"
+          (onClick)="drugImportFile.click()"
+        />
+      </div>
     }
   </div>
 

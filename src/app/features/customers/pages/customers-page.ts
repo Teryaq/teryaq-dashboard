@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, debounceTime } from 'rxjs';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { InputText } from 'primeng/inputtext';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { Customer } from '../models/customer.model';
@@ -9,7 +12,7 @@ import { CustomersApiService } from '../services/customers-api.service';
 
 @Component({
   selector: 'app-customers-page',
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, Button, Dialog, InputText, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './customers-page.html',
   styleUrl: './customers-page.css',

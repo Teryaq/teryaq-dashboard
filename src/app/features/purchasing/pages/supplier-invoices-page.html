@@ -1,15 +1,22 @@
 <section class="purchase-page">
   <header class="purchase-page__header">
     <div><h1>{{ 'purchasing.invoices.title' | translate }}</h1><p>{{ 'purchasing.invoices.subtitle' | translate }}</p></div>
-    <button class="btn btn--primary" type="button" (click)="openCreate()"><i class="pi pi-plus" aria-hidden="true"></i>{{ 'purchasing.invoices.add' | translate }}</button>
+    <p-button icon="pi pi-plus" [label]="'purchasing.invoices.add' | translate" (onClick)="openCreate()" />
   </header>
 
   <div class="purchase-filters">
-    <select class="form-select" [value]="supplierFilter()" (change)="supplierFilter.set($any($event.target).value); onFilterChange()">
-      <option value="">{{ 'purchasing.common.allSuppliers' | translate }}</option>
-      @for (supplier of suppliers(); track supplier.id) { <option [value]="supplier.id">{{ supplier.name }}</option> }
-    </select>
-    <label class="purchase-checkbox"><input type="checkbox" [checked]="outstandingOnly()" (change)="outstandingOnly.set($any($event.target).checked); onFilterChange()" /> <span>{{ 'purchasing.invoices.outstandingOnly' | translate }}</span></label>
+    <p-select
+      [ngModel]="supplierFilter()"
+      (ngModelChange)="supplierFilter.set($event || ''); onFilterChange()"
+      [options]="suppliers()"
+      optionLabel="name"
+      optionValue="id"
+      [placeholder]="'purchasing.common.allSuppliers' | translate"
+      [showClear]="true"
+      appendTo="body"
+      styleClass="w-full"
+    />
+    <label class="purchase-checkbox"><p-checkbox [binary]="true" [ngModel]="outstandingOnly()" (ngModelChange)="outstandingOnly.set($event); onFilterChange()" /> <span>{{ 'purchasing.invoices.outstandingOnly' | translate }}</span></label>
   </div>
 
   @if (isLoading()) {
@@ -24,7 +31,7 @@
           @for (invoice of invoices(); track invoice.id) {
             <tr>
               <td>{{ invoice.invoiceNumber }}</td><td>{{ invoice.supplierName }}</td><td>{{ invoice.amount }} EGP</td><td>{{ invoice.amountPaid }} EGP</td><td>{{ invoice.outstandingBalance }} EGP</td>
-              <td><div class="purchase-actions"><button type="button" (click)="openEdit(invoice)" [title]="'form.edit' | translate"><i class="pi pi-pencil" aria-hidden="true"></i></button><button type="button" (click)="openPayment(invoice)" [disabled]="invoice.outstandingBalance <= 0" [title]="'purchasing.invoices.recordPayment' | translate"><i class="pi pi-wallet" aria-hidden="true"></i></button><button type="button" (click)="deleteInvoice(invoice.id)" [disabled]="isSubmitting()" [title]="'form.delete' | translate"><i class="pi pi-trash" aria-hidden="true"></i></button></div></td>
+              <td><div class="purchase-actions"><p-button icon="pi pi-pencil" severity="secondary" [text]="true" [rounded]="true" [attr.aria-label]="'form.edit' | translate" (onClick)="openEdit(invoice)" /><p-button icon="pi pi-wallet" severity="secondary" [text]="true" [rounded]="true" [disabled]="invoice.outstandingBalance <= 0" [attr.aria-label]="'purchasing.invoices.recordPayment' | translate" (onClick)="openPayment(invoice)" /><p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [disabled]="isSubmitting()" [attr.aria-label]="'form.delete' | translate" (onClick)="deleteInvoice(invoice.id)" /></div></td>
             </tr>
           } @empty {
             <tr><td colspan="6" class="purchase-page__empty">{{ 'purchasing.invoices.empty' | translate }}</td></tr>
@@ -36,22 +43,30 @@
   }
 </section>
 
-@if (isFormOpen()) {
-  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="invoice-form-title" (click)="closeForm()"><div class="modal modal--wide" (click)="$event.stopPropagation()">
-    <div class="modal__header"><h2 id="invoice-form-title">{{ (selected() ? 'purchasing.invoices.editTitle' : 'purchasing.invoices.createTitle') | translate }}</h2><button class="modal__close" type="button" (click)="closeForm()" [attr.aria-label]="'form.close' | translate"><i class="pi pi-times" aria-hidden="true"></i></button></div>
-    <form [formGroup]="form" (ngSubmit)="submit()"><div class="modal__body">
-      <label class="form-field"><span class="form-label">{{ 'purchasing.common.supplier' | translate }}</span><select class="form-select" formControlName="supplierId" [disabled]="!!selected()"><option value="">{{ 'purchasing.common.selectSupplier' | translate }}</option>@for (supplier of suppliers(); track supplier.id) { <option [value]="supplier.id">{{ supplier.name }}</option> }</select></label>
-      <label class="form-field"><span class="form-label">{{ 'purchasing.invoices.number' | translate }}</span><input class="form-input" formControlName="invoiceNumber" /></label>
-      @if (!selected()) { <label class="form-field"><span class="form-label">{{ 'purchasing.invoices.amount' | translate }}</span><input class="form-input" type="number" min="0.01" step="0.01" formControlName="amount" /></label> }
-      <div class="form-row"><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.issuedAt' | translate }}</span><input class="form-input" type="date" formControlName="issuedAt" [disabled]="!!selected()" /></label><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.dueAt' | translate }}</span><input class="form-input" type="date" formControlName="dueAt" /></label></div>
-      <label class="form-field"><span class="form-label">{{ 'purchasing.orders.number' | translate }} <span class="form-label__optional">{{ 'form.optional' | translate }}</span></span><input class="form-input" formControlName="purchaseOrderId" [disabled]="!!selected()" /></label>
-    </div><div class="modal__footer"><button class="btn" type="button" (click)="closeForm()">{{ 'form.cancel' | translate }}</button><button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">{{ 'form.save' | translate }}</button></div></form>
-  </div></div>
-}
+<p-dialog
+  [modal]="true"
+  [visible]="isFormOpen()"
+  (visibleChange)="isFormOpen.set($event)"
+  [header]="(selected() ? 'purchasing.invoices.editTitle' : 'purchasing.invoices.createTitle') | translate"
+  styleClass="app-dialog app-dialog--wide"
+>
+    <form [formGroup]="form" (ngSubmit)="submit()"><div class="app-dialog__body">
+      <label class="form-field"><span class="form-label">{{ 'purchasing.common.supplier' | translate }}</span><p-select formControlName="supplierId" [options]="suppliers()" optionLabel="name" optionValue="id" [placeholder]="'purchasing.common.selectSupplier' | translate" [disabled]="!!selected()" appendTo="body" styleClass="w-full" /></label>
+      <label class="form-field"><span class="form-label">{{ 'purchasing.invoices.number' | translate }}</span><input pInputText class="w-full" formControlName="invoiceNumber" /></label>
+      @if (!selected()) { <label class="form-field"><span class="form-label">{{ 'purchasing.invoices.amount' | translate }}</span><p-inputnumber formControlName="amount" [min]="0.01" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" /></label> }
+      <div class="form-row"><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.issuedAt' | translate }}</span><p-datepicker formControlName="issuedAt" dateFormat="yy-mm-dd" [showIcon]="true" appendTo="body" styleClass="w-full" [disabled]="!!selected()" /></label><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.dueAt' | translate }}</span><p-datepicker formControlName="dueAt" dateFormat="yy-mm-dd" [showIcon]="true" appendTo="body" styleClass="w-full" /></label></div>
+      <label class="form-field"><span class="form-label">{{ 'purchasing.orders.number' | translate }} <span class="form-label__optional">{{ 'form.optional' | translate }}</span></span><input pInputText class="w-full" formControlName="purchaseOrderId" [disabled]="!!selected()" /></label>
+    </div><div class="app-dialog__footer"><p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeForm()" /><p-button type="submit" [label]="'form.save' | translate" [loading]="isSubmitting()" /></div></form>
+</p-dialog>
 
-@if (isPaymentOpen() && paymentTarget()) {
-  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="payment-title" (click)="closePayment()"><div class="modal" (click)="$event.stopPropagation()">
-    <div class="modal__header"><h2 id="payment-title">{{ 'purchasing.invoices.recordPayment' | translate }}</h2><button class="modal__close" type="button" (click)="closePayment()" [attr.aria-label]="'form.close' | translate"><i class="pi pi-times" aria-hidden="true"></i></button></div>
-    <form [formGroup]="paymentForm" (ngSubmit)="recordPayment()"><div class="modal__body"><p class="purchase-muted">{{ paymentTarget()!.invoiceNumber }} - {{ paymentTarget()!.outstandingBalance }} EGP</p><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.paymentAmount' | translate }}</span><input class="form-input" type="number" min="0.01" step="0.01" formControlName="amount" /></label></div><div class="modal__footer"><button class="btn" type="button" (click)="closePayment()">{{ 'form.cancel' | translate }}</button><button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">{{ 'purchasing.invoices.recordPayment' | translate }}</button></div></form>
-  </div></div>
-}
+<p-dialog
+  [modal]="true"
+  [visible]="isPaymentOpen()"
+  (visibleChange)="isPaymentOpen.set($event)"
+  [header]="'purchasing.invoices.recordPayment' | translate"
+  styleClass="app-dialog"
+>
+    @if (paymentTarget()) {
+      <form [formGroup]="paymentForm" (ngSubmit)="recordPayment()"><div class="app-dialog__body"><p class="purchase-muted">{{ paymentTarget()!.invoiceNumber }} - {{ paymentTarget()!.outstandingBalance }} EGP</p><label class="form-field"><span class="form-label">{{ 'purchasing.invoices.paymentAmount' | translate }}</span><p-inputnumber formControlName="amount" [min]="0.01" [minFractionDigits]="2" [maxFractionDigits]="2" mode="decimal" styleClass="w-full" /></label></div><div class="app-dialog__footer"><p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closePayment()" /><p-button type="submit" [label]="'purchasing.invoices.recordPayment' | translate" [loading]="isSubmitting()" /></div></form>
+    }
+</p-dialog>

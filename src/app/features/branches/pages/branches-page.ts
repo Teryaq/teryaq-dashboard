@@ -8,6 +8,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { InputText } from 'primeng/inputtext';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { BranchesApiService } from '../services/branches-api.service';
@@ -15,7 +18,7 @@ import { Branch } from '../models/branches.model';
 
 @Component({
   selector: 'app-branches-page',
-  imports: [TranslatePipe, ReactiveFormsModule],
+  imports: [TranslatePipe, ReactiveFormsModule, Button, Dialog, InputText],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './branches-page.html',
   styleUrl: './branches-page.css',

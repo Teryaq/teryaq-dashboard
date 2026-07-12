@@ -11,6 +11,8 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/ro
 import { filter } from 'rxjs';
 import { Drawer } from 'primeng/drawer';
 import { Tooltip } from 'primeng/tooltip';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { SidebarStateService } from '../../../core/layout/sidebar-state.service';
@@ -32,6 +34,8 @@ interface SidebarNavItem {
     RouterLinkActive,
     Drawer,
     Tooltip,
+    Button,
+    Dialog,
     TranslatePipe,
     AppLogo,
   ],

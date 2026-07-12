@@ -1,10 +1,17 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { catchError, debounceTime, of, Subject, switchMap } from 'rxjs';
+import { Button } from 'primeng/button';
+import { DatePicker } from 'primeng/datepicker';
+import { Dialog } from 'primeng/dialog';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
+import { Select } from 'primeng/select';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { Branch } from '../../branches/models/branches.model';
 import { BranchesApiService } from '../../branches/services/branches-api.service';
@@ -16,7 +23,7 @@ import { SuppliersApiService } from '../services/suppliers-api.service';
 
 @Component({
   selector: 'app-purchase-orders-page',
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, RouterLink, Button, DatePicker, Dialog, InputNumber, InputText, Select, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './purchase-orders-page.html',
   styleUrl: './purchasing-pages.css',
@@ -27,6 +34,7 @@ export class PurchaseOrdersPage {
   private readonly branchesApi = inject(BranchesApiService);
   private readonly catalogApi = inject(CatalogApiService);
   private readonly authService = inject(AuthService);
+  private readonly i18n = inject(I18nService);
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly drugSearch = new Subject<{ index: number; query: string }>();
@@ -48,11 +56,15 @@ export class PurchaseOrdersPage {
   protected readonly supplierFilter = signal('');
   protected readonly statusFilter = signal<PurchaseOrderStatus | ''>('');
   protected readonly statuses: PurchaseOrderStatus[] = ['Draft', 'Sent', 'PartiallyReceived', 'Received'];
+  protected readonly statusOptions = computed(() => {
+    this.i18n.locale();
+    return this.statuses.map(status => ({ label: this.i18n.translate(this.statusKey(status)), value: status }));
+  });
 
   protected readonly form = this.fb.nonNullable.group({
     branchId: ['', [Validators.required]],
     supplierId: ['', [Validators.required]],
-    expectedDeliveryDate: [''],
+    expectedDeliveryDate: this.fb.control<Date | null>(null),
     notes: ['', [Validators.maxLength(1000)]],
     lines: this.fb.array([this.createLineGroup()]),
   });
@@ -83,7 +95,7 @@ export class PurchaseOrdersPage {
     this.form.reset({
       branchId: this.authService.isOwner() ? '' : (this.authService.session()?.branchId ?? ''),
       supplierId: '',
-      expectedDeliveryDate: '',
+      expectedDeliveryDate: null,
       notes: '',
     });
     this.lines.clear();
@@ -139,7 +151,7 @@ export class PurchaseOrdersPage {
       .createPurchaseOrder({
         branchId: raw.branchId,
         supplierId: raw.supplierId,
-        expectedDeliveryDate: raw.expectedDeliveryDate || null,
+        expectedDeliveryDate: this.formatNullableDatePayload(raw.expectedDeliveryDate),
         notes: raw.notes || null,
         lines: raw.lines.map(line => ({
           drugId: line.drugId,
@@ -222,8 +234,19 @@ export class PurchaseOrdersPage {
   private createLineGroup() {
     return this.fb.nonNullable.group({
       drugId: ['', [Validators.required]],
-      quantityOrdered: ['1', [Validators.required, Validators.min(1)]],
-      unitCost: ['0', [Validators.required, Validators.min(0)]],
+      quantityOrdered: [1, [Validators.required, Validators.min(1)]],
+      unitCost: [0, [Validators.required, Validators.min(0)]],
     });
+  }
+
+  private formatNullableDatePayload(value: Date | string | null): string | null {
+    if (!value) return null;
+    if (value instanceof Date) {
+      const year = value.getFullYear();
+      const month = String(value.getMonth() + 1).padStart(2, '0');
+      const day = String(value.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    return value;
   }
 }

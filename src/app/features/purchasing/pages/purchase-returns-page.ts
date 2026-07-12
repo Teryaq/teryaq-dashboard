@@ -1,7 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, of } from 'rxjs';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
+import { Select } from 'primeng/select';
+import { Textarea } from 'primeng/textarea';
 
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { AuthService } from '../../../core/auth/services/auth.service';
@@ -15,7 +21,7 @@ import { SuppliersApiService } from '../services/suppliers-api.service';
 
 @Component({
   selector: 'app-purchase-returns-page',
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, FormsModule, Button, Dialog, InputNumber, InputText, Select, Textarea, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './purchase-returns-page.html',
   styleUrl: './purchasing-pages.css',
@@ -42,6 +48,12 @@ export class PurchaseReturnsPage {
   protected readonly pageNumber = signal(1);
   protected readonly totalCount = signal(0);
   protected readonly pageSize = 20;
+  protected readonly batchOptions = computed(() =>
+    this.batches().map(batch => ({
+      label: `${batch.drugTradeNameEn} - ${batch.batchNumber} (${batch.quantityOnHand})`,
+      value: batch.id,
+    })),
+  );
 
   protected readonly form = this.fb.nonNullable.group({
     branchId: ['', [Validators.required]],
@@ -91,12 +103,12 @@ export class PurchaseReturnsPage {
     if (this.lines.length > 1) this.lines.removeAt(index);
   }
 
-  protected onBatchChange(index: number, event: Event): void {
-    const batch = this.batches().find(item => item.id === (event.target as HTMLSelectElement).value);
+  protected onBatchChange(index: number, batchId: string): void {
+    const batch = this.batches().find(item => item.id === batchId);
     if (!batch) return;
     this.lines.at(index).patchValue({
       drugId: batch.drugId,
-      unitCost: String(batch.costPrice),
+      unitCost: batch.costPrice,
     });
   }
 
@@ -188,8 +200,8 @@ export class PurchaseReturnsPage {
     return this.fb.nonNullable.group({
       drugId: ['', [Validators.required]],
       batchId: ['', [Validators.required]],
-      quantity: ['1', [Validators.required, Validators.min(1)]],
-      unitCost: [''],
+      quantity: [1, [Validators.required, Validators.min(1)]],
+      unitCost: this.fb.control<number | null>(null),
     });
   }
 }

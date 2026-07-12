@@ -439,85 +439,6 @@ html.dark .auth-layout {
    (catalog, inventory, branches, users). Defined once here instead of
    duplicated in every component stylesheet.
    ===================================================================== */
-@keyframes app-modal-in {
-  from { opacity: 0; transform: translateY(-0.75rem) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  z-index: 1000;
-  padding: 2rem 1rem 1rem;
-  overflow-y: auto;
-  backdrop-filter: blur(2px);
-}
-
-.modal {
-  background: var(--surface-panel);
-  border: 1px solid var(--surface-border);
-  border-radius: 1.25rem;
-  width: 100%;
-  max-width: 28rem;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.2);
-  margin: auto;
-  animation: app-modal-in 0.2s ease;
-}
-
-.modal--wide { max-width: 42rem; }
-
-.modal__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--surface-border);
-}
-
-.modal__title {
-  margin: 0;
-  font-size: 1.0625rem;
-  font-weight: 700;
-  color: var(--text-color);
-}
-
-.modal__close {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 0.625rem;
-  border: 1px solid var(--surface-border);
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.875rem;
-  transition: all 0.15s;
-  flex-shrink: 0;
-}
-
-.modal__close:hover { background: var(--surface-elevated); color: var(--text-color); }
-
-.modal__body {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.modal__footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding: 1rem 1.5rem;
-  border-top: 1px solid var(--surface-border);
-}
-
 .form-field {
   display: flex;
   flex-direction: column;
@@ -545,29 +466,13 @@ html.dark .auth-layout {
   color: var(--text-muted);
 }
 
-.form-input,
-.form-select {
-  width: 100%;
-  padding: 0.625rem 0.875rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--surface-border);
-  background: var(--surface-panel);
-  color: var(--text-color);
-  font-size: 0.9375rem;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  box-sizing: border-box;
+.form-input--error,
+.form-input--error .p-inputtext,
+.form-input--error .p-select,
+.form-input--error .p-datepicker-input,
+.form-input--error .p-inputnumber-input {
+  border-color: var(--danger-border) !important;
 }
-
-.form-input:focus,
-.form-select:focus {
-  border-color: var(--action-subtle-border);
-  box-shadow: 0 0 0 3px var(--action-focus-ring);
-}
-
-.form-input::placeholder { color: var(--text-muted); }
-.form-input--error { border-color: var(--danger-border); }
 
 .form-error {
   font-size: 0.75rem;
@@ -575,67 +480,38 @@ html.dark .auth-layout {
   font-weight: 500;
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.75rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  border: 1px solid var(--surface-border);
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: inherit;
-  white-space: nowrap;
-}
-
-.btn:hover { background: var(--surface-elevated); color: var(--text-color); }
-
-.btn--primary {
-  background: var(--action-bg);
-  border-color: var(--action-border);
-  color: var(--action-text);
-}
-
-.btn--primary:hover { background: var(--action-bg-hover); border-color: var(--action-bg-hover); }
-.btn--primary:disabled { opacity: 0.6; cursor: not-allowed; }
-
-.btn:focus-visible,
-.btn--primary:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--action-focus-ring);
-}
-
-.btn--primary:focus-visible {
-  border-color: var(--action-bg);
-}
-
-.btn--danger {
-  background: var(--danger-text);
-  border-color: var(--danger-border);
-  color: #ffffff;
-}
-
-.btn--danger:hover {
-  background: var(--danger-border);
-  border-color: var(--danger-border);
-  color: #ffffff;
-}
-
-.btn--danger:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger-border) 35%, transparent);
-}
-
 /* PrimeNG buttons — keep focus ring on brand color */
 p-button .p-button:focus-visible,
 .p-button:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px var(--action-focus-ring);
+}
+
+.app-dialog {
+  width: min(28rem, calc(100vw - 2rem));
+}
+
+.app-dialog--wide {
+  width: min(48rem, calc(100vw - 2rem));
+}
+
+.app-dialog .p-dialog-content {
+  padding: 0;
+}
+
+.app-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.app-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--surface-border);
 }
 
 .navbar__text-link:focus-visible {
