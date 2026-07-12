@@ -48,10 +48,11 @@ describe('ThemeService', () => {
 
     expect(root.classList.contains('dark')).toBe(true);
     expect(root.classList.contains('theme-obsidian')).toBe(true);
-    expect(obsidianPalette[400]).toBe('#a1a1aa');
-    expect(obsidianPalette[500]).toBe('#71717a');
-    expect(obsidian.actionPrimary).toBe('#27272a');
-    expect(obsidian.actionPrimaryHover).toBe('#3f3f46');
+    expect(obsidianPalette[400]).toBe('#8aaafe');
+    expect(obsidianPalette[500]).toBe('#7c9cff');
+    expect(obsidian.actionPrimary).toBe('#7c9cff');
+    expect(obsidian.actionPrimaryHover).toBe('#a5baff');
+    expect(obsidian.actionText).toBe('#f2f4f7');
     expect(root.style.getPropertyValue('--color-primary')).toBe(obsidian.actionPrimary);
     expect(root.style.getPropertyValue('--color-primary-hover')).toBe(obsidian.actionPrimaryHover);
     expect(root.style.getPropertyValue('--action-text')).toBe(obsidian.actionText);
