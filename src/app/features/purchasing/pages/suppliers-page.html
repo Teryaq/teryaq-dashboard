@@ -1,0 +1,100 @@
+<section class="purchase-page">
+  <header class="purchase-page__header">
+    <div>
+      <h1>{{ 'purchasing.suppliers.title' | translate }}</h1>
+      <p>{{ 'purchasing.suppliers.subtitle' | translate }}</p>
+    </div>
+    <button class="btn btn--primary" type="button" (click)="openCreate()">
+      <i class="pi pi-plus" aria-hidden="true"></i>
+      {{ 'purchasing.suppliers.add' | translate }}
+    </button>
+  </header>
+
+  <label class="purchase-page__search">
+    <span class="sr-only">{{ 'purchasing.suppliers.search' | translate }}</span>
+    <i class="pi pi-search" aria-hidden="true"></i>
+    <input type="search" [placeholder]="'purchasing.suppliers.search' | translate" (input)="onSearch($event)" />
+  </label>
+
+  @if (isLoading()) {
+    <div class="purchase-page__state">{{ 'common.loading' | translate }}</div>
+  } @else if (error()) {
+    <div class="purchase-page__state purchase-page__state--error" role="alert">{{ 'common.error' | translate }}</div>
+  } @else {
+    <div class="purchase-page__table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'purchasing.suppliers.name' | translate }}</th>
+            <th>{{ 'purchasing.suppliers.contact' | translate }}</th>
+            <th>{{ 'purchasing.suppliers.phone' | translate }}</th>
+            <th>{{ 'purchasing.suppliers.email' | translate }}</th>
+            <th>{{ 'purchasing.common.status' | translate }}</th>
+            <th>{{ 'purchasing.common.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (supplier of suppliers(); track supplier.id) {
+            <tr>
+              <td>{{ supplier.name }}</td>
+              <td>{{ supplier.contactPerson || '-' }}</td>
+              <td>{{ supplier.phone || '-' }}</td>
+              <td>{{ supplier.email || '-' }}</td>
+              <td>
+                <span class="purchase-badge" [class.purchase-badge--muted]="!supplier.isActive">
+                  {{ (supplier.isActive ? 'purchasing.common.active' : 'purchasing.common.inactive') | translate }}
+                </span>
+              </td>
+              <td>
+                <div class="purchase-actions">
+                  <button type="button" (click)="openEdit(supplier)" [title]="'form.edit' | translate">
+                    <i class="pi pi-pencil" aria-hidden="true"></i>
+                  </button>
+                  <button type="button" (click)="deleteSupplier(supplier.id)" [disabled]="isSubmitting()" [title]="'form.delete' | translate">
+                    <i class="pi pi-trash" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="purchase-page__empty">{{ 'purchasing.suppliers.empty' | translate }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <nav class="data-pagination" [attr.aria-label]="'common.pagination' | translate">
+      <button type="button" (click)="previousPage()" [disabled]="pageNumber() === 1">{{ 'common.previous' | translate }}</button>
+      <span>{{ 'common.page' | translate }} {{ pageNumber() }}</span>
+      <button type="button" (click)="nextPage()" [disabled]="pageNumber() * pageSize >= totalCount()">{{ 'common.next' | translate }}</button>
+    </nav>
+  }
+</section>
+
+@if (isFormOpen()) {
+  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="supplier-form-title" (click)="closeForm()">
+    <div class="modal modal--wide" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 id="supplier-form-title">{{ (selected() ? 'purchasing.suppliers.editTitle' : 'purchasing.suppliers.createTitle') | translate }}</h2>
+        <button class="modal__close" type="button" (click)="closeForm()" [attr.aria-label]="'form.close' | translate"><i class="pi pi-times" aria-hidden="true"></i></button>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="modal__body">
+          <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.name' | translate }}</span><input class="form-input" formControlName="name" />@if (fieldError('name'); as key) { <small class="form-error">{{ key | translate }}</small> }</label>
+          <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.contact' | translate }}</span><input class="form-input" formControlName="contactPerson" /></label>
+          <div class="form-row">
+            <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.phone' | translate }}</span><input class="form-input" type="tel" formControlName="phone" /></label>
+            <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.email' | translate }}</span><input class="form-input" type="email" formControlName="email" />@if (fieldError('email'); as key) { <small class="form-error">{{ key | translate }}</small> }</label>
+          </div>
+          <label class="form-field"><span class="form-label">{{ 'purchasing.suppliers.address' | translate }}</span><textarea class="form-input" formControlName="address"></textarea></label>
+          @if (selected()) {
+            <label class="purchase-checkbox"><input type="checkbox" formControlName="isActive" /> <span>{{ 'purchasing.common.active' | translate }}</span></label>
+          }
+        </div>
+        <div class="modal__footer">
+          <button class="btn" type="button" (click)="closeForm()">{{ 'form.cancel' | translate }}</button>
+          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">{{ 'form.save' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

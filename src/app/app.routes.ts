@@ -72,6 +72,13 @@ export const routes: Routes = [
             module => module.CUSTOMERS_ROUTES,
           ),
       },
+      {
+        path: 'purchasing',
+        loadChildren: () =>
+          import('./features/purchasing/purchasing.routes').then(
+            module => module.PURCHASING_ROUTES,
+          ),
+      },
     ],
   },
   {

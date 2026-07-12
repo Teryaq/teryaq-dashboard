@@ -1,0 +1,89 @@
+<section class="purchase-page">
+  <a class="purchase-back" routerLink="/purchasing/orders"><i class="pi pi-arrow-left" aria-hidden="true"></i>{{ 'purchasing.orders.back' | translate }}</a>
+
+  @if (isLoading()) {
+    <div class="purchase-page__state">{{ 'common.loading' | translate }}</div>
+  } @else if (error() || !order()) {
+    <div class="purchase-page__state purchase-page__state--error" role="alert">{{ 'common.error' | translate }}</div>
+  } @else {
+    <header class="purchase-page__header">
+      <div>
+        <h1>{{ order()!.orderNumber }}</h1>
+        <p>{{ order()!.supplierName }} - {{ order()!.branchName }}</p>
+      </div>
+      <div class="purchase-actions purchase-actions--large">
+        @if (canSend()) {
+          <button class="btn btn--primary" type="button" (click)="send()" [disabled]="isSubmitting()">
+            <i class="pi pi-send" aria-hidden="true"></i>{{ 'purchasing.orders.send' | translate }}
+          </button>
+        }
+        @if (canReceive()) {
+          <button class="btn btn--primary" type="button" (click)="openReceive()" [disabled]="isSubmitting()">
+            <i class="pi pi-download" aria-hidden="true"></i>{{ 'purchasing.orders.receive' | translate }}
+          </button>
+        }
+      </div>
+    </header>
+
+    <div class="purchase-summary">
+      <div><span>{{ 'purchasing.common.status' | translate }}</span><strong>{{ statusKey(order()!.status) | translate }}</strong></div>
+      <div><span>{{ 'purchasing.orders.expected' | translate }}</span><strong>{{ order()!.expectedDeliveryDate || '-' }}</strong></div>
+      <div><span>{{ 'purchasing.common.notes' | translate }}</span><strong>{{ order()!.notes || '-' }}</strong></div>
+    </div>
+
+    <div class="purchase-page__table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ 'inventory.form.drug' | translate }}</th>
+            <th>{{ 'purchasing.orders.qtyOrdered' | translate }}</th>
+            <th>{{ 'purchasing.orders.qtyReceived' | translate }}</th>
+            <th>{{ 'purchasing.orders.unitCost' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of order()!.lines; track line.id) {
+            <tr>
+              <td>{{ line.drugTradeNameEn }}<br /><span class="purchase-muted">{{ line.drugTradeNameAr }}</span></td>
+              <td>{{ line.quantityOrdered }}</td>
+              <td>{{ line.quantityReceived }}</td>
+              <td>{{ line.unitCost }} EGP</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@if (isReceiveOpen()) {
+  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="receive-po-title" (click)="closeReceive()">
+    <div class="modal modal--wide" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2 id="receive-po-title">{{ 'purchasing.orders.receiveTitle' | translate }}</h2>
+        <button class="modal__close" type="button" (click)="closeReceive()" [attr.aria-label]="'form.close' | translate"><i class="pi pi-times" aria-hidden="true"></i></button>
+      </div>
+      <form [formGroup]="receiveForm" (ngSubmit)="receive()">
+        <div class="modal__body purchase-lines" formArrayName="lines">
+          @for (line of receiveLines.controls; track $index) {
+            <div class="purchase-line purchase-line--receive" [formGroupName]="$index">
+              <div class="purchase-line__title">
+                <strong>{{ line.value.label }}</strong>
+                <span>{{ 'purchasing.orders.remaining' | translate }}: {{ line.value.remaining }}</span>
+              </div>
+              <label class="form-field"><span class="form-label">{{ 'purchasing.orders.qtyReceived' | translate }}</span><input class="form-input" type="number" min="0" formControlName="quantityReceived" /></label>
+              <label class="form-field"><span class="form-label">{{ 'inventory.form.batchNumber' | translate }}</span><input class="form-input" formControlName="batchNumber" /></label>
+              <label class="form-field"><span class="form-label">{{ 'inventory.form.expiryDate' | translate }}</span><input class="form-input" type="date" formControlName="expiryDate" /></label>
+              <label class="form-field"><span class="form-label">{{ 'inventory.form.sellingPrice' | translate }}</span><input class="form-input" type="number" min="0" step="0.01" formControlName="sellingPrice" /></label>
+              <label class="form-field"><span class="form-label">{{ 'inventory.form.reorderLevel' | translate }}</span><input class="form-input" type="number" min="0" formControlName="reorderLevel" /></label>
+            </div>
+          }
+        </div>
+        <div class="modal__footer">
+          <button class="btn" type="button" (click)="closeReceive()">{{ 'form.cancel' | translate }}</button>
+          <button class="btn btn--primary" type="submit" [disabled]="isSubmitting()">{{ 'purchasing.orders.receive' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
