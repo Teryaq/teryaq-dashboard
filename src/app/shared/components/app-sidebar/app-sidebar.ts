@@ -52,6 +52,7 @@ export class AppSidebar {
     { route: '/inventory', labelKey: 'nav.inventory', icon: 'pi pi-box' },
     { route: '/catalog', labelKey: 'nav.catalog', icon: 'pi pi-database' },
     { route: '/pos', labelKey: 'nav.pos', icon: 'pi pi-shopping-cart' },
+    { route: '/purchasing', labelKey: 'nav.purchasing', icon: 'pi pi-truck' },
     { route: '/customers', labelKey: 'nav.customers', icon: 'pi pi-address-book' },
     { route: '/branches', labelKey: 'nav.branches', icon: 'pi pi-building', ownerOnly: true },
     { route: '/users', labelKey: 'nav.users', icon: 'pi pi-users', ownerOnly: true },

@@ -26,7 +26,8 @@
     "menu": "Open menu",
     "closeMenu": "Close menu",
     "account": "Account",
-    "alerts": "Alerts"
+    "alerts": "Alerts",
+    "purchasing": "Purchasing"
   },
   "theme": {
     "colorLabel": "Accent color",
@@ -370,8 +371,8 @@
       "submit": "Sign in",
       "noAccount": "Don't have an account?",
       "createAccount": "Create pharmacy account",
-      "invalidCredentials": "Invalid email or password."
-      ,"heroTitle": "Run every pharmacy operation with confidence",
+      "invalidCredentials": "Invalid email or password.",
+      "heroTitle": "Run every pharmacy operation with confidence",
       "heroText": "Teryaq brings stock, expiry alerts, sales, and teams into one focused workspace.",
       "benefitInventory": "Live inventory across every branch",
       "benefitSales": "Fast, traceable point-of-sale",
@@ -461,5 +462,90 @@
     "validation": "Please check the form for errors.",
     "server": "A server error occurred. Please try again later.",
     "unknown": "Something went wrong. Please try again."
+  },
+  "purchasing": {
+    "common": {
+      "actions": "Actions",
+      "active": "Active",
+      "inactive": "Inactive",
+      "status": "Status",
+      "supplier": "Supplier",
+      "branch": "Branch",
+      "notes": "Notes",
+      "allBranches": "All branches",
+      "allSuppliers": "All suppliers",
+      "selectSupplier": "Select supplier...",
+      "addLine": "Add line"
+    },
+    "suppliers": {
+      "title": "Suppliers",
+      "subtitle": "Manage supplier contacts and purchasing partners.",
+      "add": "New supplier",
+      "search": "Search suppliers...",
+      "name": "Supplier name",
+      "contact": "Contact person",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "createTitle": "Create supplier",
+      "editTitle": "Edit supplier",
+      "empty": "No suppliers found."
+    },
+    "orders": {
+      "title": "Purchase Orders",
+      "subtitle": "Create, send, and receive purchase orders.",
+      "add": "New order",
+      "createTitle": "Create purchase order",
+      "number": "Order number",
+      "expected": "Expected delivery",
+      "allStatuses": "All statuses",
+      "lines": "Order lines",
+      "qtyOrdered": "Qty ordered",
+      "qtyReceived": "Qty received",
+      "unitCost": "Unit cost",
+      "send": "Send",
+      "receive": "Receive",
+      "receiveTitle": "Receive purchase order",
+      "remaining": "Remaining",
+      "back": "Back to orders",
+      "empty": "No purchase orders found.",
+      "status": {
+        "Draft": "Draft",
+        "Sent": "Sent",
+        "PartiallyReceived": "Partially received",
+        "Received": "Received"
+      }
+    },
+    "invoices": {
+      "title": "Supplier Invoices",
+      "subtitle": "Track supplier bills, payments, and outstanding balances.",
+      "add": "New invoice",
+      "createTitle": "Create invoice",
+      "editTitle": "Edit invoice",
+      "number": "Invoice number",
+      "amount": "Amount",
+      "paid": "Paid",
+      "outstanding": "Outstanding",
+      "outstandingOnly": "Outstanding only",
+      "issuedAt": "Issued at",
+      "dueAt": "Due at",
+      "recordPayment": "Record payment",
+      "paymentAmount": "Payment amount",
+      "empty": "No supplier invoices found."
+    },
+    "returns": {
+      "title": "Purchase Returns",
+      "subtitle": "Return supplier stock and credit linked invoices.",
+      "add": "New return",
+      "createTitle": "Create purchase return",
+      "number": "Return number",
+      "reason": "Reason",
+      "credit": "Credit amount",
+      "returnedAt": "Returned at",
+      "lines": "Return lines",
+      "selectBatch": "Select inventory batch...",
+      "quantity": "Quantity",
+      "empty": "No purchase returns found."
+    }
   }
 }
