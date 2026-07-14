@@ -30,6 +30,7 @@ export interface SaleLineDto {
   batchId: string;
   batchNumber: string;
   quantity: number;
+  quantityReturned: number;
   unitPrice: number;
   lineTotal: number;
 }
@@ -47,6 +48,8 @@ export interface SaleDto {
   grandTotal: number;
   paymentMethod: PaymentMethod;
   status: SaleStatus;
+  voidedAt: string | null;
+  voidApprovedByUserId: string | null;
   /** UTC ISO 8601 datetime. */
   completedAt: string;
   customerId: string | null;
@@ -65,4 +68,53 @@ export interface TodaySaleSummaryDto {
   /** UTC ISO 8601 datetime. */
   completedAt: string;
   customerName: string | null;
+}
+
+export type SaleReturnStatus = 'Completed' | 'Approved';
+
+export interface SaleReturnLine {
+  id: string;
+  saleLineId: string;
+  drugId: string;
+  drugTradeNameEn: string;
+  drugTradeNameAr: string;
+  batchId: string;
+  quantity: number;
+  unitPrice: number;
+  refundAmount: number;
+  restockToInventory: boolean;
+}
+
+export interface SaleReturn {
+  id: string;
+  saleId: string;
+  branchId: string;
+  returnNumber: string;
+  reason: string;
+  refundAmount: number;
+  status: SaleReturnStatus;
+  createdByUserId: string;
+  approvedByUserId: string | null;
+  returnedAt: string;
+  lines: SaleReturnLine[];
+}
+
+export interface Receipt {
+  sale: SaleDto;
+  printedAt: string;
+}
+
+export interface ReturnSaleLineRequest {
+  saleLineId: string;
+  quantity: number;
+  restockToInventory: boolean;
+}
+
+export interface ReturnSaleRequest {
+  reason: string;
+  lines: ReturnSaleLineRequest[];
+}
+
+export interface VoidSaleRequest {
+  reason: string;
 }

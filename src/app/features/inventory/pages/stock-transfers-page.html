@@ -1,0 +1,144 @@
+<div class="inv" data-testid="stock-transfers-page">
+  <div class="inv__header">
+    <div>
+      <h1 class="inv__title">{{ 'inventory.transfers.title' | translate }}</h1>
+      <p class="inv__subtitle">{{ 'inventory.transfers.subtitle' | translate }}</p>
+    </div>
+    <p-button
+      data-testid="create-transfer"
+      icon="pi pi-plus"
+      [label]="'inventory.transfers.add' | translate"
+      (onClick)="openCreate()"
+    />
+  </div>
+
+  <div class="inv__toolbar">
+    <p-select
+      [ngModel]="branchFilter()"
+      (ngModelChange)="branchFilter.set($event || ''); onFilterChange()"
+      [options]="branches()"
+      optionLabel="name"
+      optionValue="id"
+      [placeholder]="'dashboard.allBranches' | translate"
+      [showClear]="true"
+      appendTo="body"
+      styleClass="w-full"
+    />
+    <p-select
+      [ngModel]="statusFilter()"
+      (ngModelChange)="statusFilter.set($event || ''); onFilterChange()"
+      [options]="statusOptions()"
+      optionLabel="label"
+      optionValue="value"
+      [placeholder]="'inventory.transfers.allStatuses' | translate"
+      [showClear]="true"
+      appendTo="body"
+      styleClass="w-full"
+    >
+      <ng-template #item let-option>
+        {{ option.label | translate }}
+      </ng-template>
+      <ng-template #selectedItem let-option>
+        {{ option.label | translate }}
+      </ng-template>
+    </p-select>
+  </div>
+
+  @if (isLoading()) {
+    <div class="inv__state-box">{{ 'common.loading' | translate }}</div>
+  }
+
+  @if (error() && !isLoading()) {
+    <div class="inv__state-box inv__state-box--error">{{ 'common.error' | translate }}</div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="inv__table-card">
+      <table class="inv__table" aria-label="Stock transfers">
+        <thead>
+          <tr>
+            <th>{{ 'inventory.transfers.number' | translate }}</th>
+            <th>{{ 'inventory.transfers.fromBranch' | translate }}</th>
+            <th>{{ 'inventory.transfers.toBranch' | translate }}</th>
+            <th>{{ 'inventory.col.status' | translate }}</th>
+            <th>{{ 'inventory.transfers.requestedAt' | translate }}</th>
+            <th>{{ 'inventory.col.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (transfer of transfers(); track transfer.id) {
+            <tr>
+              <td><span class="inv__batch">{{ transfer.transferNumber }}</span></td>
+              <td>{{ transfer.fromBranchName }}</td>
+              <td>{{ transfer.toBranchName }}</td>
+              <td><span class="inv__status-badge inv__status-badge--ok">{{ statusKey(transfer.status) | translate }}</span></td>
+              <td>{{ transfer.requestedAt }}</td>
+              <td><a class="inv__chip" [routerLink]="['/inventory/transfers', transfer.id]">{{ 'form.edit' | translate }}</a></td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="inv__empty">{{ 'inventory.transfers.empty' | translate }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <nav class="data-pagination" [attr.aria-label]="'common.pagination' | translate">
+      <button type="button" (click)="previousPage()" [disabled]="pageNumber() === 1">{{ 'common.previous' | translate }}</button>
+      <span>{{ 'common.page' | translate }} {{ pageNumber() }}</span>
+      <button type="button" (click)="nextPage()" [disabled]="pageNumber() * pageSize >= totalCount()">{{ 'common.next' | translate }}</button>
+    </nav>
+  }
+</div>
+
+<p-dialog
+  [modal]="true"
+  [visible]="isCreateOpen()"
+  (visibleChange)="$event ? isCreateOpen.set(true) : closeCreate()"
+  [header]="'inventory.transfers.createTitle' | translate"
+  styleClass="app-dialog app-dialog--wide"
+>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="app-dialog__body">
+      <div class="form-row">
+        <label class="form-field">
+          <span class="form-label">{{ 'inventory.transfers.fromBranch' | translate }}</span>
+          <p-select formControlName="fromBranchId" [options]="branches()" optionLabel="name" optionValue="id" appendTo="body" styleClass="w-full" />
+        </label>
+        <label class="form-field">
+          <span class="form-label">{{ 'inventory.transfers.toBranch' | translate }}</span>
+          <p-select formControlName="toBranchId" [options]="branches()" optionLabel="name" optionValue="id" appendTo="body" styleClass="w-full" />
+        </label>
+      </div>
+      <label class="form-field">
+        <span class="form-label">{{ 'purchasing.common.notes' | translate }}</span>
+        <textarea pTextarea class="w-full" formControlName="notes"></textarea>
+      </label>
+      <div class="stock-transfer-lines" formArrayName="lines">
+        <div class="stock-transfer-lines__head">
+          <h3>{{ 'inventory.transfers.lines' | translate }}</h3>
+          <p-button icon="pi pi-plus" severity="secondary" [outlined]="true" [label]="'purchasing.common.addLine' | translate" (onClick)="addLine()" />
+        </div>
+        @for (line of lines.controls; track line; let i = $index) {
+          <div class="stock-transfer-line" [formGroupName]="i">
+            <label class="form-field stock-transfer-line__batch">
+              <span class="form-label">{{ 'inventory.col.batch' | translate }}</span>
+              <p-select formControlName="batchId" [options]="batchOptions()" optionLabel="label" optionValue="value" appendTo="body" styleClass="w-full" (onChange)="onBatchChange(i, $event.value)" />
+            </label>
+            <div class="form-field stock-transfer-line__quantity">
+              <span class="form-label">{{ 'inventory.transfers.quantity' | translate }}</span>
+              <div class="stock-transfer-line__quantity-row">
+                <p-inputnumber formControlName="quantity" [min]="1" [showButtons]="true" styleClass="w-full" />
+                <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" [disabled]="lines.length === 1" [attr.aria-label]="'form.delete' | translate" (onClick)="removeLine(i)" />
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    <div class="app-dialog__footer">
+      <p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeCreate()" />
+      <p-button type="submit" [label]="'form.create' | translate" [loading]="isSubmitting()" />
+    </div>
+  </form>
+</p-dialog>

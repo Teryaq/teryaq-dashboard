@@ -2,7 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiService } from '../../../core/api/api.service';
-import { CreateSaleDto, SaleDto, TodaySaleSummaryDto } from '../models/sale.model';
+import {
+  CreateSaleDto,
+  Receipt,
+  ReturnSaleRequest,
+  SaleDto,
+  SaleReturn,
+  TodaySaleSummaryDto,
+  VoidSaleRequest,
+} from '../models/sale.model';
 
 @Injectable({ providedIn: 'root' })
 export class PosApiService {
@@ -22,5 +30,17 @@ export class PosApiService {
   getTodaysSales(branchId?: string): Observable<TodaySaleSummaryDto[]> {
     const params = branchId ? { branchId } : undefined;
     return this.api.get<TodaySaleSummaryDto[]>('pos/sales/today', { params });
+  }
+
+  returnSale(saleId: string, req: ReturnSaleRequest): Observable<SaleReturn> {
+    return this.api.post<SaleReturn>(`pos/sales/${saleId}/return`, req);
+  }
+
+  voidSale(saleId: string, req: VoidSaleRequest): Observable<SaleReturn> {
+    return this.api.post<SaleReturn>(`pos/sales/${saleId}/void`, req);
+  }
+
+  getReceipt(saleId: string): Observable<Receipt> {
+    return this.api.get<Receipt>(`pos/sales/${saleId}/receipt`);
   }
 }

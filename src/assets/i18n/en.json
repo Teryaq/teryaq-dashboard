@@ -27,7 +27,8 @@
     "closeMenu": "Close menu",
     "account": "Account",
     "alerts": "Alerts",
-    "purchasing": "Purchasing"
+    "purchasing": "Purchasing",
+    "stockTransfers": "Stock Transfers"
   },
   "theme": {
     "colorLabel": "Accent color",
@@ -177,6 +178,32 @@
       "quantityOnHand": "Corrected Quantity on Hand",
       "submitReceive": "Receive Shipment",
       "submitAdjust": "Apply Adjustment"
+    },
+    "transfers": {
+      "title": "Stock Transfers",
+      "subtitle": "Move batches between branches with dispatch and receive tracking.",
+      "add": "New transfer",
+      "createTitle": "Create stock transfer",
+      "back": "Back to transfers",
+      "number": "Transfer number",
+      "fromBranch": "Source branch",
+      "toBranch": "Destination branch",
+      "allStatuses": "All statuses",
+      "requestedAt": "Requested at",
+      "lines": "Transfer lines",
+      "quantity": "Quantity",
+      "dispatch": "Dispatch",
+      "receive": "Receive",
+      "reject": "Reject",
+      "rejectTitle": "Reject transfer",
+      "rejectReason": "Rejection reason",
+      "empty": "No stock transfers found.",
+      "status": {
+        "Requested": "Requested",
+        "Dispatched": "Dispatched",
+        "Received": "Received",
+        "Rejected": "Rejected"
+      }
     }
   },
   "catalog": {
@@ -360,6 +387,29 @@
     },
     "today": {
       "title": "Today's Sales"
+    },
+    "sales": {
+      "return": {
+        "action": "Return items",
+        "title": "Return sale items",
+        "reason": "Return reason",
+        "remaining": "Remaining",
+        "quantity": "Return quantity",
+        "restock": "Put back on shelf",
+        "submit": "Complete return",
+        "refundAmount": "Refund amount"
+      },
+      "void": {
+        "action": "Void sale",
+        "title": "Void sale",
+        "reason": "Void reason",
+        "submit": "Void sale",
+        "ownerRequired": "This sale requires an Owner to void. Please ask an Owner to log in and confirm."
+      },
+      "receipt": {
+        "reprint": "Reprint receipt",
+        "reprintedAt": "Reprinted at"
+      }
     }
   },
   "auth": {

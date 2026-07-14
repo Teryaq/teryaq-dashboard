@@ -72,12 +72,32 @@
           <div class="receipt__barcode-bar">
             <span class="receipt__mono">||||| {{ sale.saleNumber }} |||||</span>
           </div>
+          @if (receiptPrintedAt(); as printedAt) {
+            <p class="receipt__thanks">{{ 'pos.sales.receipt.reprintedAt' | translate }} {{ formatReprintDate(printedAt) }}</p>
+          }
+          @if (lastRefundAmount(); as refundAmount) {
+            <p class="receipt__thanks">{{ 'pos.sales.return.refundAmount' | translate }}: {{ refundAmount | number:'1.2-2' }} ج.م</p>
+          }
           <p class="receipt__thanks">نشكركم على ثقتكم في ترياق — دواء صحتك!</p>
         </div>
       </div>
 
       <!-- Action buttons -->
       <div class="receipt__actions">
+        @if (canReturnCurrentSale()) {
+          <button class="receipt__btn" type="button" (click)="openReturn()">
+            {{ 'pos.sales.return.action' | translate }}
+          </button>
+        }
+        @if (canVoidCurrentSale()) {
+          <button class="receipt__btn" type="button" (click)="openVoid()">
+            {{ 'pos.sales.void.action' | translate }}
+          </button>
+        }
+        <button class="receipt__btn" type="button" (click)="reprintReceipt()">
+          <i class="pi pi-refresh" aria-hidden="true"></i>
+          {{ 'pos.sales.receipt.reprint' | translate }}
+        </button>
         <button class="receipt__btn receipt__btn--close" type="button" (click)="closeReceipt()">
           إغلاق
         </button>
@@ -88,6 +108,64 @@
       </div>
 
     </div>
+  </div>
+}
+
+@if (showReturnModal() && lastSale()) {
+  <div class="receipt-overlay receipt-overlay--nested" role="dialog" aria-modal="true" aria-labelledby="sale-return-title">
+    <form class="receipt-modal pos-action-modal" (submit)="$event.preventDefault(); submitReturn()">
+      <h3 id="sale-return-title">{{ 'pos.sales.return.title' | translate }}</h3>
+      <label class="pos-action-modal__field">
+        <span>{{ 'pos.sales.return.reason' | translate }}</span>
+        <textarea class="pos-action-modal__input" [value]="returnReason()" (input)="onReturnReasonInput($event)"></textarea>
+      </label>
+      <div class="pos-action-modal__lines">
+        @for (line of returnLines(); track line.saleLineId; let i = $index) {
+          <div class="pos-action-modal__line">
+            <div>
+              <strong>{{ line.label }}</strong>
+              <small>{{ 'pos.sales.return.remaining' | translate }}: {{ line.maxQuantity }}</small>
+            </div>
+            <input
+              class="pos-action-modal__qty"
+              type="number"
+              min="0"
+              [max]="line.maxQuantity"
+              [value]="line.quantity"
+              (input)="onReturnQuantityInput(i, $event)"
+              [attr.aria-label]="'pos.sales.return.quantity' | translate"
+            />
+            <label class="pos-action-modal__toggle">
+              <input type="checkbox" [checked]="line.restockToInventory" (change)="toggleReturnRestock(i, $event)" />
+              <span>{{ 'pos.sales.return.restock' | translate }}</span>
+            </label>
+          </div>
+        }
+      </div>
+      <div class="receipt__actions">
+        <button class="receipt__btn receipt__btn--close" type="button" (click)="closeReturn()">{{ 'form.cancel' | translate }}</button>
+        <button class="receipt__btn receipt__btn--print" type="submit" [disabled]="isSubmitting()">{{ 'pos.sales.return.submit' | translate }}</button>
+      </div>
+    </form>
+  </div>
+}
+
+@if (showVoidModal() && lastSale()) {
+  <div class="receipt-overlay receipt-overlay--nested" role="dialog" aria-modal="true" aria-labelledby="sale-void-title">
+    <form class="receipt-modal pos-action-modal" (submit)="$event.preventDefault(); submitVoid()">
+      <h3 id="sale-void-title">{{ 'pos.sales.void.title' | translate }}</h3>
+      @if (ownerApprovalMessage()) {
+        <p class="pos-action-modal__alert" role="alert">{{ 'pos.sales.void.ownerRequired' | translate }}</p>
+      }
+      <label class="pos-action-modal__field">
+        <span>{{ 'pos.sales.void.reason' | translate }}</span>
+        <textarea class="pos-action-modal__input" [value]="voidReason()" (input)="onVoidReasonInput($event)"></textarea>
+      </label>
+      <div class="receipt__actions">
+        <button class="receipt__btn receipt__btn--close" type="button" (click)="closeVoid()">{{ 'form.cancel' | translate }}</button>
+        <button class="receipt__btn receipt__btn--print" type="submit" [disabled]="isSubmitting()">{{ 'pos.sales.void.submit' | translate }}</button>
+      </div>
+    </form>
   </div>
 }
 

@@ -27,7 +27,8 @@
     "closeMenu": "إغلاق القائمة",
     "account": "الحساب",
     "alerts": "التنبيهات",
-    "purchasing": "المشتريات"
+    "purchasing": "المشتريات",
+    "stockTransfers": "تحويلات المخزون"
   },
   "theme": {
     "colorLabel": "لون التمييز",
@@ -177,6 +178,32 @@
       "quantityOnHand": "الرصيد المُصحَّح",
       "submitReceive": "تأكيد الاستلام",
       "submitAdjust": "تطبيق التسوية"
+    },
+    "transfers": {
+      "title": "تحويلات المخزون",
+      "subtitle": "نقل التشغيلات بين الفروع مع متابعة الإرسال والاستلام.",
+      "add": "تحويل جديد",
+      "createTitle": "إنشاء تحويل مخزون",
+      "back": "رجوع إلى التحويلات",
+      "number": "رقم التحويل",
+      "fromBranch": "فرع المصدر",
+      "toBranch": "فرع الوجهة",
+      "allStatuses": "كل الحالات",
+      "requestedAt": "تاريخ الطلب",
+      "lines": "بنود التحويل",
+      "quantity": "الكمية",
+      "dispatch": "إرسال",
+      "receive": "استلام",
+      "reject": "رفض",
+      "rejectTitle": "رفض التحويل",
+      "rejectReason": "سبب الرفض",
+      "empty": "لا توجد تحويلات مخزون.",
+      "status": {
+        "Requested": "مطلوب",
+        "Dispatched": "مرسل",
+        "Received": "مستلم",
+        "Rejected": "مرفوض"
+      }
     }
   },
   "catalog": {
@@ -360,6 +387,29 @@
     },
     "today": {
       "title": "مبيعات اليوم"
+    },
+    "sales": {
+      "return": {
+        "action": "إرجاع أصناف",
+        "title": "إرجاع أصناف من البيع",
+        "reason": "سبب الإرجاع",
+        "remaining": "المتبقي",
+        "quantity": "كمية الإرجاع",
+        "restock": "إعادته إلى الرف",
+        "submit": "تأكيد الإرجاع",
+        "refundAmount": "قيمة الاسترداد"
+      },
+      "void": {
+        "action": "إلغاء البيع",
+        "title": "إلغاء البيع",
+        "reason": "سبب الإلغاء",
+        "submit": "تأكيد الإلغاء",
+        "ownerRequired": "هذا البيع يحتاج موافقة المالك للإلغاء. يرجى طلب تسجيل دخول المالك للتأكيد."
+      },
+      "receipt": {
+        "reprint": "إعادة طباعة الفاتورة",
+        "reprintedAt": "أعيدت الطباعة في"
+      }
     }
   },
   "auth": {

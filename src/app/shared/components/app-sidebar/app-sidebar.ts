@@ -25,6 +25,8 @@ interface SidebarNavItem {
   labelKey: string;
   icon: string;
   ownerOnly?: boolean;
+  child?: boolean;
+  exact?: boolean;
 }
 
 @Component({
@@ -53,7 +55,8 @@ export class AppSidebar {
 
   protected readonly navItems: SidebarNavItem[] = [
     { route: '/dashboard', labelKey: 'nav.dashboard', icon: 'pi pi-chart-bar' },
-    { route: '/inventory', labelKey: 'nav.inventory', icon: 'pi pi-box' },
+    { route: '/inventory', labelKey: 'nav.inventory', icon: 'pi pi-box', exact: true },
+    { route: '/inventory/transfers', labelKey: 'nav.stockTransfers', icon: 'pi pi-arrow-right-arrow-left' },
     { route: '/catalog', labelKey: 'nav.catalog', icon: 'pi pi-database' },
     { route: '/pos', labelKey: 'nav.pos', icon: 'pi pi-shopping-cart' },
     { route: '/purchasing', labelKey: 'nav.purchasing', icon: 'pi pi-truck' },
