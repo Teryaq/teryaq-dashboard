@@ -931,6 +931,22 @@ p-button .p-button:focus-visible,
 
 .receipt__btn--print:hover { background: var(--action-bg-hover); }
 
+.receipt-overlay--nested { z-index: 1200; }
+.pos-action-modal { max-width: 42rem; padding: 1.25rem; color: var(--text-color); direction: inherit; }
+.pos-action-modal h3 { margin: 0 0 1rem; font-size: 1.125rem; }
+.pos-action-modal__field, .pos-action-modal__lines { display: grid; gap: .5rem; }
+.pos-action-modal__input { min-height: 5rem; resize: vertical; border: 1px solid var(--surface-border); border-radius: .5rem; padding: .625rem; background: var(--surface-panel); color: var(--text-color); font: inherit; }
+.pos-action-modal__lines { margin-top: 1rem; }
+.pos-action-modal__line { display: grid; grid-template-columns: minmax(0, 1fr) 5rem auto; align-items: center; gap: .75rem; padding: .75rem; border: 1px solid var(--surface-border); border-radius: .5rem; }
+.pos-action-modal__line small { display: block; margin-top: .125rem; color: var(--text-muted); }
+.pos-action-modal__qty { width: 5rem; min-height: 2.25rem; border: 1px solid var(--surface-border); border-radius: .5rem; padding: .375rem .5rem; background: var(--surface-panel); color: var(--text-color); }
+.pos-action-modal__toggle { display: inline-flex; align-items: center; gap: .375rem; color: var(--text-muted); white-space: nowrap; }
+.pos-action-modal__alert { margin: 0 0 1rem; padding: .75rem; border: 1px solid var(--warning-border); border-radius: .5rem; background: var(--warning-bg); color: var(--warning-text); }
+
+@media (max-width: 767px) {
+  .pos-action-modal__line { grid-template-columns: 1fr; }
+}
+
 /* Print mode — hide everything except the receipt content.
    Uses visibility (not display:none) so a child can override its ancestor. */
 @media print {

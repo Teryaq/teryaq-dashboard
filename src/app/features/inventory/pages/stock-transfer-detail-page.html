@@ -1,0 +1,87 @@
+<div class="inv">
+  <a class="inv__chip" routerLink="/inventory/transfers">
+    <i class="pi pi-arrow-left" aria-hidden="true"></i>
+    {{ 'inventory.transfers.back' | translate }}
+  </a>
+
+  @if (isLoading()) {
+    <div class="inv__state-box">{{ 'common.loading' | translate }}</div>
+  }
+
+  @if (error() && !isLoading()) {
+    <div class="inv__state-box inv__state-box--error">{{ 'common.error' | translate }}</div>
+  }
+
+  @if (transfer(); as item) {
+    <div class="inv__header">
+      <div>
+        <h1 class="inv__title">{{ item.transferNumber }}</h1>
+        <p class="inv__subtitle">{{ item.fromBranchName }} → {{ item.toBranchName }}</p>
+      </div>
+      <div class="inv__actions">
+        @if (canDispatch(item.status)) {
+          <p-button icon="pi pi-send" [label]="'inventory.transfers.dispatch' | translate" [loading]="isSubmitting()" (onClick)="dispatch()" />
+        }
+        @if (canReceive(item.status)) {
+          <p-button icon="pi pi-check" [label]="'inventory.transfers.receive' | translate" [loading]="isSubmitting()" (onClick)="receive()" />
+        }
+        @if (canReject(item.status)) {
+          <p-button icon="pi pi-times" severity="danger" [outlined]="true" [label]="'inventory.transfers.reject' | translate" [disabled]="isSubmitting()" (onClick)="openReject()" />
+        }
+      </div>
+    </div>
+
+    <div class="inv__table-card">
+      <table class="inv__table" aria-label="Stock transfer lines">
+        <thead>
+          <tr>
+            <th>{{ 'inventory.col.drug' | translate }}</th>
+            <th>{{ 'inventory.col.batch' | translate }}</th>
+            <th>{{ 'inventory.transfers.quantity' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of item.lines; track line.id) {
+            <tr>
+              <td>
+                <div class="inv__drug-cell">
+                  <span class="inv__trade-name">{{ line.drugTradeNameEn }}</span>
+                  <span class="inv__generic-name">{{ line.drugTradeNameAr }}</span>
+                </div>
+              </td>
+              <td><span class="inv__batch">{{ line.batchId }}</span></td>
+              <td>{{ line.quantity }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="inv__batch-summary">
+      <span class="inv__batch-summary-name">{{ statusKey(item.status) | translate }}</span>
+      @if (item.notes) { <span class="inv__batch-summary-meta">{{ item.notes }}</span> }
+      @if (item.rejectionReason) { <span class="inv__batch-summary-meta">{{ item.rejectionReason }}</span> }
+    </div>
+  }
+</div>
+
+<p-dialog
+  [modal]="true"
+  [visible]="isRejectOpen()"
+  (visibleChange)="$event ? isRejectOpen.set(true) : closeReject()"
+  [header]="'inventory.transfers.rejectTitle' | translate"
+  styleClass="app-dialog"
+>
+  <form [formGroup]="rejectForm" (ngSubmit)="reject()">
+    <div class="app-dialog__body">
+      <label class="form-field">
+        <span class="form-label">{{ 'inventory.transfers.rejectReason' | translate }}</span>
+        <textarea pTextarea class="w-full" formControlName="reason"></textarea>
+      </label>
+    </div>
+    <div class="app-dialog__footer">
+      <p-button severity="secondary" [outlined]="true" [label]="'form.cancel' | translate" (onClick)="closeReject()" />
+      <p-button severity="danger" type="submit" [label]="'inventory.transfers.reject' | translate" [loading]="isSubmitting()" />
+    </div>
+  </form>
+</p-dialog>

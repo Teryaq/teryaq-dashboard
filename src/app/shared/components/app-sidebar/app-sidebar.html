@@ -12,7 +12,9 @@
         <a
           [routerLink]="item.route"
           routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
           class="app-sidebar__link"
+          [class.app-sidebar__link--child]="item.child"
           [pTooltip]="sidebarState.collapsed() ? (item.labelKey | translate) : undefined"
           [tooltipPosition]="i18n.direction() === 'rtl' ? 'left' : 'right'"
         >
@@ -73,7 +75,9 @@
         <a
           [routerLink]="item.route"
           routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
           class="app-sidebar__link"
+          [class.app-sidebar__link--child]="item.child"
           (click)="onNavClick()"
         >
           <i [class]="item.icon" aria-hidden="true"></i>

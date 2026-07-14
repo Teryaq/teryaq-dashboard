@@ -41,6 +41,14 @@ interface CartItem {
   quantity: number;
 }
 
+interface ReturnLineDraft {
+  saleLineId: string;
+  label: string;
+  maxQuantity: number;
+  quantity: number;
+  restockToInventory: boolean;
+}
+
 @Component({
   selector: 'app-pos-page',
   imports: [TranslatePipe, DecimalPipe],
@@ -61,7 +69,15 @@ export class PosPage {
   protected readonly isLoading = signal(true);
   protected readonly isSubmitting = signal(false);
   protected readonly showReceiptModal = signal(false);
+  protected readonly showReturnModal = signal(false);
+  protected readonly showVoidModal = signal(false);
   protected readonly lastSale = signal<SaleDto | null>(null);
+  protected readonly receiptPrintedAt = signal<string | null>(null);
+  protected readonly returnReason = signal('');
+  protected readonly voidReason = signal('');
+  protected readonly returnLines = signal<ReturnLineDraft[]>([]);
+  protected readonly lastRefundAmount = signal<number | null>(null);
+  protected readonly ownerApprovalMessage = signal(false);
   protected readonly searchQuery = signal('');
   protected readonly discount = signal(0);
   protected readonly cartItems = signal<CartItem[]>([]);
@@ -101,6 +117,13 @@ export class PosPage {
   protected readonly cartItemCount = computed(() =>
     this.cartItems().reduce((sum, item) => sum + item.quantity, 0),
   );
+
+  protected readonly canReturnCurrentSale = computed(() => {
+    const sale = this.lastSale();
+    return !!sale && sale.status === 'Completed' && sale.lines.some(line => this.remainingReturnQty(line) > 0);
+  });
+
+  protected readonly canVoidCurrentSale = computed(() => this.lastSale()?.status === 'Completed');
 
   protected readonly todayGrandTotal = computed(() =>
     this.todaysSales().reduce((sum, s) => sum + s.grandTotal, 0),
@@ -402,15 +425,158 @@ export class PosPage {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(sale => {
         this.lastSale.set(sale);
+        this.receiptPrintedAt.set(null);
+        this.lastRefundAmount.set(null);
+        this.ownerApprovalMessage.set(false);
         this.showReceiptModal.set(true);
       });
   }
 
   protected closeReceipt(): void {
     this.showReceiptModal.set(false);
+    this.closeReturn();
+    this.closeVoid();
   }
 
   protected printReceipt(): void {
     window.print();
+  }
+
+  protected reprintReceipt(): void {
+    const sale = this.lastSale();
+    if (!sale) return;
+    this.posApi
+      .getReceipt(sale.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(receipt => {
+        this.lastSale.set(receipt.sale);
+        this.receiptPrintedAt.set(receipt.printedAt);
+        window.print();
+      });
+  }
+
+  protected openReturn(): void {
+    const sale = this.lastSale();
+    if (!sale) return;
+    this.returnReason.set('');
+    this.returnLines.set(
+      sale.lines
+        .map(line => ({
+          saleLineId: line.id,
+          label: `${line.drugTradeNameEn} / ${line.drugTradeNameAr}`,
+          maxQuantity: this.remainingReturnQty(line),
+          quantity: 0,
+          restockToInventory: true,
+        }))
+        .filter(line => line.maxQuantity > 0),
+    );
+    this.showReturnModal.set(true);
+  }
+
+  protected closeReturn(): void {
+    this.showReturnModal.set(false);
+  }
+
+  protected onReturnReasonInput(event: Event): void {
+    this.returnReason.set((event.target as HTMLTextAreaElement).value);
+  }
+
+  protected onReturnQuantityInput(index: number, event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value);
+    this.returnLines.update(lines =>
+      lines.map((line, lineIndex) =>
+        lineIndex === index
+          ? { ...line, quantity: Math.min(Math.max(0, value || 0), line.maxQuantity) }
+          : line,
+      ),
+    );
+  }
+
+  protected toggleReturnRestock(index: number, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.returnLines.update(lines =>
+      lines.map((line, lineIndex) =>
+        lineIndex === index ? { ...line, restockToInventory: checked } : line,
+      ),
+    );
+  }
+
+  protected submitReturn(): void {
+    const sale = this.lastSale();
+    const lines = this.returnLines()
+      .filter(line => line.quantity > 0)
+      .map(line => ({
+        saleLineId: line.saleLineId,
+        quantity: line.quantity,
+        restockToInventory: line.restockToInventory,
+      }));
+    if (!sale || !this.returnReason().trim() || lines.length === 0) return;
+
+    this.isSubmitting.set(true);
+    this.posApi
+      .returnSale(sale.id, { reason: this.returnReason().trim(), lines })
+      .pipe(finalize(() => this.isSubmitting.set(false)), takeUntilDestroyed(this.destroyRef))
+      .subscribe(result => {
+        this.lastRefundAmount.set(result.refundAmount);
+        this.showReturnModal.set(false);
+        this.refreshSaleAndInventory(sale.id);
+      });
+  }
+
+  protected openVoid(): void {
+    this.voidReason.set('');
+    this.ownerApprovalMessage.set(false);
+    this.showVoidModal.set(true);
+  }
+
+  protected closeVoid(): void {
+    this.showVoidModal.set(false);
+  }
+
+  protected onVoidReasonInput(event: Event): void {
+    this.voidReason.set((event.target as HTMLTextAreaElement).value);
+  }
+
+  protected submitVoid(): void {
+    const sale = this.lastSale();
+    if (!sale || !this.voidReason().trim()) return;
+
+    this.ownerApprovalMessage.set(false);
+    this.isSubmitting.set(true);
+    this.posApi
+      .voidSale(sale.id, { reason: this.voidReason().trim() })
+      .pipe(finalize(() => this.isSubmitting.set(false)), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: result => {
+          this.lastRefundAmount.set(result.refundAmount);
+          this.showVoidModal.set(false);
+          this.refreshSaleAndInventory(sale.id);
+        },
+        error: err => {
+          if (err?.status === 403) {
+            this.ownerApprovalMessage.set(true);
+            return;
+          }
+          throw err;
+        },
+      });
+  }
+
+  protected remainingReturnQty(line: { quantity: number; quantityReturned?: number }): number {
+    return Math.max(0, line.quantity - (line.quantityReturned ?? 0));
+  }
+
+  protected formatReprintDate(isoString: string): string {
+    return new Date(isoString).toLocaleString();
+  }
+
+  private refreshSaleAndInventory(saleId: string): void {
+    this.posApi
+      .getSaleById(saleId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(sale => this.lastSale.set(sale));
+    this.loadTodaysSales();
+    this.isLoading.set(true);
+    this.loadInventory();
   }
 }
